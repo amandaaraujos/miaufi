@@ -123,12 +123,16 @@ select {
   display: flex;
 
   justify-content: space-between;
+  gap: 16px;
 
   border-bottom: 1px solid #ddd;
 
   padding: 10px 0;
+}
 
-  gap: 12px;
+.transaction div:last-child {
+  text-align: right;
+  white-space: nowrap;
 }
 
 .page {
@@ -214,8 +218,8 @@ summary {
   animation: fadeIn 0.25s ease;
 }
 
-.modal.hidden {
-  display: none;
+.hidden {
+  display: none !important;
 }
 
 .modal h2 {
