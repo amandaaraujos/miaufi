@@ -119,6 +119,12 @@ select {
   margin-top: 10px;
 }
 
+label {
+  display: block;
+  margin-top: 16px;
+  font-weight: bold;
+}
+
 .transaction {
   display: flex;
 
@@ -157,6 +163,11 @@ select {
   width: auto;
 
   margin-top: 0;
+}
+
+.checkbox label {
+  margin-top: 0;
+  font-weight: normal;
 }
 
 canvas {
