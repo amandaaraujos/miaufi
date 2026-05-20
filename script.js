@@ -63,10 +63,7 @@ if(Notification.permission !== 'granted'){
 setInterval(() => {
   const now = new Date();
 
-  if(
-    now.getHours() === 21 &&
-    now.getMinutes() === 0
-  ){
+  if(now.getHours() === 21 && now.getMinutes() === 0){
     if(Notification.permission === 'granted'){
       new Notification('💰 Registre os gastos de hoje!');
     }
@@ -88,6 +85,24 @@ hasInstallments.addEventListener('change', () => {
     document.getElementById('installments').value = 1;
   }
 });
+
+function parseBrazilianNumber(value){
+  const cleanValue =
+    String(value)
+      .replace('R$', '')
+      .replace(/\s/g, '')
+      .replace(/\./g, '')
+      .replace(',', '.');
+
+  return Number(cleanValue);
+}
+
+function formatSalaryInput(e){
+  e.target.value =
+    e.target.value
+      .replace(/[^\d,\.]/g, '')
+      .replace('.', ',');
+}
 
 function showLoginForm(){
   authChoice.classList.add('hidden');
@@ -125,7 +140,9 @@ function createUserAccount(){
     document.getElementById('userPassword').value;
 
   const salary =
-    Number(document.getElementById('userSalary').value);
+    parseBrazilianNumber(
+      document.getElementById('userSalary').value
+    );
 
   const type =
     document.getElementById('salaryType').value;
@@ -1049,11 +1066,11 @@ function renderAccountSettings(){
     user.name || '';
 
   document.getElementById('settingsSalary').value =
-    `R$ ${Number(user.salary || 0)
+    Number(user.salary || 0)
       .toLocaleString('pt-BR', {
         minimumFractionDigits: 2,
         maximumFractionDigits: 2
-      })}`;
+      });
 
   document.getElementById('settingsSalaryType').value =
     user.type || 'liquido';
@@ -1095,6 +1112,9 @@ function setupSettingsInputs(){
   const settingsSalaryInput =
     document.getElementById('settingsSalary');
 
+  const userSalaryInput =
+    document.getElementById('userSalary');
+
   const inssType =
     document.getElementById('inssType');
 
@@ -1109,7 +1129,13 @@ function setupSettingsInputs(){
 
   if(settingsSalaryInput){
     settingsSalaryInput.oninput = function(e){
-      formatMoney(e);
+      formatSalaryInput(e);
+    };
+  }
+
+  if(userSalaryInput){
+    userSalaryInput.oninput = function(e){
+      formatSalaryInput(e);
     };
   }
 
@@ -1163,7 +1189,9 @@ function saveAccountSettings(){
     document.getElementById('settingsName').value.trim();
 
   const salary =
-    parseMoney(document.getElementById('settingsSalary').value);
+    parseBrazilianNumber(
+      document.getElementById('settingsSalary').value
+    );
 
   const type =
     document.getElementById('settingsSalaryType').value;
@@ -1225,6 +1253,8 @@ window.showPage = showPage;
 window.addTransaction = addTransaction;
 window.removeCategory = removeCategory;
 window.saveAccountSettings = saveAccountSettings;
+
+setupSettingsInputs();
 
 if(user && currentUserEmail){
   openApp();
