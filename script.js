@@ -25,6 +25,7 @@ const appContent = document.getElementById('appContent');
 const authModal = document.getElementById('authModal');
 const authChoice = document.getElementById('authChoice');
 const loginForm = document.getElementById('loginForm');
+const passwordRecoveryForm = document.getElementById('passwordRecoveryForm');
 const createAccountForm = document.getElementById('createAccountForm');
 const transactionModal = document.getElementById('transactionModal');
 
@@ -120,21 +121,48 @@ function parseDiscountValue(taxKey){
   return parsePercent(value);
 }
 
-function showLoginForm(){
+function hideAllAuthForms(){
   authChoice.classList.add('hidden');
+  loginForm.classList.add('hidden');
+  passwordRecoveryForm.classList.add('hidden');
   createAccountForm.classList.add('hidden');
+}
+
+function showLoginForm(){
+  hideAllAuthForms();
+
+  const loginError =
+    document.getElementById('loginError');
+
+  if(loginError){
+    loginError.innerText = '';
+  }
+
   loginForm.classList.remove('hidden');
 }
 
+function showPasswordRecoveryForm(){
+  hideAllAuthForms();
+
+  const loginEmail =
+    document.getElementById('loginEmail').value.trim().toLowerCase();
+
+  document.getElementById('recoveryEmail').value =
+    loginEmail || '';
+
+  document.getElementById('recoveryPassword').value =
+    '';
+
+  passwordRecoveryForm.classList.remove('hidden');
+}
+
 function showCreateAccountForm(){
-  authChoice.classList.add('hidden');
-  loginForm.classList.add('hidden');
+  hideAllAuthForms();
   createAccountForm.classList.remove('hidden');
 }
 
 function backToAuthChoice(){
-  loginForm.classList.add('hidden');
-  createAccountForm.classList.add('hidden');
+  hideAllAuthForms();
   authChoice.classList.remove('hidden');
 }
 
@@ -209,18 +237,40 @@ function loginUser(){
   const password =
     document.getElementById('loginPassword').value;
 
+  const loginError =
+    document.getElementById('loginError');
+
+  if(loginError){
+    loginError.innerText = '';
+  }
+
   if(!email || !password){
-    alert('Preencha e-mail e senha');
+    if(loginError){
+      loginError.innerText = 'Preencha e-mail e senha.';
+    } else {
+      alert('Preencha e-mail e senha');
+    }
+
     return;
   }
 
   if(!users[email]){
-    alert('Conta não encontrada');
+    if(loginError){
+      loginError.innerText = 'Conta não encontrada.';
+    } else {
+      alert('Conta não encontrada');
+    }
+
     return;
   }
 
   if(users[email].password !== password){
-    alert('Senha incorreta');
+    if(loginError){
+      loginError.innerText = 'Senha incorreta.';
+    } else {
+      alert('Senha incorreta');
+    }
+
     return;
   }
 
@@ -243,6 +293,47 @@ function loginUser(){
   openApp();
 }
 
+function resetPassword(){
+  const email =
+    document.getElementById('recoveryEmail').value.trim().toLowerCase();
+
+  const newPassword =
+    document.getElementById('recoveryPassword').value;
+
+  if(!email || !newPassword){
+    alert('Preencha e-mail e nova senha');
+    return;
+  }
+
+  if(!users[email]){
+    alert('Conta não encontrada');
+    return;
+  }
+
+  users[email].password =
+    newPassword;
+
+  saveUsers();
+
+  document.getElementById('loginEmail').value =
+    email;
+
+  document.getElementById('loginPassword').value =
+    '';
+
+  const loginError =
+    document.getElementById('loginError');
+
+  if(loginError){
+    loginError.innerText =
+      'Senha alterada com sucesso. Faça login com a nova senha.';
+    loginError.className =
+      'positive';
+  }
+
+  showLoginForm();
+}
+
 function logoutUser(){
   localStorage.removeItem('currentUserEmail');
 
@@ -259,9 +350,8 @@ function logoutUser(){
   appContent.style.display = 'none';
   authModal.style.display = 'flex';
 
+  hideAllAuthForms();
   authChoice.classList.remove('hidden');
-  loginForm.classList.add('hidden');
-  createAccountForm.classList.add('hidden');
 }
 
 function openApp(){
@@ -1256,6 +1346,8 @@ function saveAccountSettings(){
 window.showLoginForm = showLoginForm;
 window.showCreateAccountForm = showCreateAccountForm;
 window.backToAuthChoice = backToAuthChoice;
+window.showPasswordRecoveryForm = showPasswordRecoveryForm;
+window.resetPassword = resetPassword;
 window.createUserAccount = createUserAccount;
 window.loginUser = loginUser;
 window.logoutUser = logoutUser;
@@ -1280,7 +1372,6 @@ if(user && currentUserEmail){
   appContent.style.display =
     'none';
 
+  hideAllAuthForms();
   authChoice.classList.remove('hidden');
-  loginForm.classList.add('hidden');
-  createAccountForm.classList.add('hidden');
 }
