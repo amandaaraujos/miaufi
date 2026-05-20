@@ -17,44 +17,19 @@ let carryOver =
 
 let fixedTaxes =
   user?.fixedTaxes || {
-    inss: {
-      enabled: false,
-      type: 'percent',
-      value: 0
-    },
-    irpf: {
-      enabled: false,
-      type: 'percent',
-      value: 0
-    }
+    inss: { enabled: false, type: 'percent', value: 0 },
+    irpf: { enabled: false, type: 'percent', value: 0 }
   };
 
-const appContent =
-  document.getElementById('appContent');
-
-const authModal =
-  document.getElementById('authModal');
-
-const authChoice =
-  document.getElementById('authChoice');
-
-const loginForm =
-  document.getElementById('loginForm');
-
-const createAccountForm =
-  document.getElementById('createAccountForm');
-
-const anotherMonth =
-  document.getElementById('anotherMonth');
-
-const amountInput =
-  document.getElementById('amount');
-
-const hasInstallments =
-  document.getElementById('hasInstallments');
-
-const installmentsBox =
-  document.getElementById('installmentsBox');
+const appContent = document.getElementById('appContent');
+const authModal = document.getElementById('authModal');
+const authChoice = document.getElementById('authChoice');
+const loginForm = document.getElementById('loginForm');
+const createAccountForm = document.getElementById('createAccountForm');
+const anotherMonth = document.getElementById('anotherMonth');
+const amountInput = document.getElementById('amount');
+const hasInstallments = document.getElementById('hasInstallments');
+const installmentsBox = document.getElementById('installmentsBox');
 
 if(Notification.permission !== 'granted'){
   Notification.requestPermission();
@@ -87,12 +62,17 @@ hasInstallments.addEventListener('change', () => {
 });
 
 function parseBrazilianNumber(value){
-  const cleanValue =
+  let cleanValue =
     String(value)
       .replace('R$', '')
       .replace(/\s/g, '')
-      .replace(/\./g, '')
-      .replace(',', '.');
+      .trim();
+
+  if(cleanValue.includes(',') && cleanValue.includes('.')){
+    cleanValue = cleanValue.replace(/\./g, '').replace(',', '.');
+  } else if(cleanValue.includes(',')){
+    cleanValue = cleanValue.replace(',', '.');
+  }
 
   return Number(cleanValue);
 }
@@ -101,28 +81,17 @@ function formatDecimalInput(e){
   e.target.value =
     e.target.value
       .replace(/[^\d,\.]/g, '')
-      .replace('.', ',');
+      .replace(/\.(?=.*\.)/g, '')
+      .replace(/,(?=.*,)/g, '');
 }
 
-function formatMoney(e){
-  let value = e.target.value;
+function formatCurrency(value){
+  const signal = value >= 0 ? '+' : '-';
 
-  value = value.replace(/\D/g, '');
-
-  value = (Number(value) / 100)
-    .toFixed(2)
-    .replace('.', ',');
-
-  value = value.replace(
-    /\B(?=(\d{3})+(?!\d))/g,
-    '.'
-  );
-
-  e.target.value = `R$ ${value}`;
-}
-
-function parseMoney(value){
-  return parseBrazilianNumber(value);
+  return `${signal}R$${Math.abs(value).toLocaleString('pt-BR', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  })}`;
 }
 
 function parsePercent(value){
@@ -135,11 +104,8 @@ function parsePercent(value){
 }
 
 function parseDiscountValue(taxKey){
-  const type =
-    document.getElementById(`${taxKey}Type`).value;
-
-  const value =
-    document.getElementById(`${taxKey}Value`).value;
+  const type = document.getElementById(`${taxKey}Type`).value;
+  const value = document.getElementById(`${taxKey}Value`).value;
 
   if(type === 'value'){
     return parseBrazilianNumber(value);
@@ -167,29 +133,18 @@ function backToAuthChoice(){
 }
 
 function saveUsers(){
-  localStorage.setItem(
-    'users',
-    JSON.stringify(users)
-  );
+  localStorage.setItem('users', JSON.stringify(users));
 }
 
 function createUserAccount(){
-  const name =
-    document.getElementById('userName').value.trim();
-
-  const email =
-    document.getElementById('userEmail').value.trim().toLowerCase();
-
-  const password =
-    document.getElementById('userPassword').value;
+  const name = document.getElementById('userName').value.trim();
+  const email = document.getElementById('userEmail').value.trim().toLowerCase();
+  const password = document.getElementById('userPassword').value;
 
   const salary =
-    parseBrazilianNumber(
-      document.getElementById('userSalary').value
-    );
+    parseBrazilianNumber(document.getElementById('userSalary').value);
 
-  const type =
-    document.getElementById('salaryType').value;
+  const type = document.getElementById('salaryType').value;
 
   if(!name || !email || !password || !salary){
     alert('Preencha todos os campos');
@@ -210,16 +165,8 @@ function createUserAccount(){
     transactions: [],
     carryOver: false,
     fixedTaxes: {
-      inss: {
-        enabled: false,
-        type: 'percent',
-        value: 0
-      },
-      irpf: {
-        enabled: false,
-        type: 'percent',
-        value: 0
-      }
+      inss: { enabled: false, type: 'percent', value: 0 },
+      irpf: { enabled: false, type: 'percent', value: 0 }
     }
   };
 
@@ -229,21 +176,15 @@ function createUserAccount(){
   carryOver = user.carryOver;
   fixedTaxes = user.fixedTaxes;
 
-  localStorage.setItem(
-    'currentUserEmail',
-    currentUserEmail
-  );
+  localStorage.setItem('currentUserEmail', currentUserEmail);
 
   saveUsers();
   openApp();
 }
 
 function loginUser(){
-  const email =
-    document.getElementById('loginEmail').value.trim().toLowerCase();
-
-  const password =
-    document.getElementById('loginPassword').value;
+  const email = document.getElementById('loginEmail').value.trim().toLowerCase();
+  const password = document.getElementById('loginPassword').value;
 
   if(!email || !password){
     alert('Preencha e-mail e senha');
@@ -267,22 +208,11 @@ function loginUser(){
 
   fixedTaxes =
     user.fixedTaxes || {
-      inss: {
-        enabled: false,
-        type: 'percent',
-        value: 0
-      },
-      irpf: {
-        enabled: false,
-        type: 'percent',
-        value: 0
-      }
+      inss: { enabled: false, type: 'percent', value: 0 },
+      irpf: { enabled: false, type: 'percent', value: 0 }
     };
 
-  localStorage.setItem(
-    'currentUserEmail',
-    currentUserEmail
-  );
+  localStorage.setItem('currentUserEmail', currentUserEmail);
 
   openApp();
 }
@@ -296,16 +226,8 @@ function logoutUser(){
   carryOver = false;
 
   fixedTaxes = {
-    inss: {
-      enabled: false,
-      type: 'percent',
-      value: 0
-    },
-    irpf: {
-      enabled: false,
-      type: 'percent',
-      value: 0
-    }
+    inss: { enabled: false, type: 'percent', value: 0 },
+    irpf: { enabled: false, type: 'percent', value: 0 }
   };
 
   appContent.style.display = 'none';
@@ -339,23 +261,18 @@ function saveData(){
 }
 
 function toggleMenu(){
-  const menu =
-    document.getElementById('menu');
+  const menu = document.getElementById('menu');
 
   menu.style.display =
-    menu.style.display === 'flex'
-      ? 'none'
-      : 'flex';
+    menu.style.display === 'flex' ? 'none' : 'flex';
 }
 
 function showPage(page){
-  document.querySelectorAll('.page')
-    .forEach(p => {
-      p.classList.remove('active');
-    });
+  document.querySelectorAll('.page').forEach(p => {
+    p.classList.remove('active');
+  });
 
-  document.getElementById(page)
-    .classList.add('active');
+  document.getElementById(page).classList.add('active');
 
   if(page === 'history'){
     renderHistory();
@@ -373,44 +290,39 @@ function showPage(page){
 function currentMonth(){
   const now = new Date();
 
-  return `${now.getFullYear()}-${String(
-    now.getMonth() + 1
-  ).padStart(2, '0')}`;
+  return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
 }
 
 function addTransaction(){
-  const type =
-    document.getElementById('type').value;
-
-  const name =
-    document.getElementById('name').value.trim();
+  const type = document.getElementById('type').value;
+  const name = document.getElementById('name').value.trim();
 
   const amount =
-    parseBrazilianNumber(
-      document.getElementById('amount').value
-    );
+    parseBrazilianNumber(document.getElementById('amount').value);
 
   const signedAmount =
     type === 'expense'
       ? -Math.abs(amount)
       : Math.abs(amount);
 
-  const category =
-    document.getElementById('category').value.trim();
+  const category = document.getElementById('category').value.trim();
 
   const installments =
     hasInstallments.checked
       ? Number(document.getElementById('installments').value)
       : 1;
 
-  const fixed =
-    document.getElementById('fixed').checked;
+  const fixed = document.getElementById('fixed').checked;
 
-  let month =
-    document.getElementById('month').value;
+  let month = document.getElementById('month').value;
 
   if(!name || !amount){
     alert('Preencha nome e valor');
+    return;
+  }
+
+  if(!installments || installments < 1){
+    alert('Informe uma quantidade válida de parcelas');
     return;
   }
 
@@ -418,36 +330,26 @@ function addTransaction(){
     month = currentMonth();
   }
 
-  const recurringMonths =
-    fixed ? 60 : installments;
-
-  const createdAt =
-    new Date().toISOString();
+  const recurringMonths = fixed ? 60 : installments;
+  const createdAt = new Date().toISOString();
 
   for(let i = 0; i < recurringMonths; i++){
-    const date =
-      new Date(month + '-01');
+    const date = new Date(month + '-01');
 
     date.setMonth(date.getMonth() + i);
 
     const finalMonth =
-      `${date.getFullYear()}-${String(
-        date.getMonth() + 1
-      ).padStart(2, '0')}`;
+      `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
 
     transactions.push({
       id: crypto.randomUUID(),
       type,
       name,
-      amount: fixed
-        ? signedAmount
-        : signedAmount / installments,
+      amount: fixed ? signedAmount : signedAmount / installments,
       category,
       month: finalMonth,
       fixed,
-      installment: fixed || installments === 1
-        ? null
-        : `${i + 1}/${installments}`,
+      installment: fixed || installments === 1 ? null : `${i + 1}/${installments}`,
       createdAt
     });
   }
@@ -472,32 +374,17 @@ function clearForm(){
   installmentsBox.style.display = 'none';
 }
 
-function formatCurrency(value){
-  const signal =
-    value >= 0 ? '+' : '-';
-
-  return `${signal}R$${Math.abs(value)
-    .toLocaleString('pt-BR', {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2
-    })}`;
-}
-
 function getFixedTaxAmount(taxKey){
-  const tax =
-    fixedTaxes?.[taxKey];
+  const tax = fixedTaxes?.[taxKey];
 
   if(!tax || !tax.enabled){
     return 0;
   }
 
-  const grossSalary =
-    Number(user.salary) || 0;
+  const grossSalary = Number(user.salary) || 0;
 
   if(tax.type === 'percent'){
-    return -Math.abs(
-      grossSalary * (Number(tax.value) / 100)
-    );
+    return -Math.abs(grossSalary * (Number(tax.value) / 100));
   }
 
   return -Math.abs(Number(tax.value));
@@ -506,11 +393,8 @@ function getFixedTaxAmount(taxKey){
 function getAutomaticMonthlyTransactions(month){
   const automatic = [];
 
-  const inssAmount =
-    getFixedTaxAmount('inss');
-
-  const irpfAmount =
-    getFixedTaxAmount('irpf');
+  const inssAmount = getFixedTaxAmount('inss');
+  const irpfAmount = getFixedTaxAmount('irpf');
 
   if(inssAmount){
     automatic.push({
@@ -551,26 +435,20 @@ function getTransactionsForMonth(month){
 }
 
 function calculateMonthlyBalance(month){
-  const monthly =
-    getTransactionsForMonth(month);
+  const monthly = getTransactionsForMonth(month);
 
-  let total =
-    Number(user.salary);
+  let total = Number(user.salary);
 
   if(carryOver){
     const previousMonths =
-      [...new Set(
-        transactions.map(t => t.month)
-      )]
+      [...new Set(transactions.map(t => t.month))]
         .filter(m => m < month)
         .sort();
 
     previousMonths.forEach(m => {
-      const monthTransactions =
-        getTransactionsForMonth(m);
+      const monthTransactions = getTransactionsForMonth(m);
 
-      let subtotal =
-        Number(user.salary);
+      let subtotal = Number(user.salary);
 
       monthTransactions.forEach(t => {
         subtotal += t.amount;
@@ -588,25 +466,18 @@ function calculateMonthlyBalance(month){
 }
 
 function render(){
-  const month =
-    currentMonth();
+  const month = currentMonth();
 
-  document.getElementById('welcome')
-    .innerText = `Olá, ${user.name}`;
+  document.getElementById('welcome').innerText =
+    `Olá, ${user.name}`;
 
-  const balance =
-    calculateMonthlyBalance(month);
+  const balance = calculateMonthlyBalance(month);
+  const saldo = document.getElementById('saldo');
 
-  const saldo =
-    document.getElementById('saldo');
-
-  saldo.innerText =
-    formatCurrency(balance);
+  saldo.innerText = formatCurrency(balance);
 
   saldo.className =
-    balance >= 0
-      ? 'saldo positive'
-      : 'saldo negative';
+    balance >= 0 ? 'saldo positive' : 'saldo negative';
 
   renderTransactions(month);
   renderInsights(month);
@@ -616,23 +487,18 @@ function renderTransactions(month){
   const currentTransactions =
     getTransactionsForMonth(month)
       .sort((a,b) => {
-        const dateA =
-          new Date(a.createdAt || 0);
-
-        const dateB =
-          new Date(b.createdAt || 0);
+        const dateA = new Date(a.createdAt || 0);
+        const dateB = new Date(b.createdAt || 0);
 
         return dateB - dateA;
       });
 
-  const list =
-    document.getElementById('transactions');
+  const list = document.getElementById('transactions');
 
   list.innerHTML = '';
 
   if(currentTransactions.length === 0){
-    list.innerHTML =
-      '<p>Sem movimentações neste mês</p>';
+    list.innerHTML = '<p>Sem movimentações neste mês</p>';
     return;
   }
 
@@ -641,26 +507,10 @@ function renderTransactions(month){
       <div class="transaction">
         <div>
           <strong>${t.name}</strong>
-
           <p>${t.category || 'Sem categoria'}</p>
-
-          ${
-            t.installment
-              ? `<small>Parcela ${t.installment}</small>`
-              : ''
-          }
-
-          ${
-            t.fixed
-              ? `<small> • Fixo</small>`
-              : ''
-          }
-
-          ${
-            t.automatic
-              ? `<small> • Automático</small>`
-              : ''
-          }
+          ${t.installment ? `<small>Parcela ${t.installment}</small>` : ''}
+          ${t.fixed ? `<small> • Fixo</small>` : ''}
+          ${t.automatic ? `<small> • Automático</small>` : ''}
         </div>
 
         <div class="${t.amount >= 0 ? 'positive' : 'negative'}">
@@ -672,26 +522,20 @@ function renderTransactions(month){
 }
 
 function renderInsights(month){
-  const currentTransactions =
-    getTransactionsForMonth(month);
+  const currentTransactions = getTransactionsForMonth(month);
 
   const biggest =
     currentTransactions
       .filter(t => t.type === 'expense')
-      .sort((a,b) =>
-        Math.abs(b.amount) - Math.abs(a.amount)
-      )[0];
+      .sort((a,b) => Math.abs(b.amount) - Math.abs(a.amount))[0];
 
-  document.getElementById('biggestExpense')
-    .innerText = biggest
-      ? `${biggest.name} ${formatCurrency(biggest.amount)}`
-      : 'Nenhuma';
+  document.getElementById('biggestExpense').innerText =
+    biggest ? `${biggest.name} ${formatCurrency(biggest.amount)}` : 'Nenhuma';
 
   const categoryTotals = {};
 
   currentTransactions.forEach(t => {
-    const categoryName =
-      t.category || 'Sem categoria';
+    const categoryName = t.category || 'Sem categoria';
 
     if(!categoryTotals[categoryName]){
       categoryTotals[categoryName] = 0;
@@ -704,10 +548,8 @@ function renderInsights(month){
     Object.entries(categoryTotals)
       .sort((a,b) => b[1] - a[1])[0];
 
-  document.getElementById('bestCategory')
-    .innerText = best
-      ? `${best[0]} ${formatCurrency(best[1])}`
-      : 'Nenhuma';
+  document.getElementById('bestCategory').innerText =
+    best ? `${best[0]} ${formatCurrency(best[1])}` : 'Nenhuma';
 
   const months =
     [...new Set(transactions.map(t => t.month))]
@@ -718,17 +560,12 @@ function renderInsights(month){
 
   if(months.length >= 2){
     const current =
-      calculateMonthlyBalance(
-        months[months.length - 1]
-      );
+      calculateMonthlyBalance(months[months.length - 1]);
 
     const previous =
-      calculateMonthlyBalance(
-        months[months.length - 2]
-      );
+      calculateMonthlyBalance(months[months.length - 2]);
 
-    const diff =
-      current - previous;
+    const diff = current - previous;
 
     comparison.innerText =
       diff >= 0
@@ -737,6 +574,7 @@ function renderInsights(month){
 
     comparison.className =
       diff >= 0 ? 'positive' : 'negative';
+
   } else {
     comparison.innerText = 'Sem comparação';
     comparison.className = '';
@@ -756,60 +594,37 @@ function renderHistory(){
 
   renderChart(grouped);
 
-  const historyPage =
-    document.getElementById('history');
-
-  const existing =
-    document.getElementById('historyDetails');
+  const historyPage = document.getElementById('history');
+  const existing = document.getElementById('historyDetails');
 
   if(existing){
     existing.remove();
   }
 
-  const container =
-    document.createElement('div');
+  const container = document.createElement('div');
+  container.id = 'historyDetails';
 
-  container.id =
-    'historyDetails';
+  const currentDate = new Date();
+  const currentYear = currentDate.getFullYear();
+  const currentMonthIndex = currentDate.getMonth() + 1;
 
-  const currentDate =
-    new Date();
-
-  const currentYear =
-    currentDate.getFullYear();
-
-  const currentMonthIndex =
-    currentDate.getMonth() + 1;
-
-  for(
-    let month = 1;
-    month <= currentMonthIndex;
-    month++
-  ){
+  for(let month = 1; month <= currentMonthIndex; month++){
     const monthKey =
-      `${currentYear}-${String(month)
-        .padStart(2, '0')}`;
+      `${currentYear}-${String(month).padStart(2, '0')}`;
 
-    const details =
-      document.createElement('details');
+    const details = document.createElement('details');
+    details.className = 'card';
 
-    details.className =
-      'card';
-
-    const summary =
-      document.createElement('summary');
+    const summary = document.createElement('summary');
 
     const monthName =
-      new Date(
-        currentYear,
-        month - 1
-      ).toLocaleString('pt-BR', {
-        month: 'long',
-        year: 'numeric'
-      });
+      new Date(currentYear, month - 1)
+        .toLocaleString('pt-BR', {
+          month: 'long',
+          year: 'numeric'
+        });
 
-    summary.innerText =
-      monthName;
+    summary.innerText = monthName;
 
     details.appendChild(summary);
 
@@ -817,57 +632,33 @@ function renderHistory(){
       getTransactionsForMonth(monthKey);
 
     if(monthTransactions.length === 0){
-      const empty =
-        document.createElement('p');
+      const empty = document.createElement('p');
 
-      empty.style.marginTop =
-        '15px';
-
-      empty.innerText =
-        'Sem registros';
+      empty.style.marginTop = '15px';
+      empty.innerText = 'Sem registros';
 
       details.appendChild(empty);
+
     } else {
       monthTransactions
         .sort((a,b) => {
-          const dateA =
-            new Date(a.createdAt || 0);
-
-          const dateB =
-            new Date(b.createdAt || 0);
+          const dateA = new Date(a.createdAt || 0);
+          const dateB = new Date(b.createdAt || 0);
 
           return dateB - dateA;
         })
         .forEach(t => {
-          const item =
-            document.createElement('div');
+          const item = document.createElement('div');
 
-          item.className =
-            'transaction';
+          item.className = 'transaction';
 
           item.innerHTML = `
             <div>
               <strong>${t.name}</strong>
-
               <p>${t.category || 'Sem categoria'}</p>
-
-              ${
-                t.installment
-                  ? `<small>Parcela ${t.installment}</small>`
-                  : ''
-              }
-
-              ${
-                t.fixed
-                  ? `<small> • Fixo</small>`
-                  : ''
-              }
-
-              ${
-                t.automatic
-                  ? `<small> • Automático</small>`
-                  : ''
-              }
+              ${t.installment ? `<small>Parcela ${t.installment}</small>` : ''}
+              ${t.fixed ? `<small> • Fixo</small>` : ''}
+              ${t.automatic ? `<small> • Automático</small>` : ''}
             </div>
 
             <div class="${t.amount >= 0 ? 'positive' : 'negative'}">
@@ -878,21 +669,15 @@ function renderHistory(){
           details.appendChild(item);
         });
 
-      const deleteBtn =
-        document.createElement('button');
+      const deleteBtn = document.createElement('button');
 
-      deleteBtn.innerText =
-        'Excluir histórico';
-
-      deleteBtn.style.marginTop =
-        '15px';
+      deleteBtn.innerText = 'Excluir histórico';
+      deleteBtn.style.marginTop = '15px';
 
       deleteBtn.onclick = () => {
         if(confirm('Deseja excluir esse histórico?')){
           transactions =
-            transactions.filter(
-              t => t.month !== monthKey
-            );
+            transactions.filter(t => t.month !== monthKey);
 
           saveData();
           render();
@@ -906,14 +691,10 @@ function renderHistory(){
     container.appendChild(details);
   }
 
-  const clearAll =
-    document.createElement('button');
+  const clearAll = document.createElement('button');
 
-  clearAll.innerText =
-    'Apagar histórico completo';
-
-  clearAll.style.marginTop =
-    '20px';
+  clearAll.innerText = 'Apagar histórico completo';
+  clearAll.style.marginTop = '20px';
 
   clearAll.onclick = () => {
     if(confirm('Deseja apagar todo histórico?')){
@@ -930,11 +711,8 @@ function renderHistory(){
 }
 
 function renderChart(grouped){
-  const labels =
-    Object.keys(grouped).sort();
-
-  const current =
-    currentMonth();
+  const labels = Object.keys(grouped).sort();
+  const current = currentMonth();
 
   if(fixedTaxes?.inss?.enabled || fixedTaxes?.irpf?.enabled){
     if(!labels.includes(current)){
@@ -963,8 +741,7 @@ function renderChart(grouped){
     expenses.push(expense);
   });
 
-  const ctx =
-    document.getElementById('chart');
+  const ctx = document.getElementById('chart');
 
   if(window.chartInstance){
     window.chartInstance.destroy();
@@ -973,10 +750,8 @@ function renderChart(grouped){
   window.chartInstance =
     new Chart(ctx, {
       type: 'line',
-
       data: {
         labels,
-
         datasets: [
           {
             label: 'Receitas',
@@ -1005,8 +780,7 @@ function renderCategories(){
       ].filter(Boolean)
     )].sort();
 
-  const list =
-    document.getElementById('categoriesList');
+  const list = document.getElementById('categoriesList');
 
   list.innerHTML = '';
 
@@ -1014,9 +788,7 @@ function renderCategories(){
     let total =
       transactions
         .filter(t => t.category === category)
-        .reduce((acc,t) => {
-          return acc + t.amount;
-        },0);
+        .reduce((acc,t) => acc + t.amount, 0);
 
     if(category === 'Impostos'){
       total += getFixedTaxAmount('inss');
@@ -1027,7 +799,6 @@ function renderCategories(){
       <div class="transaction">
         <div>
           <strong>${category}</strong>
-
           <p class="${total >= 0 ? 'positive' : 'negative'}">
             ${formatCurrency(total)}
           </p>
@@ -1044,9 +815,7 @@ function renderCategories(){
 function removeCategory(category){
   if(confirm('Deseja excluir esta categoria?')){
     transactions =
-      transactions.filter(
-        t => t.category !== category
-      );
+      transactions.filter(t => t.category !== category);
 
     if(category === 'Impostos'){
       fixedTaxes.inss.enabled = false;
@@ -1081,11 +850,11 @@ function renderAccountSettings(){
 
   document.getElementById('inssValue').value =
     fixedTaxes.inss.type === 'value' && fixedTaxes.inss.value
-      ? `R$ ${Number(fixedTaxes.inss.value)
+      ? Number(fixedTaxes.inss.value)
           .toLocaleString('pt-BR', {
             minimumFractionDigits: 2,
             maximumFractionDigits: 2
-          })}`
+          })
       : fixedTaxes.inss.value || '';
 
   document.getElementById('irpfEnabled').checked =
@@ -1096,94 +865,45 @@ function renderAccountSettings(){
 
   document.getElementById('irpfValue').value =
     fixedTaxes.irpf.type === 'value' && fixedTaxes.irpf.value
-      ? `R$ ${Number(fixedTaxes.irpf.value)
+      ? Number(fixedTaxes.irpf.value)
           .toLocaleString('pt-BR', {
             minimumFractionDigits: 2,
             maximumFractionDigits: 2
-          })}`
+          })
       : fixedTaxes.irpf.value || '';
 
   setupSettingsInputs();
 }
 
 function setupSettingsInputs(){
-  const settingsSalaryInput =
-    document.getElementById('settingsSalary');
+  const settingsSalaryInput = document.getElementById('settingsSalary');
+  const userSalaryInput = document.getElementById('userSalary');
 
-  const userSalaryInput =
-    document.getElementById('userSalary');
-
-  const inssType =
-    document.getElementById('inssType');
-
-  const irpfType =
-    document.getElementById('irpfType');
-
-  const inssValue =
-    document.getElementById('inssValue');
-
-  const irpfValue =
-    document.getElementById('irpfValue');
+  const inssValue = document.getElementById('inssValue');
+  const irpfValue = document.getElementById('irpfValue');
 
   if(settingsSalaryInput){
-    settingsSalaryInput.oninput = function(e){
-      formatDecimalInput(e);
-    };
+    settingsSalaryInput.oninput = formatDecimalInput;
   }
 
   if(userSalaryInput){
-    userSalaryInput.oninput = function(e){
-      formatDecimalInput(e);
-    };
+    userSalaryInput.oninput = formatDecimalInput;
   }
 
-  if(inssType && inssValue){
-    inssType.onchange = function(){
-      inssValue.value = '';
-
-      inssValue.placeholder =
-        inssType.value === 'value'
-          ? 'R$ 0,00'
-          : 'Ex: 8,5';
-    };
-
-    inssValue.oninput = function(){
-      if(inssType.value === 'value'){
-        formatDecimalInput({ target: inssValue });
-      } else {
-        formatDecimalInput({ target: inssValue });
-      }
-    };
+  if(inssValue){
+    inssValue.oninput = formatDecimalInput;
   }
 
-  if(irpfType && irpfValue){
-    irpfType.onchange = function(){
-      irpfValue.value = '';
-
-      irpfValue.placeholder =
-        irpfType.value === 'value'
-          ? 'R$ 0,00'
-          : 'Ex: 15';
-    };
-
-    irpfValue.oninput = function(){
-      if(irpfType.value === 'value'){
-        formatDecimalInput({ target: irpfValue });
-      } else {
-        formatDecimalInput({ target: irpfValue });
-      }
-    };
+  if(irpfValue){
+    irpfValue.oninput = formatDecimalInput;
   }
 }
 
 function saveAccountSettings(){
-  const name =
-    document.getElementById('settingsName').value.trim();
+  const name = document.getElementById('settingsName').value.trim();
 
   const salary =
-    parseBrazilianNumber(
-      document.getElementById('settingsSalary').value
-    );
+    parseBrazilianNumber(document.getElementById('settingsSalary').value);
 
   const type =
     document.getElementById('settingsSalaryType').value;
