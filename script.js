@@ -15,6 +15,20 @@ let transactions =
 let carryOver =
   user?.carryOver || false;
 
+let fixedTaxes =
+  user?.fixedTaxes || {
+    inss: {
+      enabled: false,
+      type: 'percent',
+      value: 0
+    },
+    irpf: {
+      enabled: false,
+      type: 'percent',
+      value: 0
+    }
+  };
+
 const appContent =
   document.getElementById('appContent');
 
@@ -41,6 +55,8 @@ const hasInstallments =
 
 const installmentsBox =
   document.getElementById('installmentsBox');
+
+createSettingsPageIfNeeded();
 
 if(Notification.permission !== 'granted'){
   Notification.requestPermission();
@@ -74,6 +90,152 @@ hasInstallments.addEventListener('change', () => {
     document.getElementById('installments').value = 1;
   }
 });
+
+function createSettingsPageIfNeeded(){
+  const menu =
+    document.getElementById('menu');
+
+  if(menu && !document.getElementById('settingsMenuButton')){
+    const settingsButton =
+      document.createElement('button');
+
+    settingsButton.id =
+      'settingsMenuButton';
+
+    settingsButton.innerText =
+      'Configurações da conta';
+
+    settingsButton.onclick = () => {
+      showPage('settings');
+    };
+
+    const logoutButton =
+      Array.from(menu.querySelectorAll('button'))
+        .find(button => button.innerText.trim() === 'Sair');
+
+    if(logoutButton){
+      menu.insertBefore(settingsButton, logoutButton);
+    } else {
+      menu.appendChild(settingsButton);
+    }
+  }
+
+  if(!document.getElementById('settings')){
+    const settingsSection =
+      document.createElement('section');
+
+    settingsSection.id =
+      'settings';
+
+    settingsSection.className =
+      'page';
+
+    settingsSection.innerHTML = `
+      <div class="card">
+        <h2>Configurações da conta</h2>
+
+        <p>
+          Configure aqui descontos fixos que serão considerados todos os meses no cálculo do seu saldo.
+        </p>
+
+        <hr style="margin: 20px 0; border: none; border-top: 1px solid #ddd;" />
+
+        <h3>Dados da conta</h3>
+
+        <label>Nome</label>
+        <input
+          type="text"
+          id="settingsName"
+          placeholder="Seu nome"
+        />
+
+        <label>Salário</label>
+        <input
+          type="text"
+          id="settingsSalary"
+          placeholder="R$ 0,00"
+        />
+
+        <label>Tipo de salário</label>
+        <select id="settingsSalaryType">
+          <option value="bruto">Bruto</option>
+          <option value="liquido">Líquido</option>
+        </select>
+
+        <hr style="margin: 20px 0; border: none; border-top: 1px solid #ddd;" />
+
+        <h3>Desconto fixo de INSS</h3>
+
+        <div class="checkbox">
+          <input
+            type="checkbox"
+            id="inssEnabled"
+          />
+
+          <label>Considerar INSS todos os meses</label>
+        </div>
+
+        <select id="inssType">
+          <option value="percent">% sobre o salário bruto</option>
+          <option value="value">Valor fixo em R$</option>
+        </select>
+
+        <input
+          type="number"
+          id="inssValue"
+          placeholder="Informe o valor ou percentual"
+          min="0"
+          step="0.01"
+        />
+
+        <hr style="margin: 20px 0; border: none; border-top: 1px solid #ddd;" />
+
+        <h3>Desconto fixo de IRPF</h3>
+
+        <div class="checkbox">
+          <input
+            type="checkbox"
+            id="irpfEnabled"
+          />
+
+          <label>Considerar IRPF todos os meses</label>
+        </div>
+
+        <select id="irpfType">
+          <option value="percent">% sobre o salário bruto</option>
+          <option value="value">Valor fixo em R$</option>
+        </select>
+
+        <input
+          type="number"
+          id="irpfValue"
+          placeholder="Informe o valor ou percentual"
+          min="0"
+          step="0.01"
+        />
+
+        <button
+          style="margin-top:20px"
+          onclick="saveAccountSettings()"
+        >
+          Salvar configurações
+        </button>
+      </div>
+    `;
+
+    appContent.appendChild(settingsSection);
+
+    const settingsSalaryInput =
+      document.getElementById('settingsSalary');
+
+    if(settingsSalaryInput){
+      settingsSalaryInput.addEventListener(
+        'input',
+        formatMoney
+      );
+    }
+  }
+}
 
 function showLoginForm(){
   authChoice.classList.add('hidden');
@@ -133,13 +295,26 @@ function createUserAccount(){
     salary,
     type,
     transactions: [],
-    carryOver: false
+    carryOver: false,
+    fixedTaxes: {
+      inss: {
+        enabled: false,
+        type: 'percent',
+        value: 0
+      },
+      irpf: {
+        enabled: false,
+        type: 'percent',
+        value: 0
+      }
+    }
   };
 
   currentUserEmail = email;
   user = users[email];
   transactions = user.transactions;
   carryOver = user.carryOver;
+  fixedTaxes = user.fixedTaxes;
 
   localStorage.setItem(
     'currentUserEmail',
@@ -177,6 +352,20 @@ function loginUser(){
   transactions = user.transactions || [];
   carryOver = user.carryOver || false;
 
+  fixedTaxes =
+    user.fixedTaxes || {
+      inss: {
+        enabled: false,
+        type: 'percent',
+        value: 0
+      },
+      irpf: {
+        enabled: false,
+        type: 'percent',
+        value: 0
+      }
+    };
+
   localStorage.setItem(
     'currentUserEmail',
     currentUserEmail
@@ -193,6 +382,19 @@ function logoutUser(){
   transactions = [];
   carryOver = false;
 
+  fixedTaxes = {
+    inss: {
+      enabled: false,
+      type: 'percent',
+      value: 0
+    },
+    irpf: {
+      enabled: false,
+      type: 'percent',
+      value: 0
+    }
+  };
+
   appContent.style.display = 'none';
   authModal.style.display = 'flex';
 
@@ -202,6 +404,8 @@ function logoutUser(){
 }
 
 function openApp(){
+  createSettingsPageIfNeeded();
+
   authModal.style.display = 'none';
   appContent.style.display = 'block';
 
@@ -216,6 +420,7 @@ function saveData(){
 
   user.transactions = transactions;
   user.carryOver = carryOver;
+  user.fixedTaxes = fixedTaxes;
 
   users[currentUserEmail] = user;
 
@@ -248,6 +453,10 @@ function showPage(page){
   if(page === 'categories'){
     renderCategories();
   }
+
+  if(page === 'settings'){
+    renderAccountSettings();
+  }
 }
 
 function formatMoney(e){
@@ -267,6 +476,14 @@ function formatMoney(e){
   e.target.value = `R$ ${value}`;
 }
 
+function parseMoney(value){
+  return Number(
+    String(value)
+      .replace(/[R$.\s]/g, '')
+      .replace(',', '.')
+  ) / 100;
+}
+
 function currentMonth(){
   const now = new Date();
 
@@ -283,12 +500,7 @@ function addTransaction(){
     document.getElementById('name').value.trim();
 
   const amount =
-    Number(
-      document.getElementById('amount')
-        .value
-        .replace(/[R$.\s]/g, '')
-        .replace(',', '.')
-    ) / 100;
+    parseMoney(document.getElementById('amount').value);
 
   const signedAmount =
     type === 'expense'
@@ -383,22 +595,91 @@ function formatCurrency(value){
     })}`;
 }
 
+function getFixedTaxAmount(taxKey){
+  const tax =
+    fixedTaxes?.[taxKey];
+
+  if(!tax || !tax.enabled){
+    return 0;
+  }
+
+  const grossSalary =
+    Number(user.salary) || 0;
+
+  if(tax.type === 'percent'){
+    return -Math.abs(
+      grossSalary * (Number(tax.value) / 100)
+    );
+  }
+
+  return -Math.abs(Number(tax.value));
+}
+
+function getAutomaticMonthlyTransactions(month){
+  const automatic = [];
+
+  const inssAmount =
+    getFixedTaxAmount('inss');
+
+  const irpfAmount =
+    getFixedTaxAmount('irpf');
+
+  if(inssAmount){
+    automatic.push({
+      id: `auto-inss-${month}`,
+      type: 'expense',
+      name: 'INSS',
+      amount: inssAmount,
+      category: 'Impostos',
+      month,
+      fixed: true,
+      automatic: true,
+      createdAt: `${month}-01T00:00:00.000Z`
+    });
+  }
+
+  if(irpfAmount){
+    automatic.push({
+      id: `auto-irpf-${month}`,
+      type: 'expense',
+      name: 'IRPF',
+      amount: irpfAmount,
+      category: 'Impostos',
+      month,
+      fixed: true,
+      automatic: true,
+      createdAt: `${month}-01T00:00:00.000Z`
+    });
+  }
+
+  return automatic;
+}
+
+function getTransactionsForMonth(month){
+  return [
+    ...transactions.filter(t => t.month === month),
+    ...getAutomaticMonthlyTransactions(month)
+  ];
+}
+
 function calculateMonthlyBalance(month){
   const monthly =
-    transactions.filter(t => t.month === month);
+    getTransactionsForMonth(month);
 
   let total =
     Number(user.salary);
 
   if(carryOver){
     const previousMonths =
-      [...new Set(transactions.map(t => t.month))]
+      [...new Set(
+        transactions.map(t => t.month)
+      )]
         .filter(m => m < month)
         .sort();
 
     previousMonths.forEach(m => {
       const monthTransactions =
-        transactions.filter(t => t.month === m);
+        getTransactionsForMonth(m);
 
       let subtotal =
         Number(user.salary);
@@ -445,8 +726,7 @@ function render(){
 
 function renderTransactions(month){
   const currentTransactions =
-    transactions
-      .filter(t => t.month === month)
+    getTransactionsForMonth(month)
       .sort((a,b) => {
         const dateA =
           new Date(a.createdAt || 0);
@@ -487,6 +767,12 @@ function renderTransactions(month){
               ? `<small> • Fixo</small>`
               : ''
           }
+
+          ${
+            t.automatic
+              ? `<small> • Automático</small>`
+              : ''
+          }
         </div>
 
         <div class="${t.amount >= 0 ? 'positive' : 'negative'}">
@@ -499,7 +785,7 @@ function renderTransactions(month){
 
 function renderInsights(month){
   const currentTransactions =
-    transactions.filter(t => t.month === month);
+    getTransactionsForMonth(month);
 
   const biggest =
     currentTransactions
@@ -640,7 +926,7 @@ function renderHistory(){
     details.appendChild(summary);
 
     const monthTransactions =
-      grouped[monthKey] || [];
+      getTransactionsForMonth(monthKey);
 
     if(monthTransactions.length === 0){
       const empty =
@@ -686,6 +972,12 @@ function renderHistory(){
               ${
                 t.fixed
                   ? `<small> • Fixo</small>`
+                  : ''
+              }
+
+              ${
+                t.automatic
+                  ? `<small> • Automático</small>`
                   : ''
               }
             </div>
@@ -753,6 +1045,17 @@ function renderChart(grouped){
   const labels =
     Object.keys(grouped).sort();
 
+  const current =
+    currentMonth();
+
+  if(fixedTaxes?.inss?.enabled || fixedTaxes?.irpf?.enabled){
+    if(!labels.includes(current)){
+      labels.push(current);
+    }
+  }
+
+  labels.sort();
+
   const incomes = [];
   const expenses = [];
 
@@ -760,7 +1063,7 @@ function renderChart(grouped){
     let income = 0;
     let expense = 0;
 
-    grouped[month].forEach(t => {
+    getTransactionsForMonth(month).forEach(t => {
       if(t.amount >= 0){
         income += t.amount;
       } else {
@@ -807,9 +1110,11 @@ function renderChart(grouped){
 function renderCategories(){
   const categories =
     [...new Set(
-      transactions
-        .map(t => t.category)
-        .filter(Boolean)
+      [
+        ...transactions.map(t => t.category),
+        fixedTaxes?.inss?.enabled ? 'Impostos' : null,
+        fixedTaxes?.irpf?.enabled ? 'Impostos' : null
+      ].filter(Boolean)
     )].sort();
 
   const list =
@@ -818,12 +1123,17 @@ function renderCategories(){
   list.innerHTML = '';
 
   categories.forEach(category => {
-    const total =
+    let total =
       transactions
         .filter(t => t.category === category)
         .reduce((acc,t) => {
           return acc + t.amount;
         },0);
+
+    if(category === 'Impostos'){
+      total += getFixedTaxAmount('inss');
+      total += getFixedTaxAmount('irpf');
+    }
 
     list.innerHTML += `
       <div class="transaction">
@@ -850,10 +1160,104 @@ function removeCategory(category){
         t => t.category !== category
       );
 
+    if(category === 'Impostos'){
+      fixedTaxes.inss.enabled = false;
+      fixedTaxes.irpf.enabled = false;
+    }
+
     saveData();
     renderCategories();
     render();
   }
+}
+
+function renderAccountSettings(){
+  document.getElementById('settingsName').value =
+    user.name || '';
+
+  document.getElementById('settingsSalary').value =
+    `R$ ${Number(user.salary || 0)
+      .toLocaleString('pt-BR', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      })}`;
+
+  document.getElementById('settingsSalaryType').value =
+    user.type || 'liquido';
+
+  document.getElementById('inssEnabled').checked =
+    fixedTaxes.inss.enabled;
+
+  document.getElementById('inssType').value =
+    fixedTaxes.inss.type;
+
+  document.getElementById('inssValue').value =
+    fixedTaxes.inss.value || '';
+
+  document.getElementById('irpfEnabled').checked =
+    fixedTaxes.irpf.enabled;
+
+  document.getElementById('irpfType').value =
+    fixedTaxes.irpf.type;
+
+  document.getElementById('irpfValue').value =
+    fixedTaxes.irpf.value || '';
+}
+
+function saveAccountSettings(){
+  const name =
+    document.getElementById('settingsName').value.trim();
+
+  const salary =
+    parseMoney(document.getElementById('settingsSalary').value);
+
+  const type =
+    document.getElementById('settingsSalaryType').value;
+
+  const inssEnabled =
+    document.getElementById('inssEnabled').checked;
+
+  const inssType =
+    document.getElementById('inssType').value;
+
+  const inssValue =
+    Number(document.getElementById('inssValue').value);
+
+  const irpfEnabled =
+    document.getElementById('irpfEnabled').checked;
+
+  const irpfType =
+    document.getElementById('irpfType').value;
+
+  const irpfValue =
+    Number(document.getElementById('irpfValue').value);
+
+  if(!name || !salary){
+    alert('Preencha nome e salário');
+    return;
+  }
+
+  user.name = name;
+  user.salary = salary;
+  user.type = type;
+
+  fixedTaxes = {
+    inss: {
+      enabled: inssEnabled,
+      type: inssType,
+      value: inssValue || 0
+    },
+    irpf: {
+      enabled: irpfEnabled,
+      type: irpfType,
+      value: irpfValue || 0
+    }
+  };
+
+  saveData();
+  render();
+
+  alert('Configurações salvas com sucesso!');
 }
 
 window.showLoginForm = showLoginForm;
@@ -866,6 +1270,7 @@ window.toggleMenu = toggleMenu;
 window.showPage = showPage;
 window.addTransaction = addTransaction;
 window.removeCategory = removeCategory;
+window.saveAccountSettings = saveAccountSettings;
 
 if(user && currentUserEmail){
   openApp();
