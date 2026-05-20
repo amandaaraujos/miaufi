@@ -56,8 +56,6 @@ const hasInstallments =
 const installmentsBox =
   document.getElementById('installmentsBox');
 
-createSettingsPageIfNeeded();
-
 if(Notification.permission !== 'granted'){
   Notification.requestPermission();
 }
@@ -90,152 +88,6 @@ hasInstallments.addEventListener('change', () => {
     document.getElementById('installments').value = 1;
   }
 });
-
-function createSettingsPageIfNeeded(){
-  const menu =
-    document.getElementById('menu');
-
-  if(menu && !document.getElementById('settingsMenuButton')){
-    const settingsButton =
-      document.createElement('button');
-
-    settingsButton.id =
-      'settingsMenuButton';
-
-    settingsButton.innerText =
-      'Configurações da conta';
-
-    settingsButton.onclick = () => {
-      showPage('settings');
-    };
-
-    const logoutButton =
-      Array.from(menu.querySelectorAll('button'))
-        .find(button => button.innerText.trim() === 'Sair');
-
-    if(logoutButton){
-      menu.insertBefore(settingsButton, logoutButton);
-    } else {
-      menu.appendChild(settingsButton);
-    }
-  }
-
-  if(!document.getElementById('settings')){
-    const settingsSection =
-      document.createElement('section');
-
-    settingsSection.id =
-      'settings';
-
-    settingsSection.className =
-      'page';
-
-    settingsSection.innerHTML = `
-      <div class="card">
-        <h2>Configurações da conta</h2>
-
-        <p>
-          Configure aqui descontos fixos que serão considerados todos os meses no cálculo do seu saldo.
-        </p>
-
-        <hr style="margin: 20px 0; border: none; border-top: 1px solid #ddd;" />
-
-        <h3>Dados da conta</h3>
-
-        <label>Nome</label>
-        <input
-          type="text"
-          id="settingsName"
-          placeholder="Seu nome"
-        />
-
-        <label>Salário</label>
-        <input
-          type="text"
-          id="settingsSalary"
-          placeholder="R$ 0,00"
-        />
-
-        <label>Tipo de salário</label>
-        <select id="settingsSalaryType">
-          <option value="bruto">Bruto</option>
-          <option value="liquido">Líquido</option>
-        </select>
-
-        <hr style="margin: 20px 0; border: none; border-top: 1px solid #ddd;" />
-
-        <h3>Desconto fixo de INSS</h3>
-
-        <div class="checkbox">
-          <input
-            type="checkbox"
-            id="inssEnabled"
-          />
-
-          <label>Considerar INSS todos os meses</label>
-        </div>
-
-        <select id="inssType">
-          <option value="percent">% sobre o salário bruto</option>
-          <option value="value">Valor fixo em R$</option>
-        </select>
-
-        <input
-          type="number"
-          id="inssValue"
-          placeholder="Informe o valor ou percentual"
-          min="0"
-          step="0.01"
-        />
-
-        <hr style="margin: 20px 0; border: none; border-top: 1px solid #ddd;" />
-
-        <h3>Desconto fixo de IRPF</h3>
-
-        <div class="checkbox">
-          <input
-            type="checkbox"
-            id="irpfEnabled"
-          />
-
-          <label>Considerar IRPF todos os meses</label>
-        </div>
-
-        <select id="irpfType">
-          <option value="percent">% sobre o salário bruto</option>
-          <option value="value">Valor fixo em R$</option>
-        </select>
-
-        <input
-          type="number"
-          id="irpfValue"
-          placeholder="Informe o valor ou percentual"
-          min="0"
-          step="0.01"
-        />
-
-        <button
-          style="margin-top:20px"
-          onclick="saveAccountSettings()"
-        >
-          Salvar configurações
-        </button>
-      </div>
-    `;
-
-    appContent.appendChild(settingsSection);
-
-    const settingsSalaryInput =
-      document.getElementById('settingsSalary');
-
-    if(settingsSalaryInput){
-      settingsSalaryInput.addEventListener(
-        'input',
-        formatMoney
-      );
-    }
-  }
-}
 
 function showLoginForm(){
   authChoice.classList.add('hidden');
@@ -404,8 +256,6 @@ function logoutUser(){
 }
 
 function openApp(){
-  createSettingsPageIfNeeded();
-
   authModal.style.display = 'none';
   appContent.style.display = 'block';
 
@@ -482,6 +332,29 @@ function parseMoney(value){
       .replace(/[R$.\s]/g, '')
       .replace(',', '.')
   ) / 100;
+}
+
+function parsePercent(value){
+  return Number(
+    String(value)
+      .replace('%', '')
+      .replace(',', '.')
+      .trim()
+  );
+}
+
+function parseDiscountValue(taxKey){
+  const type =
+    document.getElementById(`${taxKey}Type`).value;
+
+  const value =
+    document.getElementById(`${taxKey}Value`).value;
+
+  if(type === 'value'){
+    return parseMoney(value);
+  }
+
+  return parsePercent(value);
 }
 
 function currentMonth(){
@@ -1192,7 +1065,13 @@ function renderAccountSettings(){
     fixedTaxes.inss.type;
 
   document.getElementById('inssValue').value =
-    fixedTaxes.inss.value || '';
+    fixedTaxes.inss.type === 'value' && fixedTaxes.inss.value
+      ? `R$ ${Number(fixedTaxes.inss.value)
+          .toLocaleString('pt-BR', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+          })}`
+      : fixedTaxes.inss.value || '';
 
   document.getElementById('irpfEnabled').checked =
     fixedTaxes.irpf.enabled;
@@ -1201,7 +1080,82 @@ function renderAccountSettings(){
     fixedTaxes.irpf.type;
 
   document.getElementById('irpfValue').value =
-    fixedTaxes.irpf.value || '';
+    fixedTaxes.irpf.type === 'value' && fixedTaxes.irpf.value
+      ? `R$ ${Number(fixedTaxes.irpf.value)
+          .toLocaleString('pt-BR', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+          })}`
+      : fixedTaxes.irpf.value || '';
+
+  setupSettingsInputs();
+}
+
+function setupSettingsInputs(){
+  const settingsSalaryInput =
+    document.getElementById('settingsSalary');
+
+  const inssType =
+    document.getElementById('inssType');
+
+  const irpfType =
+    document.getElementById('irpfType');
+
+  const inssValue =
+    document.getElementById('inssValue');
+
+  const irpfValue =
+    document.getElementById('irpfValue');
+
+  if(settingsSalaryInput){
+    settingsSalaryInput.oninput = function(e){
+      formatMoney(e);
+    };
+  }
+
+  if(inssType && inssValue){
+    inssType.onchange = function(){
+      inssValue.value = '';
+
+      inssValue.placeholder =
+        inssType.value === 'value'
+          ? 'R$ 0,00'
+          : 'Ex: 8,5';
+    };
+
+    inssValue.oninput = function(){
+      if(inssType.value === 'value'){
+        formatMoney({ target: inssValue });
+      } else {
+        inssValue.value =
+          inssValue.value
+            .replace(/[^\d,\.]/g, '')
+            .replace('.', ',');
+      }
+    };
+  }
+
+  if(irpfType && irpfValue){
+    irpfType.onchange = function(){
+      irpfValue.value = '';
+
+      irpfValue.placeholder =
+        irpfType.value === 'value'
+          ? 'R$ 0,00'
+          : 'Ex: 15';
+    };
+
+    irpfValue.oninput = function(){
+      if(irpfType.value === 'value'){
+        formatMoney({ target: irpfValue });
+      } else {
+        irpfValue.value =
+          irpfValue.value
+            .replace(/[^\d,\.]/g, '')
+            .replace('.', ',');
+      }
+    };
+  }
 }
 
 function saveAccountSettings(){
@@ -1221,7 +1175,7 @@ function saveAccountSettings(){
     document.getElementById('inssType').value;
 
   const inssValue =
-    Number(document.getElementById('inssValue').value);
+    parseDiscountValue('inss');
 
   const irpfEnabled =
     document.getElementById('irpfEnabled').checked;
@@ -1230,7 +1184,7 @@ function saveAccountSettings(){
     document.getElementById('irpfType').value;
 
   const irpfValue =
-    Number(document.getElementById('irpfValue').value);
+    parseDiscountValue('irpf');
 
   if(!name || !salary){
     alert('Preencha nome e salário');
