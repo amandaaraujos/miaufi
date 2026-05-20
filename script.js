@@ -1,38 +1,79 @@
 let user = JSON.parse(localStorage.getItem('user')) || null;
 
 let transactions =
-  JSON.parse(localStorage.getItem('transactions'))
-  || [];
+  JSON.parse(localStorage.getItem('transactions')) || [];
 
 let carryOver =
-  JSON.parse(localStorage.getItem('carryOver'))
-  || false;
+  JSON.parse(localStorage.getItem('carryOver')) || false;
+
+const appContent =
+  document.getElementById('appContent');
+
+const welcomeModal =
+  document.getElementById('welcomeModal');
+
+const anotherMonth =
+  document.getElementById('anotherMonth');
+
+const amountInput =
+  document.getElementById('amount');
+
+const hasInstallments =
+  document.getElementById('hasInstallments');
+
+const installmentsBox =
+  document.getElementById('installmentsBox');
 
 if(Notification.permission !== 'granted'){
   Notification.requestPermission();
 }
 
 setInterval(() => {
-
   const now = new Date();
 
   if(
     now.getHours() === 21 &&
     now.getMinutes() === 0
   ){
-
     if(Notification.permission === 'granted'){
-
       new Notification(
         '💰 Registre os gastos de hoje!'
       );
     }
   }
-
 }, 60000);
 
-function saveData(){
+amountInput.addEventListener(
+  'input',
+  formatMoney
+);
 
+anotherMonth.addEventListener(
+  'change',
+  () => {
+    document.getElementById('month')
+      .style.display =
+        anotherMonth.checked
+          ? 'block'
+          : 'none';
+  }
+);
+
+hasInstallments.addEventListener(
+  'change',
+  () => {
+    installmentsBox.style.display =
+      hasInstallments.checked
+        ? 'block'
+        : 'none';
+
+    if(!hasInstallments.checked){
+      document.getElementById('installments').value = 1;
+    }
+  }
+);
+
+function saveData(){
   localStorage.setItem(
     'transactions',
     JSON.stringify(transactions)
@@ -45,7 +86,6 @@ function saveData(){
 }
 
 function toggleMenu(){
-
   const menu =
     document.getElementById('menu');
 
@@ -56,7 +96,6 @@ function toggleMenu(){
 }
 
 function showPage(page){
-
   document.querySelectorAll('.page')
     .forEach(p => {
       p.classList.remove('active');
@@ -74,19 +113,7 @@ function showPage(page){
   }
 }
 
-const anotherMonth =
-  document.getElementById('anotherMonth');
-
-const amountInput =
-  document.getElementById('amount');
-
-amountInput.addEventListener(
-  'input',
-  formatMoney
-);
-
 function formatMoney(e){
-
   let value = e.target.value;
 
   value = value.replace(/\D/g, '');
@@ -103,20 +130,7 @@ function formatMoney(e){
   e.target.value = `R$ ${value}`;
 }
 
-anotherMonth.addEventListener(
-  'change',
-  () => {
-
-    document.getElementById('month')
-      .style.display =
-        anotherMonth.checked
-          ? 'block'
-          : 'none';
-  }
-);
-
 function currentMonth(){
-
   const now = new Date();
 
   return `${now.getFullYear()}-${String(
@@ -125,12 +139,11 @@ function currentMonth(){
 }
 
 function addTransaction(){
-
   const type =
     document.getElementById('type').value;
 
   const name =
-    document.getElementById('name').value;
+    document.getElementById('name').value.trim();
 
   const amount = Number(
     document.getElementById('amount')
@@ -139,12 +152,17 @@ function addTransaction(){
       .replace(',', '.')
   ) / 100;
 
-  const category =
-    document.getElementById('category').value;
+  const signedAmount =
+    type === 'expense'
+      ? -Math.abs(amount)
+      : Math.abs(amount);
 
-  const installments = Number(
-    document.getElementById('installments').value
-  );
+  const category =
+    document.getElementById('category').value.trim();
+
+  const installments = hasInstallments.checked
+    ? Number(document.getElementById('installments').value)
+    : 1;
 
   const fixed =
     document.getElementById('fixed').checked;
@@ -153,9 +171,7 @@ function addTransaction(){
     document.getElementById('month').value;
 
   if(!name || !amount){
-
     alert('Preencha nome e valor');
-
     return;
   }
 
@@ -163,14 +179,10 @@ function addTransaction(){
     month = currentMonth();
   }
 
-  const installmentValue =
-    amount / installments;
-
   const recurringMonths =
     fixed ? 60 : installments;
 
   for(let i = 0; i < recurringMonths; i++){
-
     const date =
       new Date(month + '-01');
 
@@ -182,7 +194,6 @@ function addTransaction(){
       ).padStart(2, '0')}`;
 
     transactions.push({
-
       id: crypto.randomUUID(),
 
       type,
@@ -190,8 +201,8 @@ function addTransaction(){
       name,
 
       amount: fixed
-        ? amount
-        : installmentValue,
+        ? signedAmount
+        : signedAmount / installments,
 
       category,
 
@@ -199,7 +210,7 @@ function addTransaction(){
 
       fixed,
 
-      installment: fixed
+      installment: fixed || installments === 1
         ? null
         : `${i + 1}/${installments}`
     });
@@ -213,7 +224,6 @@ function addTransaction(){
 }
 
 function clearForm(){
-
   document.getElementById('name').value = '';
 
   document.getElementById('amount').value = '';
@@ -224,14 +234,18 @@ function clearForm(){
 
   document.getElementById('fixed').checked = false;
 
+  document.getElementById('hasInstallments').checked = false;
+
   document.getElementById('anotherMonth').checked = false;
 
   document.getElementById('month').style.display =
     'none';
+
+  installmentsBox.style.display =
+    'none';
 }
 
 function formatCurrency(value){
-
   const signal =
     value >= 0
       ? '+'
@@ -239,15 +253,12 @@ function formatCurrency(value){
 
   return `${signal}R$${Math.abs(value)
     .toLocaleString('pt-BR', {
-
       minimumFractionDigits: 2,
-
       maximumFractionDigits: 2
     })}`;
 }
 
 function calculateMonthlyBalance(month){
-
   const monthly =
     transactions.filter(
       t => t.month === month
@@ -257,7 +268,6 @@ function calculateMonthlyBalance(month){
     Number(user.salary);
 
   if(carryOver){
-
     const previousMonths =
       [...new Set(
         transactions.map(t => t.month)
@@ -266,7 +276,6 @@ function calculateMonthlyBalance(month){
       .sort();
 
     previousMonths.forEach(m => {
-
       const monthTransactions =
         transactions.filter(
           t => t.month === m
@@ -276,11 +285,7 @@ function calculateMonthlyBalance(month){
         Number(user.salary);
 
       monthTransactions.forEach(t => {
-
-        subtotal +=
-          t.type === 'income'
-            ? t.amount
-            : -t.amount;
+        subtotal += t.amount;
       });
 
       total += subtotal;
@@ -288,18 +293,13 @@ function calculateMonthlyBalance(month){
   }
 
   monthly.forEach(t => {
-
-    total +=
-      t.type === 'income'
-        ? t.amount
-        : -t.amount;
+    total += t.amount;
   });
 
   return total;
 }
 
 function render(){
-
   const month = currentMonth();
 
   document.getElementById('welcome')
@@ -325,7 +325,6 @@ function render(){
 }
 
 function renderTransactions(month){
-
   const currentTransactions =
     transactions.filter(
       t => t.month === month
@@ -341,13 +340,9 @@ function renderTransactions(month){
       a.type.localeCompare(b.type)
     )
     .forEach(t => {
-
       list.innerHTML += `
-
         <div class="transaction">
-
           <div>
-
             <strong>${t.name}</strong>
 
             <p>
@@ -356,9 +351,7 @@ function renderTransactions(month){
 
             ${
               t.installment
-                ? `<small>
-                    Parcela ${t.installment}
-                  </small>`
+                ? `<small>Parcela ${t.installment}</small>`
                 : ''
             }
 
@@ -367,30 +360,21 @@ function renderTransactions(month){
                 ? `<small> • Fixo</small>`
                 : ''
             }
-
           </div>
 
           <div class="${
-            t.type === 'income'
+            t.amount >= 0
               ? 'positive'
               : 'negative'
           }">
-
-            ${
-              t.type === 'income'
-                ? formatCurrency(t.amount)
-                : formatCurrency(-t.amount)
-            }
-
+            ${formatCurrency(t.amount)}
           </div>
-
         </div>
       `;
     });
 }
 
 function renderInsights(month){
-
   const currentTransactions =
     transactions.filter(
       t => t.month === month
@@ -399,26 +383,24 @@ function renderInsights(month){
   const biggest =
     currentTransactions
       .filter(t => t.type === 'expense')
-      .sort((a,b) => b.amount - a.amount)[0];
+      .sort((a,b) => Math.abs(b.amount) - Math.abs(a.amount))[0];
 
   document.getElementById('biggestExpense')
     .innerText = biggest
-      ? `${biggest.name}
-         ${formatCurrency(-biggest.amount)}`
+      ? `${biggest.name} ${formatCurrency(biggest.amount)}`
       : 'Nenhuma';
 
   const categoryTotals = {};
 
   currentTransactions.forEach(t => {
+    const categoryName =
+      t.category || 'Sem categoria';
 
-    if(!categoryTotals[t.category]){
-      categoryTotals[t.category] = 0;
+    if(!categoryTotals[categoryName]){
+      categoryTotals[categoryName] = 0;
     }
 
-    categoryTotals[t.category] +=
-      t.type === 'income'
-        ? t.amount
-        : -t.amount;
+    categoryTotals[categoryName] += t.amount;
   });
 
   const best =
@@ -427,8 +409,7 @@ function renderInsights(month){
 
   document.getElementById('bestCategory')
     .innerText = best
-      ? `${best[0]}
-         ${formatCurrency(best[1])}`
+      ? `${best[0]} ${formatCurrency(best[1])}`
       : 'Nenhuma';
 
   const months =
@@ -437,7 +418,6 @@ function renderInsights(month){
     )].sort();
 
   if(months.length >= 2){
-
     const current =
       calculateMonthlyBalance(
         months[months.length - 1]
@@ -466,11 +446,9 @@ function renderInsights(month){
 }
 
 function renderHistory(){
-
   const grouped = {};
 
   transactions.forEach(t => {
-
     if(!grouped[t.month]){
       grouped[t.month] = [];
     }
@@ -508,7 +486,6 @@ function renderHistory(){
     month <= currentMonthIndex;
     month++
   ){
-
     const monthKey =
       `${currentYear}-${String(month)
         .padStart(2, '0')}`;
@@ -526,7 +503,6 @@ function renderHistory(){
         currentYear,
         month - 1
       ).toLocaleString('pt-BR', {
-
         month: 'long',
         year: 'numeric'
       });
@@ -539,7 +515,6 @@ function renderHistory(){
       grouped[monthKey] || [];
 
     if(monthTransactions.length === 0){
-
       const empty =
         document.createElement('p');
 
@@ -551,18 +526,14 @@ function renderHistory(){
       details.appendChild(empty);
 
     } else {
-
       monthTransactions.forEach(t => {
-
         const item =
           document.createElement('div');
 
         item.className = 'transaction';
 
         item.innerHTML = `
-
           <div>
-
             <strong>${t.name}</strong>
 
             <p>
@@ -571,9 +542,7 @@ function renderHistory(){
 
             ${
               t.installment
-                ? `<small>
-                    Parcela ${t.installment}
-                  </small>`
+                ? `<small>Parcela ${t.installment}</small>`
                 : ''
             }
 
@@ -582,21 +551,14 @@ function renderHistory(){
                 ? `<small> • Fixo</small>`
                 : ''
             }
-
           </div>
 
           <div class="${
-            t.type === 'income'
+            t.amount >= 0
               ? 'positive'
               : 'negative'
           }">
-
-            ${
-              t.type === 'income'
-                ? formatCurrency(t.amount)
-                : formatCurrency(-t.amount)
-            }
-
+            ${formatCurrency(t.amount)}
           </div>
         `;
 
@@ -609,14 +571,13 @@ function renderHistory(){
       deleteBtn.innerText =
         'Excluir histórico';
 
-      deleteBtn.style.marginTop = '15px';
+      deleteBtn.style.marginTop =
+        '15px';
 
       deleteBtn.onclick = () => {
-
         if(confirm(
           'Deseja excluir esse histórico?'
         )){
-
           transactions =
             transactions.filter(
               t => t.month !== monthKey
@@ -642,14 +603,13 @@ function renderHistory(){
   clearAll.innerText =
     'Apagar histórico completo';
 
-  clearAll.style.marginTop = '20px';
+  clearAll.style.marginTop =
+    '20px';
 
   clearAll.onclick = () => {
-
     if(confirm(
       'Deseja apagar todo histórico?'
     )){
-
       transactions = [];
 
       saveData();
@@ -666,7 +626,6 @@ function renderHistory(){
 }
 
 function renderChart(grouped){
-
   const labels =
     Object.keys(grouped).sort();
 
@@ -674,16 +633,14 @@ function renderChart(grouped){
   const expenses = [];
 
   labels.forEach(month => {
-
     let income = 0;
     let expense = 0;
 
     grouped[month].forEach(t => {
-
-      if(t.type === 'income'){
+      if(t.amount >= 0){
         income += t.amount;
       } else {
-        expense += t.amount;
+        expense += Math.abs(t.amount);
       }
     });
 
@@ -699,15 +656,12 @@ function renderChart(grouped){
   }
 
   window.chartInstance = new Chart(ctx, {
-
     type: 'line',
 
     data: {
-
       labels,
 
       datasets: [
-
         {
           label: 'Receitas',
           data: incomes,
@@ -727,14 +681,11 @@ function renderChart(grouped){
 }
 
 function renderCategories(){
-
   const categories =
     [...new Set(
-
       transactions
         .map(t => t.category)
         .filter(Boolean)
-
     )].sort();
 
   const list =
@@ -743,28 +694,18 @@ function renderCategories(){
   list.innerHTML = '';
 
   categories.forEach(category => {
-
     const total =
       transactions
         .filter(
           t => t.category === category
         )
         .reduce((acc,t) => {
-
-          return acc + (
-            t.type === 'income'
-              ? t.amount
-              : -t.amount
-          );
-
+          return acc + t.amount;
         },0);
 
     list.innerHTML += `
-
       <div class="transaction">
-
         <div>
-
           <strong>${category}</strong>
 
           <p class="${
@@ -772,11 +713,8 @@ function renderCategories(){
               ? 'positive'
               : 'negative'
           }">
-
             ${formatCurrency(total)}
-
           </p>
-
         </div>
 
         <button
@@ -784,18 +722,15 @@ function renderCategories(){
         >
           Excluir
         </button>
-
       </div>
     `;
   });
 }
 
 function removeCategory(category){
-
   if(confirm(
     'Deseja excluir esta categoria?'
   )){
-
     transactions =
       transactions.filter(
         t => t.category !== category
@@ -810,19 +745,16 @@ function removeCategory(category){
 }
 
 function saveUserData(){
-
   const name =
-    document.getElementById('userName').value;
+    document.getElementById('userName').value.trim();
 
-  const salary = Number(
-    document.getElementById('userSalary').value
-  );
+  const salary =
+    Number(document.getElementById('userSalary').value);
 
   const type =
     document.getElementById('salaryType').value;
 
   if(!name || !salary){
-
     alert('Preencha todos os campos');
 
     return;
@@ -839,16 +771,28 @@ function saveUserData(){
     JSON.stringify(user)
   );
 
-  document.getElementById('welcomeModal')
-    .style.display = 'none';
+  welcomeModal.style.display =
+    'none';
+
+  appContent.style.display =
+    'block';
 
   render();
 }
 
-if(user){
+if(user && user.name){
+  welcomeModal.style.display =
+    'none';
 
-  document.getElementById('welcomeModal')
-    .style.display = 'none';
+  appContent.style.display =
+    'block';
 
   render();
+
+} else {
+  welcomeModal.style.display =
+    'flex';
+
+  appContent.style.display =
+    'none';
 }
