@@ -139,6 +139,17 @@ label {
   padding: 10px 0;
 }
 
+.transaction.clickable {
+  cursor: pointer;
+}
+
+.transaction.clickable:hover {
+  background: #f5efe6;
+  border-radius: 10px;
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
 .transaction div:last-child {
   text-align: right;
   white-space: nowrap;
