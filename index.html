@@ -79,7 +79,7 @@
       />
 
       <input
-        type="number"
+        type="text"
         id="userSalary"
         placeholder="Seu salário bruto"
       />
@@ -95,6 +95,51 @@
 
       <button class="secondary-btn" onclick="backToAuthChoice()">
         Voltar
+      </button>
+    </div>
+
+  </div>
+
+  <div class="modal-overlay hidden" id="transactionModal">
+
+    <div class="modal">
+      <h2>Editar movimentação</h2>
+
+      <input type="hidden" id="editTransactionId" />
+
+      <label for="editType">Tipo</label>
+      <select id="editType">
+        <option value="expense">Despesa</option>
+        <option value="income">Receita</option>
+      </select>
+
+      <label for="editName">Nome</label>
+      <input
+        type="text"
+        id="editName"
+        placeholder="Nome da movimentação"
+      />
+
+      <label for="editCategory">Categoria</label>
+      <input
+        type="text"
+        id="editCategory"
+        placeholder="Categoria"
+      />
+
+      <label for="editAmount">Valor</label>
+      <input
+        type="text"
+        id="editAmount"
+        placeholder="Ex: 1000,00"
+      />
+
+      <button onclick="saveEditedTransaction()">
+        Salvar alterações
+      </button>
+
+      <button class="secondary-btn" onclick="closeTransactionModal()">
+        Cancelar
       </button>
     </div>
 
@@ -182,7 +227,7 @@
         <input
           type="text"
           id="amount"
-          placeholder="R$ 0,00"
+          placeholder="Ex: 1000,00"
         />
 
         <input
@@ -295,7 +340,7 @@
         <input
           type="text"
           id="settingsSalary"
-          placeholder="R$ 0,00"
+          placeholder="Ex: 1475,00"
         />
 
         <label for="settingsSalaryType">Tipo de salário</label>
@@ -303,6 +348,17 @@
           <option value="bruto">Bruto</option>
           <option value="liquido">Líquido</option>
         </select>
+
+        <div class="checkbox">
+          <input
+            type="checkbox"
+            id="carryOverEnabled"
+          />
+
+          <label for="carryOverEnabled">
+            Somar meses anteriores?
+          </label>
+        </div>
 
         <hr class="divider" />
 
@@ -334,7 +390,7 @@
         <input
           type="text"
           id="inssValue"
-          placeholder="Ex: 8,5 ou R$ 250,00"
+          placeholder="Ex: 8,5 ou 250,00"
         />
 
         <hr class="divider" />
@@ -367,7 +423,7 @@
         <input
           type="text"
           id="irpfValue"
-          placeholder="Ex: 15 ou R$ 450,00"
+          placeholder="Ex: 15 ou 450,00"
         />
 
         <button
