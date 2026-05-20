@@ -117,11 +117,14 @@ select {
   border: 1px solid #ddd;
 
   margin-top: 10px;
+  margin-bottom: 10px;
 }
 
 label {
   display: block;
-  margin-top: 16px;
+
+  margin-top: 12px;
+
   font-weight: bold;
 }
 
@@ -155,6 +158,7 @@ label {
   gap: 10px;
 
   margin-top: 10px;
+  margin-bottom: 10px;
 
   align-items: center;
 }
@@ -162,11 +166,12 @@ label {
 .checkbox input {
   width: auto;
 
-  margin-top: 0;
+  margin: 0;
 }
 
 .checkbox label {
-  margin-top: 0;
+  margin: 0;
+
   font-weight: normal;
 }
 
@@ -247,6 +252,18 @@ summary {
 
 .modal button {
   margin-top: 10px;
+}
+
+.section-description {
+  margin-top: 8px;
+  opacity: 0.75;
+}
+
+.divider {
+  margin: 20px 0;
+
+  border: none;
+  border-top: 1px solid #ddd;
 }
 
 @keyframes fadeIn {
