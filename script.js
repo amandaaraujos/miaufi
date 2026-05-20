@@ -1,16 +1,34 @@
-let user = JSON.parse(localStorage.getItem('user')) || null;
+let users =
+  JSON.parse(localStorage.getItem('users')) || {};
+
+let currentUserEmail =
+  localStorage.getItem('currentUserEmail') || null;
+
+let user =
+  currentUserEmail && users[currentUserEmail]
+    ? users[currentUserEmail]
+    : null;
 
 let transactions =
-  JSON.parse(localStorage.getItem('transactions')) || [];
+  user?.transactions || [];
 
 let carryOver =
-  JSON.parse(localStorage.getItem('carryOver')) || false;
+  user?.carryOver || false;
 
 const appContent =
   document.getElementById('appContent');
 
-const welcomeModal =
-  document.getElementById('welcomeModal');
+const authModal =
+  document.getElementById('authModal');
+
+const authChoice =
+  document.getElementById('authChoice');
+
+const loginForm =
+  document.getElementById('loginForm');
+
+const createAccountForm =
+  document.getElementById('createAccountForm');
 
 const anotherMonth =
   document.getElementById('anotherMonth');
@@ -73,16 +91,148 @@ hasInstallments.addEventListener(
   }
 );
 
-function saveData(){
+function saveUsers(){
   localStorage.setItem(
-    'transactions',
-    JSON.stringify(transactions)
+    'users',
+    JSON.stringify(users)
   );
+}
+
+function saveData(){
+  if(!user || !currentUserEmail){
+    return;
+  }
+
+  user.transactions = transactions;
+  user.carryOver = carryOver;
+
+  users[currentUserEmail] = user;
+
+  saveUsers();
+}
+
+function showLoginForm(){
+  authChoice.classList.add('hidden');
+  createAccountForm.classList.add('hidden');
+  loginForm.classList.remove('hidden');
+}
+
+function showCreateAccountForm(){
+  authChoice.classList.add('hidden');
+  loginForm.classList.add('hidden');
+  createAccountForm.classList.remove('hidden');
+}
+
+function backToAuthChoice(){
+  loginForm.classList.add('hidden');
+  createAccountForm.classList.add('hidden');
+  authChoice.classList.remove('hidden');
+}
+
+function createUserAccount(){
+  const name =
+    document.getElementById('userName').value.trim();
+
+  const email =
+    document.getElementById('userEmail').value.trim().toLowerCase();
+
+  const password =
+    document.getElementById('userPassword').value;
+
+  const salary =
+    Number(document.getElementById('userSalary').value);
+
+  const type =
+    document.getElementById('salaryType').value;
+
+  if(!name || !email || !password || !salary){
+    alert('Preencha todos os campos');
+    return;
+  }
+
+  if(users[email]){
+    alert('Já existe uma conta com este e-mail');
+    return;
+  }
+
+  users[email] = {
+    name,
+    email,
+    password,
+    salary,
+    type,
+    transactions: [],
+    carryOver: false
+  };
+
+  currentUserEmail = email;
+  user = users[email];
+  transactions = user.transactions;
+  carryOver = user.carryOver;
 
   localStorage.setItem(
-    'carryOver',
-    JSON.stringify(carryOver)
+    'currentUserEmail',
+    currentUserEmail
   );
+
+  saveUsers();
+
+  openApp();
+}
+
+function loginUser(){
+  const email =
+    document.getElementById('loginEmail').value.trim().toLowerCase();
+
+  const password =
+    document.getElementById('loginPassword').value;
+
+  if(!email || !password){
+    alert('Preencha e-mail e senha');
+    return;
+  }
+
+  if(!users[email] || users[email].password !== password){
+    alert('E-mail ou senha inválidos');
+    return;
+  }
+
+  currentUserEmail = email;
+  user = users[email];
+  transactions = user.transactions || [];
+  carryOver = user.carryOver || false;
+
+  localStorage.setItem(
+    'currentUserEmail',
+    currentUserEmail
+  );
+
+  openApp();
+}
+
+function logoutUser(){
+  localStorage.removeItem('currentUserEmail');
+
+  currentUserEmail = null;
+  user = null;
+  transactions = [];
+  carryOver = false;
+
+  appContent.style.display = 'none';
+  authModal.style.display = 'flex';
+
+  authChoice.classList.remove('hidden');
+  loginForm.classList.add('hidden');
+  createAccountForm.classList.add('hidden');
+}
+
+function openApp(){
+  authModal.style.display = 'none';
+  appContent.style.display = 'block';
+
+  showPage('home');
+
+  render();
 }
 
 function toggleMenu(){
@@ -182,6 +332,9 @@ function addTransaction(){
   const recurringMonths =
     fixed ? 60 : installments;
 
+  const createdAt =
+    new Date().toISOString();
+
   for(let i = 0; i < recurringMonths; i++){
     const date =
       new Date(month + '-01');
@@ -212,7 +365,9 @@ function addTransaction(){
 
       installment: fixed || installments === 1
         ? null
-        : `${i + 1}/${installments}`
+        : `${i + 1}/${installments}`,
+
+      createdAt
     });
   }
 
@@ -326,52 +481,61 @@ function render(){
 
 function renderTransactions(month){
   const currentTransactions =
-    transactions.filter(
-      t => t.month === month
-    );
+    transactions
+      .filter(t => t.month === month)
+      .sort((a,b) => {
+        const dateA =
+          new Date(a.createdAt || 0);
+
+        const dateB =
+          new Date(b.createdAt || 0);
+
+        return dateB - dateA;
+      });
 
   const list =
     document.getElementById('transactions');
 
   list.innerHTML = '';
 
-  currentTransactions
-    .sort((a,b) =>
-      a.type.localeCompare(b.type)
-    )
-    .forEach(t => {
-      list.innerHTML += `
-        <div class="transaction">
-          <div>
-            <strong>${t.name}</strong>
+  if(currentTransactions.length === 0){
+    list.innerHTML = '<p>Sem movimentações neste mês</p>';
+    return;
+  }
 
-            <p>
-              ${t.category || 'Sem categoria'}
-            </p>
+  currentTransactions.forEach(t => {
+    list.innerHTML += `
+      <div class="transaction">
+        <div>
+          <strong>${t.name}</strong>
 
-            ${
-              t.installment
-                ? `<small>Parcela ${t.installment}</small>`
-                : ''
-            }
+          <p>
+            ${t.category || 'Sem categoria'}
+          </p>
 
-            ${
-              t.fixed
-                ? `<small> • Fixo</small>`
-                : ''
-            }
-          </div>
+          ${
+            t.installment
+              ? `<small>Parcela ${t.installment}</small>`
+              : ''
+          }
 
-          <div class="${
-            t.amount >= 0
-              ? 'positive'
-              : 'negative'
-          }">
-            ${formatCurrency(t.amount)}
-          </div>
+          ${
+            t.fixed
+              ? `<small> • Fixo</small>`
+              : ''
+          }
         </div>
-      `;
-    });
+
+        <div class="${
+          t.amount >= 0
+            ? 'positive'
+            : 'negative'
+        }">
+          ${formatCurrency(t.amount)}
+        </div>
+      </div>
+    `;
+  });
 }
 
 function renderInsights(month){
@@ -526,44 +690,54 @@ function renderHistory(){
       details.appendChild(empty);
 
     } else {
-      monthTransactions.forEach(t => {
-        const item =
-          document.createElement('div');
+      monthTransactions
+        .sort((a,b) => {
+          const dateA =
+            new Date(a.createdAt || 0);
 
-        item.className = 'transaction';
+          const dateB =
+            new Date(b.createdAt || 0);
 
-        item.innerHTML = `
-          <div>
-            <strong>${t.name}</strong>
+          return dateB - dateA;
+        })
+        .forEach(t => {
+          const item =
+            document.createElement('div');
 
-            <p>
-              ${t.category || 'Sem categoria'}
-            </p>
+          item.className = 'transaction';
 
-            ${
-              t.installment
-                ? `<small>Parcela ${t.installment}</small>`
-                : ''
-            }
+          item.innerHTML = `
+            <div>
+              <strong>${t.name}</strong>
 
-            ${
-              t.fixed
-                ? `<small> • Fixo</small>`
-                : ''
-            }
-          </div>
+              <p>
+                ${t.category || 'Sem categoria'}
+              </p>
 
-          <div class="${
-            t.amount >= 0
-              ? 'positive'
-              : 'negative'
-          }">
-            ${formatCurrency(t.amount)}
-          </div>
-        `;
+              ${
+                t.installment
+                  ? `<small>Parcela ${t.installment}</small>`
+                  : ''
+              }
 
-        details.appendChild(item);
-      });
+              ${
+                t.fixed
+                  ? `<small> • Fixo</small>`
+                  : ''
+              }
+            </div>
+
+            <div class="${
+              t.amount >= 0
+                ? 'positive'
+                : 'negative'
+            }">
+              ${formatCurrency(t.amount)}
+            </div>
+          `;
+
+          details.appendChild(item);
+        });
 
       const deleteBtn =
         document.createElement('button');
@@ -744,55 +918,9 @@ function removeCategory(category){
   }
 }
 
-function saveUserData(){
-  const name =
-    document.getElementById('userName').value.trim();
-
-  const salary =
-    Number(document.getElementById('userSalary').value);
-
-  const type =
-    document.getElementById('salaryType').value;
-
-  if(!name || !salary){
-    alert('Preencha todos os campos');
-
-    return;
-  }
-
-  user = {
-    name,
-    salary,
-    type
-  };
-
-  localStorage.setItem(
-    'user',
-    JSON.stringify(user)
-  );
-
-  welcomeModal.style.display =
-    'none';
-
-  appContent.style.display =
-    'block';
-
-  render();
-}
-
-if(user && user.name){
-  welcomeModal.style.display =
-    'none';
-
-  appContent.style.display =
-    'block';
-
-  render();
-
+if(user && currentUserEmail){
+  openApp();
 } else {
-  welcomeModal.style.display =
-    'flex';
-
-  appContent.style.display =
-    'none';
+  authModal.style.display = 'flex';
+  appContent.style.display = 'none';
 }
