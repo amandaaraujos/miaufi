@@ -276,80 +276,106 @@
       <div class="card">
         <h2>Configurações da conta</h2>
 
-        <p>
-          Cadastre descontos fixos como INSS e IRPF. Eles serão considerados automaticamente no saldo mensal.
+        <p class="section-description">
+          Configure seus dados da conta e descontos fixos mensais.
         </p>
-      </div>
 
-      <div class="card">
+        <hr class="divider" />
+
         <h3>Dados da conta</h3>
 
+        <label for="settingsName">Nome</label>
         <input
           type="text"
           id="settingsName"
-          placeholder="Nome"
+          placeholder="Seu nome"
         />
 
+        <label for="settingsSalary">Salário bruto</label>
         <input
-          type="number"
+          type="text"
           id="settingsSalary"
-          placeholder="Salário bruto"
+          placeholder="R$ 0,00"
         />
 
+        <label for="settingsSalaryType">Tipo de salário</label>
         <select id="settingsSalaryType">
           <option value="bruto">Bruto</option>
           <option value="liquido">Líquido</option>
         </select>
 
+        <hr class="divider" />
+
+        <h3>Desconto fixo de INSS</h3>
+
+        <div class="checkbox">
+          <input
+            type="checkbox"
+            id="inssEnabled"
+          />
+
+          <label for="inssEnabled">
+            Considerar INSS todos os meses
+          </label>
+        </div>
+
+        <label for="inssType">Tipo de desconto</label>
+        <select id="inssType">
+          <option value="percent">
+            Percentual sobre salário bruto (%)
+          </option>
+
+          <option value="value">
+            Valor fixo em reais (R$)
+          </option>
+        </select>
+
+        <label for="inssValue">Valor do desconto</label>
+        <input
+          type="text"
+          id="inssValue"
+          placeholder="Ex: 8,5 ou R$ 250,00"
+        />
+
+        <hr class="divider" />
+
+        <h3>Desconto fixo de IRPF</h3>
+
+        <div class="checkbox">
+          <input
+            type="checkbox"
+            id="irpfEnabled"
+          />
+
+          <label for="irpfEnabled">
+            Considerar IRPF todos os meses
+          </label>
+        </div>
+
+        <label for="irpfType">Tipo de desconto</label>
+        <select id="irpfType">
+          <option value="percent">
+            Percentual sobre salário bruto (%)
+          </option>
+
+          <option value="value">
+            Valor fixo em reais (R$)
+          </option>
+        </select>
+
+        <label for="irpfValue">Valor do desconto</label>
+        <input
+          type="text"
+          id="irpfValue"
+          placeholder="Ex: 15 ou R$ 450,00"
+        />
+
         <button
           style="margin-top:20px"
           onclick="saveAccountSettings()"
         >
-          Salvar dados da conta
+          Salvar configurações
         </button>
-      </div>
-
-      <div class="card">
-        <h3>Descontos fixos</h3>
-
-        <label>INSS</label>
-
-        <select id="inssType">
-          <option value="percent">Percentual sobre salário bruto</option>
-          <option value="value">Valor fixo</option>
-        </select>
-
-        <input
-          type="number"
-          id="inssValue"
-          placeholder="Ex: 9 ou 450"
-        />
-
-        <label>IRPF</label>
-
-        <select id="irpfType">
-          <option value="percent">Percentual sobre salário bruto</option>
-          <option value="value">Valor fixo</option>
-        </select>
-
-        <input
-          type="number"
-          id="irpfValue"
-          placeholder="Ex: 7.5 ou 350"
-        />
-
-        <button
-          style="margin-top:20px"
-          onclick="saveTaxSettings()"
-        >
-          Salvar descontos
-        </button>
-      </div>
-
-      <div class="card">
-        <h3>Descontos cadastrados</h3>
-
-        <div id="taxSettingsList"></div>
       </div>
 
     </section>
