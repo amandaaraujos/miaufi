@@ -21,15 +21,35 @@ let fixedTaxes =
     irpf: { enabled: false, type: 'percent', value: 0 }
   };
 
-const appContent = document.getElementById('appContent');
-const authModal = document.getElementById('authModal');
-const authChoice = document.getElementById('authChoice');
-const loginForm = document.getElementById('loginForm');
-const createAccountForm = document.getElementById('createAccountForm');
-const anotherMonth = document.getElementById('anotherMonth');
-const amountInput = document.getElementById('amount');
-const hasInstallments = document.getElementById('hasInstallments');
-const installmentsBox = document.getElementById('installmentsBox');
+const appContent =
+  document.getElementById('appContent');
+
+const authModal =
+  document.getElementById('authModal');
+
+const authChoice =
+  document.getElementById('authChoice');
+
+const loginForm =
+  document.getElementById('loginForm');
+
+const createAccountForm =
+  document.getElementById('createAccountForm');
+
+const transactionModal =
+  document.getElementById('transactionModal');
+
+const anotherMonth =
+  document.getElementById('anotherMonth');
+
+const amountInput =
+  document.getElementById('amount');
+
+const hasInstallments =
+  document.getElementById('hasInstallments');
+
+const installmentsBox =
+  document.getElementById('installmentsBox');
 
 if(Notification.permission !== 'granted'){
   Notification.requestPermission();
@@ -69,9 +89,13 @@ function parseBrazilianNumber(value){
       .trim();
 
   if(cleanValue.includes(',') && cleanValue.includes('.')){
-    cleanValue = cleanValue.replace(/\./g, '').replace(',', '.');
+    cleanValue =
+      cleanValue
+        .replace(/\./g, '')
+        .replace(',', '.');
   } else if(cleanValue.includes(',')){
-    cleanValue = cleanValue.replace(',', '.');
+    cleanValue =
+      cleanValue.replace(',', '.');
   }
 
   return Number(cleanValue);
@@ -86,12 +110,14 @@ function formatDecimalInput(e){
 }
 
 function formatCurrency(value){
-  const signal = value >= 0 ? '+' : '-';
+  const signal =
+    value >= 0 ? '+' : '-';
 
-  return `${signal}R$${Math.abs(value).toLocaleString('pt-BR', {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2
-  })}`;
+  return `${signal}R$${Math.abs(value)
+    .toLocaleString('pt-BR', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    })}`;
 }
 
 function parsePercent(value){
@@ -104,8 +130,11 @@ function parsePercent(value){
 }
 
 function parseDiscountValue(taxKey){
-  const type = document.getElementById(`${taxKey}Type`).value;
-  const value = document.getElementById(`${taxKey}Value`).value;
+  const type =
+    document.getElementById(`${taxKey}Type`).value;
+
+  const value =
+    document.getElementById(`${taxKey}Value`).value;
 
   if(type === 'value'){
     return parseBrazilianNumber(value);
@@ -133,18 +162,29 @@ function backToAuthChoice(){
 }
 
 function saveUsers(){
-  localStorage.setItem('users', JSON.stringify(users));
+  localStorage.setItem(
+    'users',
+    JSON.stringify(users)
+  );
 }
 
 function createUserAccount(){
-  const name = document.getElementById('userName').value.trim();
-  const email = document.getElementById('userEmail').value.trim().toLowerCase();
-  const password = document.getElementById('userPassword').value;
+  const name =
+    document.getElementById('userName').value.trim();
+
+  const email =
+    document.getElementById('userEmail').value.trim().toLowerCase();
+
+  const password =
+    document.getElementById('userPassword').value;
 
   const salary =
-    parseBrazilianNumber(document.getElementById('userSalary').value);
+    parseBrazilianNumber(
+      document.getElementById('userSalary').value
+    );
 
-  const type = document.getElementById('salaryType').value;
+  const type =
+    document.getElementById('salaryType').value;
 
   if(!name || !email || !password || !salary){
     alert('Preencha todos os campos');
@@ -176,15 +216,21 @@ function createUserAccount(){
   carryOver = user.carryOver;
   fixedTaxes = user.fixedTaxes;
 
-  localStorage.setItem('currentUserEmail', currentUserEmail);
+  localStorage.setItem(
+    'currentUserEmail',
+    currentUserEmail
+  );
 
   saveUsers();
   openApp();
 }
 
 function loginUser(){
-  const email = document.getElementById('loginEmail').value.trim().toLowerCase();
-  const password = document.getElementById('loginPassword').value;
+  const email =
+    document.getElementById('loginEmail').value.trim().toLowerCase();
+
+  const password =
+    document.getElementById('loginPassword').value;
 
   if(!email || !password){
     alert('Preencha e-mail e senha');
@@ -212,7 +258,10 @@ function loginUser(){
       irpf: { enabled: false, type: 'percent', value: 0 }
     };
 
-  localStorage.setItem('currentUserEmail', currentUserEmail);
+  localStorage.setItem(
+    'currentUserEmail',
+    currentUserEmail
+  );
 
   openApp();
 }
@@ -261,18 +310,23 @@ function saveData(){
 }
 
 function toggleMenu(){
-  const menu = document.getElementById('menu');
+  const menu =
+    document.getElementById('menu');
 
   menu.style.display =
-    menu.style.display === 'flex' ? 'none' : 'flex';
+    menu.style.display === 'flex'
+      ? 'none'
+      : 'flex';
 }
 
 function showPage(page){
-  document.querySelectorAll('.page').forEach(p => {
-    p.classList.remove('active');
-  });
+  document.querySelectorAll('.page')
+    .forEach(p => {
+      p.classList.remove('active');
+    });
 
-  document.getElementById(page).classList.add('active');
+  document.getElementById(page)
+    .classList.add('active');
 
   if(page === 'history'){
     renderHistory();
@@ -288,33 +342,44 @@ function showPage(page){
 }
 
 function currentMonth(){
-  const now = new Date();
+  const now =
+    new Date();
 
-  return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+  return `${now.getFullYear()}-${String(
+    now.getMonth() + 1
+  ).padStart(2, '0')}`;
 }
 
 function addTransaction(){
-  const type = document.getElementById('type').value;
-  const name = document.getElementById('name').value.trim();
+  const type =
+    document.getElementById('type').value;
+
+  const name =
+    document.getElementById('name').value.trim();
 
   const amount =
-    parseBrazilianNumber(document.getElementById('amount').value);
+    parseBrazilianNumber(
+      document.getElementById('amount').value
+    );
 
   const signedAmount =
     type === 'expense'
       ? -Math.abs(amount)
       : Math.abs(amount);
 
-  const category = document.getElementById('category').value.trim();
+  const category =
+    document.getElementById('category').value.trim();
 
   const installments =
     hasInstallments.checked
       ? Number(document.getElementById('installments').value)
       : 1;
 
-  const fixed = document.getElementById('fixed').checked;
+  const fixed =
+    document.getElementById('fixed').checked;
 
-  let month = document.getElementById('month').value;
+  let month =
+    document.getElementById('month').value;
 
   if(!name || !amount){
     alert('Preencha nome e valor');
@@ -330,26 +395,39 @@ function addTransaction(){
     month = currentMonth();
   }
 
-  const recurringMonths = fixed ? 60 : installments;
-  const createdAt = new Date().toISOString();
+  const createdAt =
+    new Date().toISOString();
+
+  const recurringMonths =
+    fixed ? 60 : installments;
 
   for(let i = 0; i < recurringMonths; i++){
-    const date = new Date(month + '-01');
+    const date =
+      new Date(currentMonth() + '-01');
 
     date.setMonth(date.getMonth() + i);
 
     const finalMonth =
-      `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+      fixed
+        ? `${date.getFullYear()}-${String(
+            date.getMonth() + 1
+          ).padStart(2, '0')}`
+        : getInstallmentMonth(i);
 
     transactions.push({
       id: crypto.randomUUID(),
+      parentId: crypto.randomUUID(),
       type,
       name,
-      amount: fixed ? signedAmount : signedAmount / installments,
+      amount: fixed
+        ? signedAmount
+        : signedAmount / installments,
       category,
       month: finalMonth,
       fixed,
-      installment: fixed || installments === 1 ? null : `${i + 1}/${installments}`,
+      installment: fixed || installments === 1
+        ? null
+        : `${i + 1}/${installments}`,
       createdAt
     });
   }
@@ -357,6 +435,17 @@ function addTransaction(){
   saveData();
   clearForm();
   render();
+}
+
+function getInstallmentMonth(index){
+  const date =
+    new Date(currentMonth() + '-01');
+
+  date.setMonth(date.getMonth() + index);
+
+  return `${date.getFullYear()}-${String(
+    date.getMonth() + 1
+  ).padStart(2, '0')}`;
 }
 
 function clearForm(){
@@ -375,16 +464,20 @@ function clearForm(){
 }
 
 function getFixedTaxAmount(taxKey){
-  const tax = fixedTaxes?.[taxKey];
+  const tax =
+    fixedTaxes?.[taxKey];
 
   if(!tax || !tax.enabled){
     return 0;
   }
 
-  const grossSalary = Number(user.salary) || 0;
+  const grossSalary =
+    Number(user.salary) || 0;
 
   if(tax.type === 'percent'){
-    return -Math.abs(grossSalary * (Number(tax.value) / 100));
+    return -Math.abs(
+      grossSalary * (Number(tax.value) / 100)
+    );
   }
 
   return -Math.abs(Number(tax.value));
@@ -393,8 +486,11 @@ function getFixedTaxAmount(taxKey){
 function getAutomaticMonthlyTransactions(month){
   const automatic = [];
 
-  const inssAmount = getFixedTaxAmount('inss');
-  const irpfAmount = getFixedTaxAmount('irpf');
+  const inssAmount =
+    getFixedTaxAmount('inss');
+
+  const irpfAmount =
+    getFixedTaxAmount('irpf');
 
   if(inssAmount){
     automatic.push({
@@ -435,20 +531,26 @@ function getTransactionsForMonth(month){
 }
 
 function calculateMonthlyBalance(month){
-  const monthly = getTransactionsForMonth(month);
+  const monthly =
+    getTransactionsForMonth(month);
 
-  let total = Number(user.salary);
+  let total =
+    Number(user.salary);
 
   if(carryOver){
     const previousMonths =
-      [...new Set(transactions.map(t => t.month))]
+      [...new Set(
+        transactions.map(t => t.month)
+      )]
         .filter(m => m < month)
         .sort();
 
     previousMonths.forEach(m => {
-      const monthTransactions = getTransactionsForMonth(m);
+      const monthTransactions =
+        getTransactionsForMonth(m);
 
-      let subtotal = Number(user.salary);
+      let subtotal =
+        Number(user.salary);
 
       monthTransactions.forEach(t => {
         subtotal += t.amount;
@@ -466,18 +568,25 @@ function calculateMonthlyBalance(month){
 }
 
 function render(){
-  const month = currentMonth();
+  const month =
+    currentMonth();
 
-  document.getElementById('welcome').innerText =
-    `Olá, ${user.name}`;
+  document.getElementById('welcome')
+    .innerText = `Olá, ${user.name}`;
 
-  const balance = calculateMonthlyBalance(month);
-  const saldo = document.getElementById('saldo');
+  const balance =
+    calculateMonthlyBalance(month);
 
-  saldo.innerText = formatCurrency(balance);
+  const saldo =
+    document.getElementById('saldo');
+
+  saldo.innerText =
+    formatCurrency(balance);
 
   saldo.className =
-    balance >= 0 ? 'saldo positive' : 'saldo negative';
+    balance >= 0
+      ? 'saldo positive'
+      : 'saldo negative';
 
   renderTransactions(month);
   renderInsights(month);
@@ -487,24 +596,37 @@ function renderTransactions(month){
   const currentTransactions =
     getTransactionsForMonth(month)
       .sort((a,b) => {
-        const dateA = new Date(a.createdAt || 0);
-        const dateB = new Date(b.createdAt || 0);
+        const dateA =
+          new Date(a.createdAt || 0);
+
+        const dateB =
+          new Date(b.createdAt || 0);
 
         return dateB - dateA;
       });
 
-  const list = document.getElementById('transactions');
+  const list =
+    document.getElementById('transactions');
 
   list.innerHTML = '';
 
   if(currentTransactions.length === 0){
-    list.innerHTML = '<p>Sem movimentações neste mês</p>';
+    list.innerHTML =
+      '<p>Sem movimentações neste mês</p>';
     return;
   }
 
   currentTransactions.forEach(t => {
+    const clickableClass =
+      t.automatic ? '' : 'clickable';
+
+    const clickAction =
+      t.automatic
+        ? ''
+        : `onclick="openTransactionModal('${t.id}')"`;
+
     list.innerHTML += `
-      <div class="transaction">
+      <div class="transaction ${clickableClass}" ${clickAction}>
         <div>
           <strong>${t.name}</strong>
           <p>${t.category || 'Sem categoria'}</p>
@@ -521,21 +643,122 @@ function renderTransactions(month){
   });
 }
 
+function openTransactionModal(transactionId){
+  const transaction =
+    transactions.find(t => t.id === transactionId);
+
+  if(!transaction){
+    return;
+  }
+
+  document.getElementById('editTransactionId').value =
+    transaction.id;
+
+  document.getElementById('editType').value =
+    transaction.type;
+
+  document.getElementById('editName').value =
+    transaction.name;
+
+  document.getElementById('editCategory').value =
+    transaction.category || '';
+
+  document.getElementById('editAmount').value =
+    Math.abs(transaction.amount)
+      .toLocaleString('pt-BR', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      });
+
+  transactionModal.classList.remove('hidden');
+}
+
+function closeTransactionModal(){
+  transactionModal.classList.add('hidden');
+}
+
+function saveEditedTransaction(){
+  const transactionId =
+    document.getElementById('editTransactionId').value;
+
+  const transaction =
+    transactions.find(t => t.id === transactionId);
+
+  if(!transaction){
+    return;
+  }
+
+  const type =
+    document.getElementById('editType').value;
+
+  const name =
+    document.getElementById('editName').value.trim();
+
+  const category =
+    document.getElementById('editCategory').value.trim();
+
+  const amount =
+    parseBrazilianNumber(
+      document.getElementById('editAmount').value
+    );
+
+  if(!name || !amount){
+    alert('Preencha nome e valor');
+    return;
+  }
+
+  transaction.type =
+    type;
+
+  transaction.name =
+    name;
+
+  transaction.category =
+    category;
+
+  transaction.amount =
+    type === 'expense'
+      ? -Math.abs(amount)
+      : Math.abs(amount);
+
+  transaction.updatedAt =
+    new Date().toISOString();
+
+  saveData();
+  closeTransactionModal();
+  render();
+
+  if(document.getElementById('history').classList.contains('active')){
+    renderHistory();
+  }
+
+  if(document.getElementById('categories').classList.contains('active')){
+    renderCategories();
+  }
+}
+
 function renderInsights(month){
-  const currentTransactions = getTransactionsForMonth(month);
+  const currentTransactions =
+    getTransactionsForMonth(month);
 
   const biggest =
     currentTransactions
       .filter(t => t.type === 'expense')
-      .sort((a,b) => Math.abs(b.amount) - Math.abs(a.amount))[0];
+      .sort((a,b) =>
+        Math.abs(b.amount) - Math.abs(a.amount)
+      )[0];
 
-  document.getElementById('biggestExpense').innerText =
-    biggest ? `${biggest.name} ${formatCurrency(biggest.amount)}` : 'Nenhuma';
+  document.getElementById('biggestExpense')
+    .innerText =
+      biggest
+        ? `${biggest.name} ${formatCurrency(biggest.amount)}`
+        : 'Nenhuma';
 
   const categoryTotals = {};
 
   currentTransactions.forEach(t => {
-    const categoryName = t.category || 'Sem categoria';
+    const categoryName =
+      t.category || 'Sem categoria';
 
     if(!categoryTotals[categoryName]){
       categoryTotals[categoryName] = 0;
@@ -548,8 +771,11 @@ function renderInsights(month){
     Object.entries(categoryTotals)
       .sort((a,b) => b[1] - a[1])[0];
 
-  document.getElementById('bestCategory').innerText =
-    best ? `${best[0]} ${formatCurrency(best[1])}` : 'Nenhuma';
+  document.getElementById('bestCategory')
+    .innerText =
+      best
+        ? `${best[0]} ${formatCurrency(best[1])}`
+        : 'Nenhuma';
 
   const months =
     [...new Set(transactions.map(t => t.month))]
@@ -560,12 +786,17 @@ function renderInsights(month){
 
   if(months.length >= 2){
     const current =
-      calculateMonthlyBalance(months[months.length - 1]);
+      calculateMonthlyBalance(
+        months[months.length - 1]
+      );
 
     const previous =
-      calculateMonthlyBalance(months[months.length - 2]);
+      calculateMonthlyBalance(
+        months[months.length - 2]
+      );
 
-    const diff = current - previous;
+    const diff =
+      current - previous;
 
     comparison.innerText =
       diff >= 0
@@ -594,28 +825,43 @@ function renderHistory(){
 
   renderChart(grouped);
 
-  const historyPage = document.getElementById('history');
-  const existing = document.getElementById('historyDetails');
+  const historyPage =
+    document.getElementById('history');
+
+  const existing =
+    document.getElementById('historyDetails');
 
   if(existing){
     existing.remove();
   }
 
-  const container = document.createElement('div');
-  container.id = 'historyDetails';
+  const container =
+    document.createElement('div');
 
-  const currentDate = new Date();
-  const currentYear = currentDate.getFullYear();
-  const currentMonthIndex = currentDate.getMonth() + 1;
+  container.id =
+    'historyDetails';
+
+  const currentDate =
+    new Date();
+
+  const currentYear =
+    currentDate.getFullYear();
+
+  const currentMonthIndex =
+    currentDate.getMonth() + 1;
 
   for(let month = 1; month <= currentMonthIndex; month++){
     const monthKey =
       `${currentYear}-${String(month).padStart(2, '0')}`;
 
-    const details = document.createElement('details');
-    details.className = 'card';
+    const details =
+      document.createElement('details');
 
-    const summary = document.createElement('summary');
+    details.className =
+      'card';
+
+    const summary =
+      document.createElement('summary');
 
     const monthName =
       new Date(currentYear, month - 1)
@@ -624,7 +870,8 @@ function renderHistory(){
           year: 'numeric'
         });
 
-    summary.innerText = monthName;
+    summary.innerText =
+      monthName;
 
     details.appendChild(summary);
 
@@ -632,25 +879,36 @@ function renderHistory(){
       getTransactionsForMonth(monthKey);
 
     if(monthTransactions.length === 0){
-      const empty = document.createElement('p');
+      const empty =
+        document.createElement('p');
 
-      empty.style.marginTop = '15px';
-      empty.innerText = 'Sem registros';
+      empty.style.marginTop =
+        '15px';
+
+      empty.innerText =
+        'Sem registros';
 
       details.appendChild(empty);
 
     } else {
       monthTransactions
         .sort((a,b) => {
-          const dateA = new Date(a.createdAt || 0);
-          const dateB = new Date(b.createdAt || 0);
+          const dateA =
+            new Date(a.createdAt || 0);
+
+          const dateB =
+            new Date(b.createdAt || 0);
 
           return dateB - dateA;
         })
         .forEach(t => {
-          const item = document.createElement('div');
+          const item =
+            document.createElement('div');
 
-          item.className = 'transaction';
+          item.className =
+            t.automatic
+              ? 'transaction'
+              : 'transaction clickable';
 
           item.innerHTML = `
             <div>
@@ -666,18 +924,30 @@ function renderHistory(){
             </div>
           `;
 
+          if(!t.automatic){
+            item.onclick = () => {
+              openTransactionModal(t.id);
+            };
+          }
+
           details.appendChild(item);
         });
 
-      const deleteBtn = document.createElement('button');
+      const deleteBtn =
+        document.createElement('button');
 
-      deleteBtn.innerText = 'Excluir histórico';
-      deleteBtn.style.marginTop = '15px';
+      deleteBtn.innerText =
+        'Excluir histórico';
+
+      deleteBtn.style.marginTop =
+        '15px';
 
       deleteBtn.onclick = () => {
         if(confirm('Deseja excluir esse histórico?')){
           transactions =
-            transactions.filter(t => t.month !== monthKey);
+            transactions.filter(
+              t => t.month !== monthKey
+            );
 
           saveData();
           render();
@@ -691,10 +961,14 @@ function renderHistory(){
     container.appendChild(details);
   }
 
-  const clearAll = document.createElement('button');
+  const clearAll =
+    document.createElement('button');
 
-  clearAll.innerText = 'Apagar histórico completo';
-  clearAll.style.marginTop = '20px';
+  clearAll.innerText =
+    'Apagar histórico completo';
+
+  clearAll.style.marginTop =
+    '20px';
 
   clearAll.onclick = () => {
     if(confirm('Deseja apagar todo histórico?')){
@@ -711,8 +985,11 @@ function renderHistory(){
 }
 
 function renderChart(grouped){
-  const labels = Object.keys(grouped).sort();
-  const current = currentMonth();
+  const labels =
+    Object.keys(grouped).sort();
+
+  const current =
+    currentMonth();
 
   if(fixedTaxes?.inss?.enabled || fixedTaxes?.irpf?.enabled){
     if(!labels.includes(current)){
@@ -741,7 +1018,8 @@ function renderChart(grouped){
     expenses.push(expense);
   });
 
-  const ctx = document.getElementById('chart');
+  const ctx =
+    document.getElementById('chart');
 
   if(window.chartInstance){
     window.chartInstance.destroy();
@@ -780,7 +1058,8 @@ function renderCategories(){
       ].filter(Boolean)
     )].sort();
 
-  const list = document.getElementById('categoriesList');
+  const list =
+    document.getElementById('categoriesList');
 
   list.innerHTML = '';
 
@@ -815,7 +1094,9 @@ function renderCategories(){
 function removeCategory(category){
   if(confirm('Deseja excluir esta categoria?')){
     transactions =
-      transactions.filter(t => t.category !== category);
+      transactions.filter(
+        t => t.category !== category
+      );
 
     if(category === 'Impostos'){
       fixedTaxes.inss.enabled = false;
@@ -841,6 +1122,9 @@ function renderAccountSettings(){
 
   document.getElementById('settingsSalaryType').value =
     user.type || 'liquido';
+
+  document.getElementById('carryOverEnabled').checked =
+    carryOver;
 
   document.getElementById('inssEnabled').checked =
     fixedTaxes.inss.enabled;
@@ -872,38 +1156,35 @@ function renderAccountSettings(){
           })
       : fixedTaxes.irpf.value || '';
 
-  setupSettingsInputs();
+  setupInputs();
 }
 
-function setupSettingsInputs(){
-  const settingsSalaryInput = document.getElementById('settingsSalary');
-  const userSalaryInput = document.getElementById('userSalary');
+function setupInputs(){
+  const inputs =
+    [
+      amountInput,
+      document.getElementById('userSalary'),
+      document.getElementById('settingsSalary'),
+      document.getElementById('inssValue'),
+      document.getElementById('irpfValue'),
+      document.getElementById('editAmount')
+    ];
 
-  const inssValue = document.getElementById('inssValue');
-  const irpfValue = document.getElementById('irpfValue');
-
-  if(settingsSalaryInput){
-    settingsSalaryInput.oninput = formatDecimalInput;
-  }
-
-  if(userSalaryInput){
-    userSalaryInput.oninput = formatDecimalInput;
-  }
-
-  if(inssValue){
-    inssValue.oninput = formatDecimalInput;
-  }
-
-  if(irpfValue){
-    irpfValue.oninput = formatDecimalInput;
-  }
+  inputs.forEach(input => {
+    if(input){
+      input.oninput = formatDecimalInput;
+    }
+  });
 }
 
 function saveAccountSettings(){
-  const name = document.getElementById('settingsName').value.trim();
+  const name =
+    document.getElementById('settingsName').value.trim();
 
   const salary =
-    parseBrazilianNumber(document.getElementById('settingsSalary').value);
+    parseBrazilianNumber(
+      document.getElementById('settingsSalary').value
+    );
 
   const type =
     document.getElementById('settingsSalaryType').value;
@@ -926,14 +1207,25 @@ function saveAccountSettings(){
   const irpfValue =
     parseDiscountValue('irpf');
 
+  const carryOverEnabled =
+    document.getElementById('carryOverEnabled').checked;
+
   if(!name || !salary){
     alert('Preencha nome e salário');
     return;
   }
 
-  user.name = name;
-  user.salary = salary;
-  user.type = type;
+  user.name =
+    name;
+
+  user.salary =
+    salary;
+
+  user.type =
+    type;
+
+  carryOver =
+    carryOverEnabled;
 
   fixedTaxes = {
     inss: {
@@ -954,25 +1246,58 @@ function saveAccountSettings(){
   alert('Configurações salvas com sucesso!');
 }
 
-window.showLoginForm = showLoginForm;
-window.showCreateAccountForm = showCreateAccountForm;
-window.backToAuthChoice = backToAuthChoice;
-window.createUserAccount = createUserAccount;
-window.loginUser = loginUser;
-window.logoutUser = logoutUser;
-window.toggleMenu = toggleMenu;
-window.showPage = showPage;
-window.addTransaction = addTransaction;
-window.removeCategory = removeCategory;
-window.saveAccountSettings = saveAccountSettings;
+window.showLoginForm =
+  showLoginForm;
 
-setupSettingsInputs();
+window.showCreateAccountForm =
+  showCreateAccountForm;
+
+window.backToAuthChoice =
+  backToAuthChoice;
+
+window.createUserAccount =
+  createUserAccount;
+
+window.loginUser =
+  loginUser;
+
+window.logoutUser =
+  logoutUser;
+
+window.toggleMenu =
+  toggleMenu;
+
+window.showPage =
+  showPage;
+
+window.addTransaction =
+  addTransaction;
+
+window.removeCategory =
+  removeCategory;
+
+window.saveAccountSettings =
+  saveAccountSettings;
+
+window.openTransactionModal =
+  openTransactionModal;
+
+window.closeTransactionModal =
+  closeTransactionModal;
+
+window.saveEditedTransaction =
+  saveEditedTransaction;
+
+setupInputs();
 
 if(user && currentUserEmail){
   openApp();
 } else {
-  authModal.style.display = 'flex';
-  appContent.style.display = 'none';
+  authModal.style.display =
+    'flex';
+
+  appContent.style.display =
+    'none';
 
   authChoice.classList.remove('hidden');
   loginForm.classList.add('hidden');
