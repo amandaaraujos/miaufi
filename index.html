@@ -17,16 +17,66 @@
 
 <body>
 
-  <div class="modal-overlay" id="welcomeModal">
-    <div class="modal">
-      <h2>Bem-vindo 💰</h2>
+  <div class="modal-overlay" id="authModal">
 
-      <p>Vamos configurar seu controle financeiro</p>
+    <div class="modal" id="entryModal">
+      <h2>Bem-vindo 💰</h2>
+      <p>Entre na sua conta ou crie um novo acesso.</p>
+
+      <button onclick="showLoginModal()">
+        Já tenho uma conta
+      </button>
+
+      <button onclick="showCreateAccountModal()">
+        Criar conta
+      </button>
+    </div>
+
+    <div class="modal hidden" id="loginModal">
+      <h2>Entrar</h2>
+      <p>Acesse sua conta financeira.</p>
+
+      <input
+        type="email"
+        id="loginEmail"
+        placeholder="Seu e-mail"
+      />
+
+      <input
+        type="password"
+        id="loginPassword"
+        placeholder="Sua senha"
+      />
+
+      <button onclick="loginUser()">
+        Entrar
+      </button>
+
+      <button class="secondary-btn" onclick="showEntryModal()">
+        Voltar
+      </button>
+    </div>
+
+    <div class="modal hidden" id="createAccountModal">
+      <h2>Criar conta</h2>
+      <p>Vamos configurar seu controle financeiro.</p>
 
       <input
         type="text"
         id="userName"
         placeholder="Seu nome"
+      />
+
+      <input
+        type="email"
+        id="userEmail"
+        placeholder="Seu e-mail"
+      />
+
+      <input
+        type="password"
+        id="userPassword"
+        placeholder="Crie uma senha"
       />
 
       <input
@@ -40,10 +90,15 @@
         <option value="liquido">Líquido</option>
       </select>
 
-      <button onclick="saveUserData()">
-        Começar
+      <button onclick="createUserAccount()">
+        Criar conta
+      </button>
+
+      <button class="secondary-btn" onclick="showEntryModal()">
+        Voltar
       </button>
     </div>
+
   </div>
 
   <div id="appContent" style="display:none">
@@ -70,6 +125,10 @@
 
       <button onclick="showPage('categories')">
         Categorias
+      </button>
+
+      <button onclick="logoutUser()">
+        Sair
       </button>
     </div>
 
