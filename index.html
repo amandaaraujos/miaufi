@@ -52,10 +52,7 @@
         Entrar
       </button>
 
-      <button
-        class="secondary-btn"
-        onclick="backToAuthChoice()"
-      >
+      <button class="secondary-btn" onclick="backToAuthChoice()">
         Voltar
       </button>
     </div>
@@ -84,7 +81,7 @@
       <input
         type="number"
         id="userSalary"
-        placeholder="Seu salário"
+        placeholder="Seu salário bruto"
       />
 
       <select id="salaryType">
@@ -96,10 +93,7 @@
         Criar conta
       </button>
 
-      <button
-        class="secondary-btn"
-        onclick="backToAuthChoice()"
-      >
+      <button class="secondary-btn" onclick="backToAuthChoice()">
         Voltar
       </button>
     </div>
@@ -130,6 +124,10 @@
 
       <button onclick="showPage('categories')">
         Categorias
+      </button>
+
+      <button onclick="showPage('settings')">
+        Configurações da conta
       </button>
 
       <button onclick="logoutUser()">
@@ -269,6 +267,89 @@
         <h2>Categorias</h2>
 
         <div id="categoriesList"></div>
+      </div>
+
+    </section>
+
+    <section id="settings" class="page">
+
+      <div class="card">
+        <h2>Configurações da conta</h2>
+
+        <p>
+          Cadastre descontos fixos como INSS e IRPF. Eles serão considerados automaticamente no saldo mensal.
+        </p>
+      </div>
+
+      <div class="card">
+        <h3>Dados da conta</h3>
+
+        <input
+          type="text"
+          id="settingsName"
+          placeholder="Nome"
+        />
+
+        <input
+          type="number"
+          id="settingsSalary"
+          placeholder="Salário bruto"
+        />
+
+        <select id="settingsSalaryType">
+          <option value="bruto">Bruto</option>
+          <option value="liquido">Líquido</option>
+        </select>
+
+        <button
+          style="margin-top:20px"
+          onclick="saveAccountSettings()"
+        >
+          Salvar dados da conta
+        </button>
+      </div>
+
+      <div class="card">
+        <h3>Descontos fixos</h3>
+
+        <label>INSS</label>
+
+        <select id="inssType">
+          <option value="percent">Percentual sobre salário bruto</option>
+          <option value="value">Valor fixo</option>
+        </select>
+
+        <input
+          type="number"
+          id="inssValue"
+          placeholder="Ex: 9 ou 450"
+        />
+
+        <label>IRPF</label>
+
+        <select id="irpfType">
+          <option value="percent">Percentual sobre salário bruto</option>
+          <option value="value">Valor fixo</option>
+        </select>
+
+        <input
+          type="number"
+          id="irpfValue"
+          placeholder="Ex: 7.5 ou 350"
+        />
+
+        <button
+          style="margin-top:20px"
+          onclick="saveTaxSettings()"
+        >
+          Salvar descontos
+        </button>
+      </div>
+
+      <div class="card">
+        <h3>Descontos cadastrados</h3>
+
+        <div id="taxSettingsList"></div>
       </div>
 
     </section>
