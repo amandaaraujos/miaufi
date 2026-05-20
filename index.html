@@ -20,16 +20,10 @@
 
 <body>
 
-  <!-- ========================= -->
-  <!-- MODAL AUTENTICAÇÃO -->
-  <!-- ========================= -->
-
   <div
     class="modal-overlay"
     id="authModal"
   >
-
-    <!-- ESCOLHA -->
 
     <div
       class="modal auth-card"
@@ -62,8 +56,6 @@
       </button>
 
     </div>
-
-    <!-- LOGIN -->
 
     <div
       class="modal hidden"
@@ -121,8 +113,6 @@
 
     </div>
 
-    <!-- RECUPERAR SENHA -->
-
     <div
       class="modal hidden"
       id="passwordRecoveryForm"
@@ -166,8 +156,6 @@
       </button>
 
     </div>
-
-    <!-- CRIAR CONTA -->
 
     <div
       class="modal hidden"
@@ -238,10 +226,6 @@
     </div>
 
   </div>
-
-  <!-- ========================= -->
-  <!-- MODAL EDITAR MOVIMENTAÇÃO -->
-  <!-- ========================= -->
 
   <div
     class="modal-overlay hidden"
@@ -327,27 +311,26 @@
 
   </div>
 
-  <!-- ========================= -->
-  <!-- APP -->
-  <!-- ========================= -->
-
   <div
     id="appContent"
     style="display:none"
   >
-
-    <!-- HEADER -->
 
     <header class="topbar">
 
       <button
         class="menu-btn"
         onclick="toggleMenu()"
+        aria-label="Abrir menu"
       >
         ☰
       </button>
 
-      <div class="brand">
+      <button
+        class="brand"
+        onclick="showPage('home')"
+        aria-label="Ir para o início"
+      >
 
         <img
           src="logo-miaufi.png"
@@ -367,13 +350,11 @@
 
         </div>
 
-      </div>
+      </button>
 
       <div class="header-space"></div>
 
     </header>
-
-    <!-- MENU -->
 
     <nav
       class="menu"
@@ -402,16 +383,10 @@
 
     </nav>
 
-    <!-- ========================= -->
-    <!-- HOME -->
-    <!-- ========================= -->
-
     <section
       id="home"
       class="page active"
     >
-
-      <!-- HERO -->
 
       <div class="hero-card">
 
@@ -435,11 +410,7 @@
 
       </div>
 
-      <!-- RESUMOS -->
-
       <div class="summary-grid">
-
-        <!-- CARD 1 -->
 
         <div class="summary-card">
 
@@ -457,9 +428,12 @@
 
         </div>
 
-        <!-- CARD 2 -->
-
-        <div class="summary-card">
+        <button
+          class="summary-card clickable-card"
+          id="bestCategoryCard"
+          onclick="openFeaturedCategoryDetail()"
+          aria-label="Ver detalhes da categoria em destaque"
+        >
 
           <div class="summary-icon">
             📈
@@ -473,9 +447,7 @@
             Nenhuma categoria
           </p>
 
-        </div>
-
-        <!-- CARD 3 -->
+        </button>
 
         <div class="summary-card">
 
@@ -495,8 +467,6 @@
 
       </div>
 
-      <!-- FORMULÁRIO -->
-
       <div class="card form-card">
 
         <div class="section-header">
@@ -510,8 +480,6 @@
           </p>
 
         </div>
-
-        <!-- TIPO -->
 
         <label for="type">
           Tipo de movimentação
@@ -529,8 +497,6 @@
 
         </select>
 
-        <!-- NOME -->
-
         <label for="name">
           Nome da movimentação
         </label>
@@ -540,8 +506,6 @@
           id="name"
           placeholder="Ex: Mercado, aluguel, freelance"
         />
-
-        <!-- VALOR -->
 
         <label for="amount">
           Valor
@@ -553,8 +517,6 @@
           placeholder="Ex: 1000,00"
         />
 
-        <!-- CATEGORIA -->
-
         <label for="category">
           Categoria
         </label>
@@ -564,8 +526,6 @@
           id="category"
           placeholder="Ex: Alimentação"
         />
-
-        <!-- OUTRO MÊS -->
 
         <div class="checkbox">
 
@@ -585,8 +545,6 @@
           id="month"
           style="display:none"
         />
-
-        <!-- PARCELAMENTO -->
 
         <div class="checkbox">
 
@@ -616,8 +574,6 @@
 
         </div>
 
-        <!-- FIXO -->
-
         <div class="checkbox">
 
           <input
@@ -640,8 +596,6 @@
 
       </div>
 
-      <!-- MOVIMENTAÇÕES -->
-
       <div class="card">
 
         <div class="section-header">
@@ -661,10 +615,6 @@
       </div>
 
     </section>
-
-    <!-- ========================= -->
-    <!-- HISTÓRICO -->
-    <!-- ========================= -->
 
     <section
       id="history"
@@ -691,10 +641,6 @@
 
     </section>
 
-    <!-- ========================= -->
-    <!-- CATEGORIAS -->
-    <!-- ========================= -->
-
     <section
       id="categories"
       class="page"
@@ -709,7 +655,7 @@
           </h2>
 
           <p>
-            Organize seus gastos e entradas
+            Clique em uma categoria para ver os registros do mês
           </p>
 
         </div>
@@ -720,9 +666,46 @@
 
     </section>
 
-    <!-- ========================= -->
-    <!-- CONFIGURAÇÕES -->
-    <!-- ========================= -->
+    <section
+      id="categoryDetail"
+      class="page"
+    >
+
+      <div class="card">
+
+        <div class="section-header detail-header">
+
+          <div>
+
+            <h2 id="categoryDetailTitle">
+              Detalhe da categoria
+            </h2>
+
+            <p id="categoryDetailSubtitle">
+              Registros do mês atual
+            </p>
+
+          </div>
+
+          <button
+            class="secondary-btn small-button"
+            onclick="showPage('categories')"
+          >
+            Voltar
+          </button>
+
+        </div>
+
+        <div
+          class="category-total-box"
+          id="categoryDetailTotal"
+        ></div>
+
+        <div id="categoryDetailList"></div>
+
+      </div>
+
+    </section>
 
     <section
       id="settings"
@@ -743,8 +726,6 @@
 
         </div>
 
-        <!-- NOME -->
-
         <label for="settingsName">
           Nome
         </label>
@@ -755,8 +736,6 @@
           placeholder="Seu nome"
         />
 
-        <!-- SALÁRIO -->
-
         <label for="settingsSalary">
           Salário
         </label>
@@ -766,8 +745,6 @@
           id="settingsSalary"
           placeholder="Ex: 4500,00"
         />
-
-        <!-- TIPO -->
 
         <label for="settingsSalaryType">
           Tipo de salário
@@ -785,8 +762,6 @@
 
         </select>
 
-        <!-- SOMAR MESES -->
-
         <div class="checkbox">
 
           <input
@@ -801,8 +776,6 @@
         </div>
 
         <hr class="divider" />
-
-        <!-- INSS -->
 
         <h3 class="settings-title">
           INSS
@@ -840,8 +813,6 @@
         />
 
         <hr class="divider" />
-
-        <!-- IRPF -->
 
         <h3 class="settings-title">
           IRPF
@@ -894,4 +865,5 @@
   <script src="script.js"></script>
 
 </body>
+
 </html>
