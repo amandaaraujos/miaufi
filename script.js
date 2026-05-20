@@ -21,6 +21,12 @@ let fixedTaxes =
     irpf: { enabled: false, type: 'percent', value: 0 }
   };
 
+let featuredCategory =
+  null;
+
+let selectedCategory =
+  null;
+
 const appContent = document.getElementById('appContent');
 const authModal = document.getElementById('authModal');
 const authChoice = document.getElementById('authChoice');
@@ -136,6 +142,7 @@ function showLoginForm(){
 
   if(loginError){
     loginError.innerText = '';
+    loginError.className = 'negative';
   }
 
   loginForm.classList.remove('hidden');
@@ -242,6 +249,7 @@ function loginUser(){
 
   if(loginError){
     loginError.innerText = '';
+    loginError.className = 'negative';
   }
 
   if(!email || !password){
@@ -266,7 +274,7 @@ function loginUser(){
 
   if(users[email].password !== password){
     if(loginError){
-      loginError.innerText = 'Senha incorreta.';
+      loginError.innerText = 'A senha não confere. Tente novamente.';
     } else {
       alert('Senha incorreta');
     }
@@ -321,17 +329,18 @@ function resetPassword(){
   document.getElementById('loginPassword').value =
     '';
 
+  showLoginForm();
+
   const loginError =
     document.getElementById('loginError');
 
   if(loginError){
     loginError.innerText =
       'Senha alterada com sucesso. Faça login com a nova senha.';
+
     loginError.className =
       'positive';
   }
-
-  showLoginForm();
 }
 
 function logoutUser(){
@@ -341,6 +350,8 @@ function logoutUser(){
   user = null;
   transactions = [];
   carryOver = false;
+  selectedCategory = null;
+  featuredCategory = null;
 
   fixedTaxes = {
     inss: { enabled: false, type: 'percent', value: 0 },
@@ -405,6 +416,10 @@ function showPage(page){
 
   if(page === 'settings'){
     renderAccountSettings();
+  }
+
+  if(page === 'categoryDetail'){
+    renderCategoryDetail();
   }
 }
 
@@ -510,6 +525,14 @@ function addTransaction(){
 
   if(document.getElementById('history').classList.contains('active')){
     renderHistory();
+  }
+
+  if(document.getElementById('categories').classList.contains('active')){
+    renderCategories();
+  }
+
+  if(document.getElementById('categoryDetail').classList.contains('active')){
+    renderCategoryDetail();
   }
 }
 
@@ -701,7 +724,7 @@ function renderTransactions(month){
 
   if(currentTransactions.length === 0){
     list.innerHTML =
-      '<p>Sem movimentações neste mês</p>';
+      '<p>Nenhuma movimentação registrada neste mês</p>';
     return;
   }
 
@@ -824,6 +847,10 @@ function saveEditedTransaction(){
   if(document.getElementById('categories').classList.contains('active')){
     renderCategories();
   }
+
+  if(document.getElementById('categoryDetail').classList.contains('active')){
+    renderCategoryDetail();
+  }
 }
 
 function deleteTransaction(){
@@ -858,6 +885,10 @@ function deleteTransaction(){
   if(document.getElementById('categories').classList.contains('active')){
     renderCategories();
   }
+
+  if(document.getElementById('categoryDetail').classList.contains('active')){
+    renderCategoryDetail();
+  }
 }
 
 function renderInsights(month){
@@ -875,7 +906,7 @@ function renderInsights(month){
     .innerText =
       biggest
         ? `${biggest.name} ${formatCurrency(biggest.amount)}`
-        : 'Nenhuma';
+        : 'Nenhuma movimentação';
 
   const categoryTotals = {};
 
@@ -894,11 +925,14 @@ function renderInsights(month){
     Object.entries(categoryTotals)
       .sort((a,b) => b[1] - a[1])[0];
 
+  featuredCategory =
+    best ? best[0] : null;
+
   document.getElementById('bestCategory')
     .innerText =
       best
         ? `${best[0]} ${formatCurrency(best[1])}`
-        : 'Nenhuma';
+        : 'Nenhuma categoria';
 
   const months =
     getAllVisibleMonths();
@@ -932,6 +966,115 @@ function renderInsights(month){
     comparison.innerText = 'Sem comparação';
     comparison.className = '';
   }
+}
+
+function openFeaturedCategoryDetail(){
+  if(!featuredCategory){
+    alert('Ainda não há categoria em destaque neste mês.');
+    return;
+  }
+
+  openCategoryDetail(featuredCategory);
+}
+
+function openCategoryDetail(category){
+  selectedCategory =
+    category || 'Sem categoria';
+
+  showPage('categoryDetail');
+}
+
+function renderCategoryDetail(){
+  if(!selectedCategory){
+    showPage('categories');
+    return;
+  }
+
+  const month =
+    currentMonth();
+
+  const monthlyTransactions =
+    getTransactionsForMonth(month)
+      .filter(t => {
+        const category =
+          t.category || 'Sem categoria';
+
+        return category === selectedCategory;
+      })
+      .sort((a,b) => {
+        const dateA =
+          new Date(a.createdAt || 0);
+
+        const dateB =
+          new Date(b.createdAt || 0);
+
+        return dateB - dateA;
+      });
+
+  const title =
+    document.getElementById('categoryDetailTitle');
+
+  const subtitle =
+    document.getElementById('categoryDetailSubtitle');
+
+  const totalBox =
+    document.getElementById('categoryDetailTotal');
+
+  const list =
+    document.getElementById('categoryDetailList');
+
+  title.innerText =
+    selectedCategory;
+
+  subtitle.innerText =
+    'Registros do mês atual';
+
+  const total =
+    monthlyTransactions.reduce((acc, item) => {
+      return acc + item.amount;
+    }, 0);
+
+  totalBox.innerText =
+    formatCurrency(total);
+
+  totalBox.className =
+    total >= 0
+      ? 'category-total-box positive'
+      : 'category-total-box negative';
+
+  list.innerHTML = '';
+
+  if(monthlyTransactions.length === 0){
+    list.innerHTML =
+      '<p>Nenhuma movimentação encontrada nesta categoria.</p>';
+    return;
+  }
+
+  monthlyTransactions.forEach(t => {
+    const clickableClass =
+      t.automatic ? '' : 'clickable';
+
+    const clickAction =
+      t.automatic
+        ? ''
+        : `onclick="openTransactionModal('${t.id}')"`;
+
+    list.innerHTML += `
+      <div class="transaction ${clickableClass}" ${clickAction}>
+        <div>
+          <strong>${t.name}</strong>
+          <p>${t.category || 'Sem categoria'}</p>
+          ${t.installment ? `<small>Parcela ${t.installment}</small>` : ''}
+          ${t.fixed ? `<small> • Fixo</small>` : ''}
+          ${t.automatic ? `<small> • Automático</small>` : ''}
+        </div>
+
+        <div class="${t.amount >= 0 ? 'positive' : 'negative'}">
+          ${formatCurrency(t.amount)}
+        </div>
+      </div>
+    `;
+  });
 }
 
 function renderHistory(){
@@ -994,7 +1137,7 @@ function renderHistory(){
         '15px';
 
       empty.innerText =
-        'Sem registros';
+        'Nenhuma movimentação registrada neste mês';
 
       details.appendChild(empty);
 
@@ -1045,13 +1188,13 @@ function renderHistory(){
         document.createElement('button');
 
       deleteBtn.innerText =
-        'Excluir histórico';
+        'Excluir registros deste mês';
 
       deleteBtn.style.marginTop =
         '15px';
 
       deleteBtn.onclick = () => {
-        if(confirm('Deseja excluir esse histórico?')){
+        if(confirm('Deseja excluir os registros deste mês?')){
           transactions =
             transactions.filter(
               t => t.month !== monthKey
@@ -1129,13 +1272,13 @@ function renderChart(){
         labels,
         datasets: [
           {
-            label: 'Receitas',
+            label: 'Entradas',
             data: incomes,
             borderColor: 'green',
             tension: 0.3
           },
           {
-            label: 'Despesas',
+            label: 'Gastos',
             data: expenses,
             borderColor: 'red',
             tension: 0.3
@@ -1146,13 +1289,14 @@ function renderChart(){
 }
 
 function renderCategories(){
+  const monthlyTransactions =
+    getTransactionsForMonth(currentMonth());
+
   const categories =
     [...new Set(
-      [
-        ...transactions.map(t => t.category),
-        fixedTaxes?.inss?.enabled ? 'Impostos' : null,
-        fixedTaxes?.irpf?.enabled ? 'Impostos' : null
-      ].filter(Boolean)
+      monthlyTransactions
+        .map(t => t.category || 'Sem categoria')
+        .filter(Boolean)
     )].sort();
 
   const list =
@@ -1160,30 +1304,32 @@ function renderCategories(){
 
   list.innerHTML = '';
 
+  if(categories.length === 0){
+    list.innerHTML =
+      '<p>Nenhuma categoria registrada neste mês.</p>';
+    return;
+  }
+
   categories.forEach(category => {
-    let total =
-      transactions
-        .filter(t => t.category === category)
+    const total =
+      monthlyTransactions
+        .filter(t => (t.category || 'Sem categoria') === category)
         .reduce((acc,t) => acc + t.amount, 0);
 
-    if(category === 'Impostos'){
-      total += getFixedTaxAmount('inss');
-      total += getFixedTaxAmount('irpf');
-    }
-
     list.innerHTML += `
-      <div class="transaction">
+      <button
+        class="transaction clickable category-row"
+        onclick="openCategoryDetail('${category.replace(/'/g, "\\'")}')"
+      >
         <div>
           <strong>${category}</strong>
-          <p class="${total >= 0 ? 'positive' : 'negative'}">
-            ${formatCurrency(total)}
-          </p>
+          <p>Ver registros do mês</p>
         </div>
 
-        <button onclick="removeCategory('${category}')">
-          Excluir
-        </button>
-      </div>
+        <div class="${total >= 0 ? 'positive' : 'negative'}">
+          ${formatCurrency(total)}
+        </div>
+      </button>
     `;
   });
 }
@@ -1360,6 +1506,8 @@ window.openTransactionModal = openTransactionModal;
 window.closeTransactionModal = closeTransactionModal;
 window.saveEditedTransaction = saveEditedTransaction;
 window.deleteTransaction = deleteTransaction;
+window.openFeaturedCategoryDetail = openFeaturedCategoryDetail;
+window.openCategoryDetail = openCategoryDetail;
 
 setupInputs();
 
