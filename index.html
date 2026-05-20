@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-
   <meta charset="UTF-8" />
 
   <meta
@@ -14,20 +13,15 @@
   <link rel="stylesheet" href="style.css" />
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
 </head>
 
 <body>
 
   <div class="modal-overlay" id="welcomeModal">
-
     <div class="modal">
-
       <h2>Bem-vindo 💰</h2>
 
-      <p>
-        Vamos configurar seu controle financeiro
-      </p>
+      <p>Vamos configurar seu controle financeiro</p>
 
       <input
         type="text"
@@ -42,216 +36,180 @@
       />
 
       <select id="salaryType">
-
-        <option value="bruto">
-          Bruto
-        </option>
-
-        <option value="liquido">
-          Líquido
-        </option>
-
+        <option value="bruto">Bruto</option>
+        <option value="liquido">Líquido</option>
       </select>
 
       <button onclick="saveUserData()">
         Começar
       </button>
-
     </div>
-
   </div>
 
-  <div class="header">
+  <div id="appContent" style="display:none">
 
-    <button
-      class="menu-btn"
-      onclick="toggleMenu()"
-    >
-      ☰
-    </button>
-
-    <h2>Controle Financeiro</h2>
-
-  </div>
-
-  <div class="menu" id="menu">
-
-    <button onclick="showPage('home')">
-      Página Inicial
-    </button>
-
-    <button onclick="showPage('history')">
-      Histórico
-    </button>
-
-    <button onclick="showPage('categories')">
-      Categorias
-    </button>
-
-  </div>
-
-  <section id="home" class="page active">
-
-    <div class="card center">
-
-      <h2 id="welcome"></h2>
-
-      <div class="saldo" id="saldo"></div>
-
-      <p>Saldo disponível do mês</p>
-
-    </div>
-
-    <div class="grid">
-
-      <div class="card">
-
-        <h3>Maior despesa</h3>
-
-        <p id="biggestExpense">
-          Nenhuma
-        </p>
-
-      </div>
-
-      <div class="card">
-
-        <h3>Categoria com economia</h3>
-
-        <p id="bestCategory">
-          Nenhuma
-        </p>
-
-      </div>
-
-      <div class="card">
-
-        <h3>Comparação mensal</h3>
-
-        <p id="comparison">
-          R$0,00
-        </p>
-
-      </div>
-
-    </div>
-
-    <div class="card">
-
-      <h2>Adicionar movimentação</h2>
-
-      <select id="type">
-
-        <option value="expense">
-          Despesa
-        </option>
-
-        <option value="income">
-          Receita
-        </option>
-
-      </select>
-
-      <input
-        type="text"
-        id="name"
-        placeholder="Nome"
-      />
-
-      <input
-        type="text"
-        id="amount"
-        placeholder="R$ 0,00"
-      />
-
-      <input
-        type="text"
-        id="category"
-        placeholder="Categoria"
-      />
-
-      <div class="checkbox">
-
-        <input
-          type="checkbox"
-          id="anotherMonth"
-        />
-
-        <label>
-          Outro mês?
-        </label>
-
-      </div>
-
-      <input
-        type="month"
-        id="month"
-        style="display:none"
-      />
-
-      <input
-        type="number"
-        id="installments"
-        placeholder="Parcelas"
-        value="1"
-        min="1"
-      />
-
-      <div class="checkbox">
-
-        <input
-          type="checkbox"
-          id="fixed"
-        />
-
-        <label>
-          Valor fixo?
-        </label>
-
-      </div>
-
+    <div class="header">
       <button
-        style="margin-top:20px"
-        onclick="addTransaction()"
+        class="menu-btn"
+        onclick="toggleMenu()"
       >
-        Adicionar
+        ☰
       </button>
 
+      <h2>Controle Financeiro</h2>
     </div>
 
-    <div class="card">
+    <div class="menu" id="menu">
+      <button onclick="showPage('home')">
+        Página Inicial
+      </button>
 
-      <h2>Movimentações</h2>
+      <button onclick="showPage('history')">
+        Histórico
+      </button>
 
-      <div id="transactions"></div>
-
+      <button onclick="showPage('categories')">
+        Categorias
+      </button>
     </div>
 
-  </section>
+    <section id="home" class="page active">
 
-  <section id="history" class="page">
+      <div class="card center">
+        <h2 id="welcome"></h2>
 
-    <div class="card">
+        <div class="saldo" id="saldo"></div>
 
-      <h2>Histórico</h2>
+        <p>Saldo disponível do mês</p>
+      </div>
 
-      <canvas id="chart"></canvas>
+      <div class="grid">
 
-    </div>
+        <div class="card">
+          <h3>Maior despesa</h3>
+          <p id="biggestExpense">Nenhuma</p>
+        </div>
 
-  </section>
+        <div class="card">
+          <h3>Categoria com economia</h3>
+          <p id="bestCategory">Nenhuma</p>
+        </div>
 
-  <section id="categories" class="page">
+        <div class="card">
+          <h3>Comparação mensal</h3>
+          <p id="comparison">R$0,00</p>
+        </div>
 
-    <div class="card">
+      </div>
 
-      <h2>Categorias</h2>
+      <div class="card">
 
-      <div id="categoriesList"></div>
+        <h2>Adicionar movimentação</h2>
 
-    </div>
+        <select id="type">
+          <option value="expense">Despesa</option>
+          <option value="income">Receita</option>
+        </select>
 
-  </section>
+        <input
+          type="text"
+          id="name"
+          placeholder="Nome"
+        />
+
+        <input
+          type="text"
+          id="amount"
+          placeholder="R$ 0,00"
+        />
+
+        <input
+          type="text"
+          id="category"
+          placeholder="Categoria"
+        />
+
+        <div class="checkbox">
+          <input
+            type="checkbox"
+            id="anotherMonth"
+          />
+
+          <label>Outro mês?</label>
+        </div>
+
+        <input
+          type="month"
+          id="month"
+          style="display:none"
+        />
+
+        <div class="checkbox">
+          <input
+            type="checkbox"
+            id="hasInstallments"
+          />
+
+          <label>Parcelar?</label>
+        </div>
+
+        <div id="installmentsBox" style="display:none">
+          <input
+            type="number"
+            id="installments"
+            placeholder="Quantidade de parcelas"
+            value="1"
+            min="1"
+          />
+        </div>
+
+        <div class="checkbox">
+          <input
+            type="checkbox"
+            id="fixed"
+          />
+
+          <label>Valor fixo?</label>
+        </div>
+
+        <button
+          style="margin-top:20px"
+          onclick="addTransaction()"
+        >
+          Adicionar
+        </button>
+
+      </div>
+
+      <div class="card">
+        <h2>Movimentações</h2>
+
+        <div id="transactions"></div>
+      </div>
+
+    </section>
+
+    <section id="history" class="page">
+
+      <div class="card">
+        <h2>Histórico</h2>
+
+        <canvas id="chart"></canvas>
+      </div>
+
+    </section>
+
+    <section id="categories" class="page">
+
+      <div class="card">
+        <h2>Categorias</h2>
+
+        <div id="categoriesList"></div>
+      </div>
+
+    </section>
+
+  </div>
 
   <script src="script.js"></script>
 
