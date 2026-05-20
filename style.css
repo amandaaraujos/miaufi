@@ -74,7 +74,11 @@ body{
 
   justify-content:center;
 
-  gap:14px;
+  gap:clamp(8px, 2vw, 14px);
+
+  width:100%;
+
+  min-width:0;
 
 }
 
@@ -82,11 +86,13 @@ body{
 
   text-align:left;
 
+  min-width:0;
+
 }
 
 .brand-text h1{
 
-  font-size:24px;
+  font-size:clamp(18px, 4vw, 24px);
 
   font-weight:700;
 
@@ -94,25 +100,31 @@ body{
 
   line-height:1.1;
 
+  word-break:break-word;
+
 }
 
 .brand-text p{
 
-  font-size:13px;
+  font-size:clamp(11px, 2.4vw, 13px);
 
   color:var(--text-secondary);
 
   margin-top:4px;
 
+  line-height:1.4;
+
 }
 
 .logo{
 
-  width:58px;
+  width:clamp(42px, 8vw, 58px);
 
-  height:58px;
+  height:auto;
 
   object-fit:contain;
+
+  flex-shrink:0;
 
 }
 
@@ -726,9 +738,15 @@ select:focus{
 
 .auth-logo{
 
-  width:140px;
+  width:clamp(90px, 28vw, 140px);
+
+  height:auto;
+
+  object-fit:contain;
 
   margin:0 auto 12px;
+
+  display:block;
 
 }
 
@@ -755,9 +773,15 @@ select:focus{
 
 .mini-logo{
 
-  width:74px;
+  width:clamp(52px, 18vw, 74px);
+
+  height:auto;
+
+  object-fit:contain;
 
   margin:0 auto;
+
+  display:block;
 
 }
 
@@ -861,54 +885,43 @@ select:focus{
 
   body{
 
-    padding:16px;
+    padding:14px;
+
+  }
+
+  .topbar{
+
+    grid-template-columns:44px 1fr 44px;
+
+    gap:8px;
 
   }
 
   .brand{
 
-    gap:10px;
-
-  }
-
-  .brand-text h1{
-
-    font-size:21px;
-
-  }
-
-  .brand-text p{
-
-    font-size:12px;
-
-  }
-
-  .logo{
-
-    width:50px;
-    height:50px;
+    justify-content:flex-start;
 
   }
 
   .hero-card{
 
-    padding:26px;
+    padding:24px;
 
-    border-radius:26px;
+    border-radius:24px;
 
   }
 
   .saldo{
 
-    font-size:36px;
+    font-size:clamp(28px, 8vw, 36px);
 
   }
 
   .card{
 
-    padding:22px;
+    padding:20px;
 
-    border-radius:24px;
+    border-radius:22px;
 
   }
 
@@ -920,9 +933,9 @@ select:focus{
 
   .modal{
 
-    padding:28px;
+    padding:24px;
 
-    border-radius:28px;
+    border-radius:26px;
 
   }
 
@@ -930,21 +943,45 @@ select:focus{
 
 @media(max-width:480px){
 
+  body{
+
+    padding:12px;
+
+  }
+
+  .topbar{
+
+    margin-bottom:18px;
+
+  }
+
+  .brand{
+
+    gap:8px;
+
+  }
+
+  .hero-card{
+
+    padding:20px;
+
+  }
+
   .saldo{
 
-    font-size:32px;
+    font-size:30px;
 
   }
 
   .hero-title{
 
-    font-size:18px;
+    font-size:16px;
 
   }
 
   .section-header h2{
 
-    font-size:22px;
+    font-size:20px;
 
   }
 
@@ -953,6 +990,12 @@ select:focus{
   button{
 
     font-size:14px;
+
+  }
+
+  .modal{
+
+    padding:22px;
 
   }
 
