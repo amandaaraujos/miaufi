@@ -19,22 +19,22 @@
 
   <div class="modal-overlay" id="authModal">
 
-    <div class="modal" id="entryModal">
+    <div class="modal" id="authChoice">
       <h2>Bem-vindo 💰</h2>
-      <p>Entre na sua conta ou crie um novo acesso.</p>
 
-      <button onclick="showLoginModal()">
+      <p>Entre na sua conta ou crie um novo cadastro.</p>
+
+      <button onclick="showLoginForm()">
         Já tenho uma conta
       </button>
 
-      <button onclick="showCreateAccountModal()">
+      <button onclick="showCreateAccountForm()">
         Criar conta
       </button>
     </div>
 
-    <div class="modal hidden" id="loginModal">
+    <div class="modal hidden" id="loginForm">
       <h2>Entrar</h2>
-      <p>Acesse sua conta financeira.</p>
 
       <input
         type="email"
@@ -52,14 +52,16 @@
         Entrar
       </button>
 
-      <button class="secondary-btn" onclick="showEntryModal()">
+      <button
+        class="secondary-btn"
+        onclick="backToAuthChoice()"
+      >
         Voltar
       </button>
     </div>
 
-    <div class="modal hidden" id="createAccountModal">
+    <div class="modal hidden" id="createAccountForm">
       <h2>Criar conta</h2>
-      <p>Vamos configurar seu controle financeiro.</p>
 
       <input
         type="text"
@@ -94,7 +96,10 @@
         Criar conta
       </button>
 
-      <button class="secondary-btn" onclick="showEntryModal()">
+      <button
+        class="secondary-btn"
+        onclick="backToAuthChoice()"
+      >
         Voltar
       </button>
     </div>
