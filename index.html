@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  />
+
+  <title>Controle Financeiro</title>
+
+  <link rel="stylesheet" href="style.css" />
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+
+  <div class="header">
+    <button class="menu-btn" onclick="toggleMenu()">☰</button>
+    <h2>Controle Financeiro</h2>
+  </div>
+
+  <div class="menu" id="menu">
+    <button onclick="showPage('home')">Página Inicial</button>
+    <button onclick="showPage('history')">Histórico</button>
+    <button onclick="showPage('categories')">Categorias</button>
+  </div>
+
+  <section id="home" class="page active">
+
+    <div class="card center">
+      <h2 id="welcome"></h2>
+
+      <div class="saldo" id="saldo"></div>
+
+      <p>Saldo disponível do mês</p>
+    </div>
+
+    <div class="grid">
+
+      <div class="card">
+        <h3>Maior despesa</h3>
+        <p id="biggestExpense">Nenhuma</p>
+      </div>
+
+      <div class="card">
+        <h3>Categoria com economia</h3>
+        <p id="bestCategory">Nenhuma</p>
+      </div>
+
+      <div class="card">
+        <h3>Comparação mensal</h3>
+        <p id="comparison">R$0,00</p>
+      </div>
+
+    </div>
+
+    <div class="card">
+
+      <h2>Adicionar movimentação</h2>
+
+      <select id="type">
+        <option value="expense">Despesa</option>
+        <option value="income">Receita</option>
+      </select>
+
+      <input type="text" id="name" placeholder="Nome" />
+
+      <input type="number" id="amount" placeholder="Valor" />
+
+      <input type="text" id="category" placeholder="Categoria" />
+
+      <div class="checkbox">
+        <input type="checkbox" id="anotherMonth" />
+        <label>Outro mês?</label>
+      </div>
+
+      <input
+        type="month"
+        id="month"
+        style="display:none"
+      />
+
+      <input
+        type="number"
+        id="installments"
+        placeholder="Parcelas"
+        value="1"
+        min="1"
+      />
+
+      <div class="checkbox">
+        <input type="checkbox" id="fixed" />
+        <label>Valor fixo?</label>
+      </div>
+
+      <button
+        style="margin-top:20px"
+        onclick="addTransaction()"
+      >
+        Adicionar
+      </button>
+
+    </div>
+
+    <div class="card">
+      <h2>Movimentações</h2>
+
+      <div id="transactions"></div>
+    </div>
+
+  </section>
+
+  <section id="history" class="page">
+
+    <div class="card">
+      <h2>Histórico</h2>
+
+      <canvas id="chart"></canvas>
+    </div>
+
+  </section>
+
+  <section id="categories" class="page">
+
+    <div class="card">
+      <h2>Categorias</h2>
+
+      <div id="categoriesList"></div>
+    </div>
+
+  </section>
+
+  <script src="script.js"></script>
+
+</body>
+</html>
