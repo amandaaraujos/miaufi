@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
+
   <meta charset="UTF-8" />
 
   <meta
@@ -8,33 +10,79 @@
     content="width=device-width, initial-scale=1.0"
   />
 
-  <title>Miaufi</title>
+  <title>Miaufi • Assistente Financeiro</title>
 
   <link rel="stylesheet" href="style.css" />
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 </head>
 
 <body>
 
-  <div class="modal-overlay" id="authModal">
+  <!-- ========================= -->
+  <!-- MODAL AUTENTICAÇÃO -->
+  <!-- ========================= -->
 
-    <div class="modal" id="authChoice">
-      <h2>Bem-vindo 💰</h2>
+  <div
+    class="modal-overlay"
+    id="authModal"
+  >
 
-      <p>Entre na sua conta ou crie um novo cadastro.</p>
+    <!-- ESCOLHA -->
+
+    <div
+      class="modal auth-card"
+      id="authChoice"
+    >
+
+      <img
+        src="logo-miaufi.png"
+        alt="Logo Miaufi"
+        class="auth-logo"
+      />
+
+      <h1 class="auth-title">
+        Miaufi
+      </h1>
+
+      <p class="auth-subtitle">
+        Seu assistente financeiro pessoal
+      </p>
 
       <button onclick="showLoginForm()">
-        Já tenho uma conta
+        Entrar na minha conta
       </button>
 
-      <button onclick="showCreateAccountForm()">
-        Criar conta
+      <button
+        class="secondary-btn"
+        onclick="showCreateAccountForm()"
+      >
+        Criar nova conta
       </button>
+
     </div>
 
-    <div class="modal hidden" id="loginForm">
-      <h2>Entrar</h2>
+    <!-- LOGIN -->
+
+    <div
+      class="modal hidden"
+      id="loginForm"
+    >
+
+      <img
+        src="logo-miaufi.png"
+        alt="Logo Miaufi"
+        class="mini-logo"
+      />
+
+      <h2>
+        Entrar
+      </h2>
+
+      <p class="modal-description">
+        Continue de onde parou.
+      </p>
 
       <input
         type="email"
@@ -48,25 +96,51 @@
         placeholder="Sua senha"
       />
 
-      <p id="loginError" class="negative"></p>
+      <p
+        id="loginError"
+        class="negative"
+      ></p>
 
       <button onclick="loginUser()">
         Entrar
       </button>
 
-      <button class="secondary-btn" onclick="showPasswordRecoveryForm()">
+      <button
+        class="secondary-btn"
+        onclick="showPasswordRecoveryForm()"
+      >
         Recuperar senha
       </button>
 
-      <button class="secondary-btn" onclick="backToAuthChoice()">
+      <button
+        class="secondary-btn"
+        onclick="backToAuthChoice()"
+      >
         Voltar
       </button>
+
     </div>
 
-    <div class="modal hidden" id="passwordRecoveryForm">
-      <h2>Recuperar senha</h2>
+    <!-- RECUPERAR SENHA -->
 
-      <p>Informe seu e-mail e crie uma nova senha.</p>
+    <div
+      class="modal hidden"
+      id="passwordRecoveryForm"
+    >
+
+      <img
+        src="logo-miaufi.png"
+        alt="Logo Miaufi"
+        class="mini-logo"
+      />
+
+      <h2>
+        Nova senha
+      </h2>
+
+      <p class="modal-description">
+        Seus dados serão mantidos.
+      </p>
 
       <input
         type="email"
@@ -84,13 +158,35 @@
         Salvar nova senha
       </button>
 
-      <button class="secondary-btn" onclick="showLoginForm()">
-        Voltar para login
+      <button
+        class="secondary-btn"
+        onclick="showLoginForm()"
+      >
+        Voltar
       </button>
+
     </div>
 
-    <div class="modal hidden" id="createAccountForm">
-      <h2>Criar conta</h2>
+    <!-- CRIAR CONTA -->
+
+    <div
+      class="modal hidden"
+      id="createAccountForm"
+    >
+
+      <img
+        src="logo-miaufi.png"
+        alt="Logo Miaufi"
+        class="mini-logo"
+      />
+
+      <h2>
+        Criar conta
+      </h2>
+
+      <p class="modal-description">
+        Organize sua vida financeira de forma simples.
+      </p>
 
       <input
         type="text"
@@ -113,53 +209,96 @@
       <input
         type="text"
         id="userSalary"
-        placeholder="Seu salário bruto"
+        placeholder="Seu salário"
       />
 
       <select id="salaryType">
-        <option value="bruto">Bruto</option>
-        <option value="liquido">Líquido</option>
+
+        <option value="bruto">
+          Salário bruto
+        </option>
+
+        <option value="liquido">
+          Salário líquido
+        </option>
+
       </select>
 
       <button onclick="createUserAccount()">
         Criar conta
       </button>
 
-      <button class="secondary-btn" onclick="backToAuthChoice()">
+      <button
+        class="secondary-btn"
+        onclick="backToAuthChoice()"
+      >
         Voltar
       </button>
+
     </div>
 
   </div>
 
-  <div class="modal-overlay hidden" id="transactionModal">
+  <!-- ========================= -->
+  <!-- MODAL EDITAR MOVIMENTAÇÃO -->
+  <!-- ========================= -->
+
+  <div
+    class="modal-overlay hidden"
+    id="transactionModal"
+  >
 
     <div class="modal">
-      <h2>Editar movimentação</h2>
 
-      <input type="hidden" id="editTransactionId" />
+      <h2>
+        Editar movimentação
+      </h2>
 
-      <label for="editType">Tipo</label>
+      <input
+        type="hidden"
+        id="editTransactionId"
+      />
+
+      <label for="editType">
+        Tipo
+      </label>
+
       <select id="editType">
-        <option value="expense">Despesa</option>
-        <option value="income">Receita</option>
+
+        <option value="expense">
+          Gasto
+        </option>
+
+        <option value="income">
+          Entrada
+        </option>
+
       </select>
 
-      <label for="editName">Nome</label>
+      <label for="editName">
+        Nome da movimentação
+      </label>
+
       <input
         type="text"
         id="editName"
-        placeholder="Nome da movimentação"
+        placeholder="Ex: Mercado"
       />
 
-      <label for="editCategory">Categoria</label>
+      <label for="editCategory">
+        Categoria
+      </label>
+
       <input
         type="text"
         id="editCategory"
-        placeholder="Categoria"
+        placeholder="Ex: Alimentação"
       />
 
-      <label for="editAmount">Valor</label>
+      <label for="editAmount">
+        Valor
+      </label>
+
       <input
         type="text"
         id="editAmount"
@@ -170,20 +309,37 @@
         Salvar alterações
       </button>
 
-      <button class="danger-btn" onclick="deleteTransaction()">
-        Apagar movimentação
+      <button
+        class="danger-btn"
+        onclick="deleteTransaction()"
+      >
+        Excluir movimentação
       </button>
 
-      <button class="secondary-btn" onclick="closeTransactionModal()">
+      <button
+        class="secondary-btn"
+        onclick="closeTransactionModal()"
+      >
         Cancelar
       </button>
+
     </div>
 
   </div>
 
-  <div id="appContent" style="display:none">
+  <!-- ========================= -->
+  <!-- APP -->
+  <!-- ========================= -->
 
-    <div class="header">
+  <div
+    id="appContent"
+    style="display:none"
+  >
+
+    <!-- HEADER -->
+
+    <header class="topbar">
+
       <button
         class="menu-btn"
         onclick="toggleMenu()"
@@ -191,69 +347,265 @@
         ☰
       </button>
 
-      <h2>Controle Financeiro</h2>
+      <div class="brand">
 
-      <div class="header-spacer"></div>
-    </div>
+        <img
+          src="logo-miaufi.png"
+          alt="Logo Miaufi"
+          class="logo"
+        />
 
-    <div class="menu" id="menu">
-      <button onclick="showPage('home')">Página Inicial</button>
-      <button onclick="showPage('history')">Histórico</button>
-      <button onclick="showPage('categories')">Categorias</button>
-      <button onclick="showPage('settings')">Configurações da conta</button>
-      <button onclick="logoutUser()">Sair</button>
-    </div>
+        <div class="brand-text">
 
-    <section id="home" class="page active">
+          <h1>
+            Miaufi
+          </h1>
 
-      <div class="card center">
-        <h2 id="welcome"></h2>
-        <div class="saldo" id="saldo"></div>
-        <p>Saldo disponível do mês</p>
+          <p>
+            Seu assistente financeiro pessoal
+          </p>
+
+        </div>
+
       </div>
 
-      <div class="grid">
-        <div class="card">
-          <h3>Maior despesa</h3>
-          <p id="biggestExpense">Nenhuma</p>
-        </div>
+      <div class="header-space"></div>
 
-        <div class="card">
-          <h3>Categoria com economia</h3>
-          <p id="bestCategory">Nenhuma</p>
-        </div>
+    </header>
 
-        <div class="card">
-          <h3>Comparação mensal</h3>
-          <p id="comparison">R$0,00</p>
-        </div>
+    <!-- MENU -->
+
+    <nav
+      class="menu"
+      id="menu"
+    >
+
+      <button onclick="showPage('home')">
+        Início
+      </button>
+
+      <button onclick="showPage('history')">
+        Extrato mensal
+      </button>
+
+      <button onclick="showPage('categories')">
+        Categorias
+      </button>
+
+      <button onclick="showPage('settings')">
+        Minha conta
+      </button>
+
+      <button onclick="logoutUser()">
+        Sair
+      </button>
+
+    </nav>
+
+    <!-- ========================= -->
+    <!-- HOME -->
+    <!-- ========================= -->
+
+    <section
+      id="home"
+      class="page active"
+    >
+
+      <!-- HERO -->
+
+      <div class="hero-card">
+
+        <p
+          class="welcome-text"
+          id="welcome"
+        ></p>
+
+        <h2 class="hero-title">
+          Você tem disponível
+        </h2>
+
+        <div
+          class="saldo"
+          id="saldo"
+        ></div>
+
+        <p class="saldo-description">
+          Atualizado automaticamente
+        </p>
+
       </div>
 
-      <div class="card">
-        <h2>Adicionar movimentação</h2>
+      <!-- RESUMOS -->
+
+      <div class="summary-grid">
+
+        <!-- CARD 1 -->
+
+        <div class="summary-card">
+
+          <div class="summary-icon">
+            🐾
+          </div>
+
+          <p class="summary-label">
+            Maior gasto
+          </p>
+
+          <p id="biggestExpense">
+            Nenhum registro
+          </p>
+
+        </div>
+
+        <!-- CARD 2 -->
+
+        <div class="summary-card">
+
+          <div class="summary-icon">
+            📈
+          </div>
+
+          <p class="summary-label">
+            Categoria em destaque
+          </p>
+
+          <p id="bestCategory">
+            Nenhuma categoria
+          </p>
+
+        </div>
+
+        <!-- CARD 3 -->
+
+        <div class="summary-card">
+
+          <div class="summary-icon">
+            📅
+          </div>
+
+          <p class="summary-label">
+            Comparação mensal
+          </p>
+
+          <p id="comparison">
+            Sem comparação
+          </p>
+
+        </div>
+
+      </div>
+
+      <!-- FORMULÁRIO -->
+
+      <div class="card form-card">
+
+        <div class="section-header">
+
+          <h2>
+            Adicionar entrada ou gasto
+          </h2>
+
+          <p>
+            Registre movimentações do seu mês
+          </p>
+
+        </div>
+
+        <!-- TIPO -->
+
+        <label for="type">
+          Tipo de movimentação
+        </label>
 
         <select id="type">
-          <option value="expense">Despesa</option>
-          <option value="income">Receita</option>
+
+          <option value="expense">
+            Gasto
+          </option>
+
+          <option value="income">
+            Entrada
+          </option>
+
         </select>
 
-        <input type="text" id="name" placeholder="Nome" />
-        <input type="text" id="amount" placeholder="Ex: 1000,00" />
-        <input type="text" id="category" placeholder="Categoria" />
+        <!-- NOME -->
+
+        <label for="name">
+          Nome da movimentação
+        </label>
+
+        <input
+          type="text"
+          id="name"
+          placeholder="Ex: Mercado, aluguel, freelance"
+        />
+
+        <!-- VALOR -->
+
+        <label for="amount">
+          Valor
+        </label>
+
+        <input
+          type="text"
+          id="amount"
+          placeholder="Ex: 1000,00"
+        />
+
+        <!-- CATEGORIA -->
+
+        <label for="category">
+          Categoria
+        </label>
+
+        <input
+          type="text"
+          id="category"
+          placeholder="Ex: Alimentação"
+        />
+
+        <!-- OUTRO MÊS -->
 
         <div class="checkbox">
-          <input type="checkbox" id="anotherMonth" />
-          <label>Outro mês?</label>
+
+          <input
+            type="checkbox"
+            id="anotherMonth"
+          />
+
+          <label for="anotherMonth">
+            Lançar em outro mês?
+          </label>
+
         </div>
 
-        <input type="month" id="month" style="display:none" />
+        <input
+          type="month"
+          id="month"
+          style="display:none"
+        />
+
+        <!-- PARCELAMENTO -->
 
         <div class="checkbox">
-          <input type="checkbox" id="hasInstallments" />
-          <label>Parcelar?</label>
+
+          <input
+            type="checkbox"
+            id="hasInstallments"
+          />
+
+          <label for="hasInstallments">
+            Dividir em parcelas?
+          </label>
+
         </div>
 
-        <div id="installmentsBox" style="display:none">
+        <div
+          id="installmentsBox"
+          style="display:none"
+        >
+
           <input
             type="number"
             id="installments"
@@ -261,108 +613,280 @@
             value="1"
             min="1"
           />
+
         </div>
+
+        <!-- FIXO -->
 
         <div class="checkbox">
-          <input type="checkbox" id="fixed" />
-          <label>Valor fixo?</label>
+
+          <input
+            type="checkbox"
+            id="fixed"
+          />
+
+          <label for="fixed">
+            Repetir todo mês?
+          </label>
+
         </div>
 
-        <button style="margin-top:20px" onclick="addTransaction()">
-          Adicionar
+        <button
+          class="primary-button"
+          onclick="addTransaction()"
+        >
+          Salvar movimentação
         </button>
+
       </div>
 
+      <!-- MOVIMENTAÇÕES -->
+
       <div class="card">
-        <h2>Movimentações</h2>
+
+        <div class="section-header">
+
+          <h2>
+            Movimentações
+          </h2>
+
+          <p>
+            Mais recentes primeiro
+          </p>
+
+        </div>
+
         <div id="transactions"></div>
+
       </div>
 
     </section>
 
-    <section id="history" class="page">
+    <!-- ========================= -->
+    <!-- HISTÓRICO -->
+    <!-- ========================= -->
+
+    <section
+      id="history"
+      class="page"
+    >
+
       <div class="card">
-        <h2>Histórico</h2>
+
+        <div class="section-header">
+
+          <h2>
+            Extrato mensal
+          </h2>
+
+          <p>
+            Acompanhe sua evolução financeira
+          </p>
+
+        </div>
+
         <canvas id="chart"></canvas>
+
       </div>
+
     </section>
 
-    <section id="categories" class="page">
+    <!-- ========================= -->
+    <!-- CATEGORIAS -->
+    <!-- ========================= -->
+
+    <section
+      id="categories"
+      class="page"
+    >
+
       <div class="card">
-        <h2>Categorias</h2>
+
+        <div class="section-header">
+
+          <h2>
+            Categorias
+          </h2>
+
+          <p>
+            Organize seus gastos e entradas
+          </p>
+
+        </div>
+
         <div id="categoriesList"></div>
+
       </div>
+
     </section>
 
-    <section id="settings" class="page">
+    <!-- ========================= -->
+    <!-- CONFIGURAÇÕES -->
+    <!-- ========================= -->
+
+    <section
+      id="settings"
+      class="page"
+    >
+
       <div class="card">
-        <h2>Configurações da conta</h2>
 
-        <p class="section-description">
-          Configure seus dados da conta e descontos fixos mensais.
-        </p>
+        <div class="section-header">
 
-        <hr class="divider" />
+          <h2>
+            Minha conta
+          </h2>
 
-        <h3>Dados da conta</h3>
+          <p>
+            Configure seus dados e descontos automáticos
+          </p>
 
-        <label for="settingsName">Nome</label>
-        <input type="text" id="settingsName" placeholder="Seu nome" />
+        </div>
 
-        <label for="settingsSalary">Salário bruto</label>
-        <input type="text" id="settingsSalary" placeholder="Ex: 1475,00" />
+        <!-- NOME -->
 
-        <label for="settingsSalaryType">Tipo de salário</label>
+        <label for="settingsName">
+          Nome
+        </label>
+
+        <input
+          type="text"
+          id="settingsName"
+          placeholder="Seu nome"
+        />
+
+        <!-- SALÁRIO -->
+
+        <label for="settingsSalary">
+          Salário
+        </label>
+
+        <input
+          type="text"
+          id="settingsSalary"
+          placeholder="Ex: 4500,00"
+        />
+
+        <!-- TIPO -->
+
+        <label for="settingsSalaryType">
+          Tipo de salário
+        </label>
+
         <select id="settingsSalaryType">
-          <option value="bruto">Bruto</option>
-          <option value="liquido">Líquido</option>
+
+          <option value="bruto">
+            Bruto
+          </option>
+
+          <option value="liquido">
+            Líquido
+          </option>
+
         </select>
 
+        <!-- SOMAR MESES -->
+
         <div class="checkbox">
-          <input type="checkbox" id="carryOverEnabled" />
-          <label for="carryOverEnabled">Somar meses anteriores?</label>
+
+          <input
+            type="checkbox"
+            id="carryOverEnabled"
+          />
+
+          <label for="carryOverEnabled">
+            Somar saldo dos meses anteriores?
+          </label>
+
         </div>
 
         <hr class="divider" />
 
-        <h3>Desconto fixo de INSS</h3>
+        <!-- INSS -->
+
+        <h3 class="settings-title">
+          INSS
+        </h3>
 
         <div class="checkbox">
-          <input type="checkbox" id="inssEnabled" />
-          <label for="inssEnabled">Considerar INSS todos os meses</label>
+
+          <input
+            type="checkbox"
+            id="inssEnabled"
+          />
+
+          <label for="inssEnabled">
+            Aplicar automaticamente
+          </label>
+
         </div>
 
-        <label for="inssType">Tipo de desconto</label>
         <select id="inssType">
-          <option value="percent">Percentual sobre salário bruto (%)</option>
-          <option value="value">Valor fixo em reais (R$)</option>
+
+          <option value="percent">
+            Percentual (%)
+          </option>
+
+          <option value="value">
+            Valor fixo (R$)
+          </option>
+
         </select>
 
-        <label for="inssValue">Valor do desconto</label>
-        <input type="text" id="inssValue" placeholder="Ex: 8,5 ou 250,00" />
+        <input
+          type="text"
+          id="inssValue"
+          placeholder="Ex: 8,5 ou 450,00"
+        />
 
         <hr class="divider" />
 
-        <h3>Desconto fixo de IRPF</h3>
+        <!-- IRPF -->
+
+        <h3 class="settings-title">
+          IRPF
+        </h3>
 
         <div class="checkbox">
-          <input type="checkbox" id="irpfEnabled" />
-          <label for="irpfEnabled">Considerar IRPF todos os meses</label>
+
+          <input
+            type="checkbox"
+            id="irpfEnabled"
+          />
+
+          <label for="irpfEnabled">
+            Aplicar automaticamente
+          </label>
+
         </div>
 
-        <label for="irpfType">Tipo de desconto</label>
         <select id="irpfType">
-          <option value="percent">Percentual sobre salário bruto (%)</option>
-          <option value="value">Valor fixo em reais (R$)</option>
+
+          <option value="percent">
+            Percentual (%)
+          </option>
+
+          <option value="value">
+            Valor fixo (R$)
+          </option>
+
         </select>
 
-        <label for="irpfValue">Valor do desconto</label>
-        <input type="text" id="irpfValue" placeholder="Ex: 15 ou 450,00" />
+        <input
+          type="text"
+          id="irpfValue"
+          placeholder="Ex: 15 ou 750,00"
+        />
 
-        <button style="margin-top:20px" onclick="saveAccountSettings()">
+        <button
+          class="primary-button"
+          onclick="saveAccountSettings()"
+        >
           Salvar configurações
         </button>
+
       </div>
+
     </section>
 
   </div>
