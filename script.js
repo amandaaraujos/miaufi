@@ -21,35 +21,17 @@ let fixedTaxes =
     irpf: { enabled: false, type: 'percent', value: 0 }
   };
 
-const appContent =
-  document.getElementById('appContent');
+const appContent = document.getElementById('appContent');
+const authModal = document.getElementById('authModal');
+const authChoice = document.getElementById('authChoice');
+const loginForm = document.getElementById('loginForm');
+const createAccountForm = document.getElementById('createAccountForm');
+const transactionModal = document.getElementById('transactionModal');
 
-const authModal =
-  document.getElementById('authModal');
-
-const authChoice =
-  document.getElementById('authChoice');
-
-const loginForm =
-  document.getElementById('loginForm');
-
-const createAccountForm =
-  document.getElementById('createAccountForm');
-
-const transactionModal =
-  document.getElementById('transactionModal');
-
-const anotherMonth =
-  document.getElementById('anotherMonth');
-
-const amountInput =
-  document.getElementById('amount');
-
-const hasInstallments =
-  document.getElementById('hasInstallments');
-
-const installmentsBox =
-  document.getElementById('installmentsBox');
+const anotherMonth = document.getElementById('anotherMonth');
+const amountInput = document.getElementById('amount');
+const hasInstallments = document.getElementById('hasInstallments');
+const installmentsBox = document.getElementById('installmentsBox');
 
 if(Notification.permission !== 'granted'){
   Notification.requestPermission();
@@ -89,13 +71,9 @@ function parseBrazilianNumber(value){
       .trim();
 
   if(cleanValue.includes(',') && cleanValue.includes('.')){
-    cleanValue =
-      cleanValue
-        .replace(/\./g, '')
-        .replace(',', '.');
+    cleanValue = cleanValue.replace(/\./g, '').replace(',', '.');
   } else if(cleanValue.includes(',')){
-    cleanValue =
-      cleanValue.replace(',', '.');
+    cleanValue = cleanValue.replace(',', '.');
   }
 
   return Number(cleanValue);
@@ -110,8 +88,7 @@ function formatDecimalInput(e){
 }
 
 function formatCurrency(value){
-  const signal =
-    value >= 0 ? '+' : '-';
+  const signal = value >= 0 ? '+' : '-';
 
   return `${signal}R$${Math.abs(value)
     .toLocaleString('pt-BR', {
@@ -342,11 +319,21 @@ function showPage(page){
 }
 
 function currentMonth(){
-  const now =
-    new Date();
+  const now = new Date();
 
   return `${now.getFullYear()}-${String(
     now.getMonth() + 1
+  ).padStart(2, '0')}`;
+}
+
+function getMonthByOffset(baseMonth, offset){
+  const date =
+    new Date(baseMonth + '-01T00:00:00');
+
+  date.setMonth(date.getMonth() + offset);
+
+  return `${date.getFullYear()}-${String(
+    date.getMonth() + 1
   ).padStart(2, '0')}`;
 }
 
@@ -378,8 +365,13 @@ function addTransaction(){
   const fixed =
     document.getElementById('fixed').checked;
 
-  let month =
+  const selectedMonth =
     document.getElementById('month').value;
+
+  const startMonth =
+    hasInstallments.checked
+      ? currentMonth()
+      : selectedMonth || currentMonth();
 
   if(!name || !amount){
     alert('Preencha nome e valor');
@@ -391,32 +383,22 @@ function addTransaction(){
     return;
   }
 
-  if(!month){
-    month = currentMonth();
-  }
-
   const createdAt =
     new Date().toISOString();
 
-  const recurringMonths =
+  const parentId =
+    crypto.randomUUID();
+
+  const totalMonths =
     fixed ? 60 : installments;
 
-  for(let i = 0; i < recurringMonths; i++){
-    const date =
-      new Date(currentMonth() + '-01');
-
-    date.setMonth(date.getMonth() + i);
-
+  for(let i = 0; i < totalMonths; i++){
     const finalMonth =
-      fixed
-        ? `${date.getFullYear()}-${String(
-            date.getMonth() + 1
-          ).padStart(2, '0')}`
-        : getInstallmentMonth(i);
+      getMonthByOffset(startMonth, i);
 
     transactions.push({
       id: crypto.randomUUID(),
-      parentId: crypto.randomUUID(),
+      parentId,
       type,
       name,
       amount: fixed
@@ -435,17 +417,10 @@ function addTransaction(){
   saveData();
   clearForm();
   render();
-}
 
-function getInstallmentMonth(index){
-  const date =
-    new Date(currentMonth() + '-01');
-
-  date.setMonth(date.getMonth() + index);
-
-  return `${date.getFullYear()}-${String(
-    date.getMonth() + 1
-  ).padStart(2, '0')}`;
+  if(document.getElementById('history').classList.contains('active')){
+    renderHistory();
+  }
 }
 
 function clearForm(){
@@ -539,9 +514,7 @@ function calculateMonthlyBalance(month){
 
   if(carryOver){
     const previousMonths =
-      [...new Set(
-        transactions.map(t => t.month)
-      )]
+      getAllVisibleMonths()
         .filter(m => m < month)
         .sort();
 
@@ -565,6 +538,32 @@ function calculateMonthlyBalance(month){
   });
 
   return total;
+}
+
+function getAllVisibleMonths(){
+  const months =
+    new Set(transactions.map(t => t.month));
+
+  const now =
+    new Date();
+
+  const currentYear =
+    now.getFullYear();
+
+  const currentMonthIndex =
+    now.getMonth() + 1;
+
+  for(let month = 1; month <= currentMonthIndex; month++){
+    months.add(
+      `${currentYear}-${String(month).padStart(2, '0')}`
+    );
+  }
+
+  transactions.forEach(t => {
+    months.add(t.month);
+  });
+
+  return [...months].sort();
 }
 
 function render(){
@@ -737,6 +736,40 @@ function saveEditedTransaction(){
   }
 }
 
+function deleteTransaction(){
+  const transactionId =
+    document.getElementById('editTransactionId').value;
+
+  const transaction =
+    transactions.find(t => t.id === transactionId);
+
+  if(!transaction){
+    return;
+  }
+
+  const shouldDelete =
+    confirm('Deseja apagar esta movimentação?');
+
+  if(!shouldDelete){
+    return;
+  }
+
+  transactions =
+    transactions.filter(t => t.id !== transactionId);
+
+  saveData();
+  closeTransactionModal();
+  render();
+
+  if(document.getElementById('history').classList.contains('active')){
+    renderHistory();
+  }
+
+  if(document.getElementById('categories').classList.contains('active')){
+    renderCategories();
+  }
+}
+
 function renderInsights(month){
   const currentTransactions =
     getTransactionsForMonth(month);
@@ -778,8 +811,7 @@ function renderInsights(month){
         : 'Nenhuma';
 
   const months =
-    [...new Set(transactions.map(t => t.month))]
-      .sort();
+    getAllVisibleMonths();
 
   const comparison =
     document.getElementById('comparison');
@@ -813,17 +845,7 @@ function renderInsights(month){
 }
 
 function renderHistory(){
-  const grouped = {};
-
-  transactions.forEach(t => {
-    if(!grouped[t.month]){
-      grouped[t.month] = [];
-    }
-
-    grouped[t.month].push(t);
-  });
-
-  renderChart(grouped);
+  renderChart();
 
   const historyPage =
     document.getElementById('history');
@@ -841,19 +863,10 @@ function renderHistory(){
   container.id =
     'historyDetails';
 
-  const currentDate =
-    new Date();
+  const months =
+    getAllVisibleMonths();
 
-  const currentYear =
-    currentDate.getFullYear();
-
-  const currentMonthIndex =
-    currentDate.getMonth() + 1;
-
-  for(let month = 1; month <= currentMonthIndex; month++){
-    const monthKey =
-      `${currentYear}-${String(month).padStart(2, '0')}`;
-
+  months.forEach(monthKey => {
     const details =
       document.createElement('details');
 
@@ -863,12 +876,17 @@ function renderHistory(){
     const summary =
       document.createElement('summary');
 
+    const [year, month] =
+      monthKey.split('-');
+
     const monthName =
-      new Date(currentYear, month - 1)
-        .toLocaleString('pt-BR', {
-          month: 'long',
-          year: 'numeric'
-        });
+      new Date(
+        Number(year),
+        Number(month) - 1
+      ).toLocaleString('pt-BR', {
+        month: 'long',
+        year: 'numeric'
+      });
 
     summary.innerText =
       monthName;
@@ -959,7 +977,7 @@ function renderHistory(){
     }
 
     container.appendChild(details);
-  }
+  });
 
   const clearAll =
     document.createElement('button');
@@ -984,20 +1002,9 @@ function renderHistory(){
   historyPage.appendChild(container);
 }
 
-function renderChart(grouped){
+function renderChart(){
   const labels =
-    Object.keys(grouped).sort();
-
-  const current =
-    currentMonth();
-
-  if(fixedTaxes?.inss?.enabled || fixedTaxes?.irpf?.enabled){
-    if(!labels.includes(current)){
-      labels.push(current);
-    }
-  }
-
-  labels.sort();
+    getAllVisibleMonths();
 
   const incomes = [];
   const expenses = [];
@@ -1246,47 +1253,21 @@ function saveAccountSettings(){
   alert('Configurações salvas com sucesso!');
 }
 
-window.showLoginForm =
-  showLoginForm;
-
-window.showCreateAccountForm =
-  showCreateAccountForm;
-
-window.backToAuthChoice =
-  backToAuthChoice;
-
-window.createUserAccount =
-  createUserAccount;
-
-window.loginUser =
-  loginUser;
-
-window.logoutUser =
-  logoutUser;
-
-window.toggleMenu =
-  toggleMenu;
-
-window.showPage =
-  showPage;
-
-window.addTransaction =
-  addTransaction;
-
-window.removeCategory =
-  removeCategory;
-
-window.saveAccountSettings =
-  saveAccountSettings;
-
-window.openTransactionModal =
-  openTransactionModal;
-
-window.closeTransactionModal =
-  closeTransactionModal;
-
-window.saveEditedTransaction =
-  saveEditedTransaction;
+window.showLoginForm = showLoginForm;
+window.showCreateAccountForm = showCreateAccountForm;
+window.backToAuthChoice = backToAuthChoice;
+window.createUserAccount = createUserAccount;
+window.loginUser = loginUser;
+window.logoutUser = logoutUser;
+window.toggleMenu = toggleMenu;
+window.showPage = showPage;
+window.addTransaction = addTransaction;
+window.removeCategory = removeCategory;
+window.saveAccountSettings = saveAccountSettings;
+window.openTransactionModal = openTransactionModal;
+window.closeTransactionModal = closeTransactionModal;
+window.saveEditedTransaction = saveEditedTransaction;
+window.deleteTransaction = deleteTransaction;
 
 setupInputs();
 
