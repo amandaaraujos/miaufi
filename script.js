@@ -70,7 +70,7 @@ setInterval(() => {
   }
 }, 60000);
 
-amountInput.addEventListener('input', formatMoney);
+amountInput.addEventListener('input', formatDecimalInput);
 
 anotherMonth.addEventListener('change', () => {
   document.getElementById('month').style.display =
@@ -97,11 +97,55 @@ function parseBrazilianNumber(value){
   return Number(cleanValue);
 }
 
-function formatSalaryInput(e){
+function formatDecimalInput(e){
   e.target.value =
     e.target.value
       .replace(/[^\d,\.]/g, '')
       .replace('.', ',');
+}
+
+function formatMoney(e){
+  let value = e.target.value;
+
+  value = value.replace(/\D/g, '');
+
+  value = (Number(value) / 100)
+    .toFixed(2)
+    .replace('.', ',');
+
+  value = value.replace(
+    /\B(?=(\d{3})+(?!\d))/g,
+    '.'
+  );
+
+  e.target.value = `R$ ${value}`;
+}
+
+function parseMoney(value){
+  return parseBrazilianNumber(value);
+}
+
+function parsePercent(value){
+  return Number(
+    String(value)
+      .replace('%', '')
+      .replace(',', '.')
+      .trim()
+  );
+}
+
+function parseDiscountValue(taxKey){
+  const type =
+    document.getElementById(`${taxKey}Type`).value;
+
+  const value =
+    document.getElementById(`${taxKey}Value`).value;
+
+  if(type === 'value'){
+    return parseBrazilianNumber(value);
+  }
+
+  return parsePercent(value);
 }
 
 function showLoginForm(){
@@ -326,54 +370,6 @@ function showPage(page){
   }
 }
 
-function formatMoney(e){
-  let value = e.target.value;
-
-  value = value.replace(/\D/g, '');
-
-  value = (Number(value) / 100)
-    .toFixed(2)
-    .replace('.', ',');
-
-  value = value.replace(
-    /\B(?=(\d{3})+(?!\d))/g,
-    '.'
-  );
-
-  e.target.value = `R$ ${value}`;
-}
-
-function parseMoney(value){
-  return Number(
-    String(value)
-      .replace(/[R$.\s]/g, '')
-      .replace(',', '.')
-  ) / 100;
-}
-
-function parsePercent(value){
-  return Number(
-    String(value)
-      .replace('%', '')
-      .replace(',', '.')
-      .trim()
-  );
-}
-
-function parseDiscountValue(taxKey){
-  const type =
-    document.getElementById(`${taxKey}Type`).value;
-
-  const value =
-    document.getElementById(`${taxKey}Value`).value;
-
-  if(type === 'value'){
-    return parseMoney(value);
-  }
-
-  return parsePercent(value);
-}
-
 function currentMonth(){
   const now = new Date();
 
@@ -390,7 +386,9 @@ function addTransaction(){
     document.getElementById('name').value.trim();
 
   const amount =
-    parseMoney(document.getElementById('amount').value);
+    parseBrazilianNumber(
+      document.getElementById('amount').value
+    );
 
   const signedAmount =
     type === 'expense'
@@ -1129,13 +1127,13 @@ function setupSettingsInputs(){
 
   if(settingsSalaryInput){
     settingsSalaryInput.oninput = function(e){
-      formatSalaryInput(e);
+      formatDecimalInput(e);
     };
   }
 
   if(userSalaryInput){
     userSalaryInput.oninput = function(e){
-      formatSalaryInput(e);
+      formatDecimalInput(e);
     };
   }
 
@@ -1151,12 +1149,9 @@ function setupSettingsInputs(){
 
     inssValue.oninput = function(){
       if(inssType.value === 'value'){
-        formatMoney({ target: inssValue });
+        formatDecimalInput({ target: inssValue });
       } else {
-        inssValue.value =
-          inssValue.value
-            .replace(/[^\d,\.]/g, '')
-            .replace('.', ',');
+        formatDecimalInput({ target: inssValue });
       }
     };
   }
@@ -1173,12 +1168,9 @@ function setupSettingsInputs(){
 
     irpfValue.oninput = function(){
       if(irpfType.value === 'value'){
-        formatMoney({ target: irpfValue });
+        formatDecimalInput({ target: irpfValue });
       } else {
-        irpfValue.value =
-          irpfValue.value
-            .replace(/[^\d,\.]/g, '')
-            .replace('.', ',');
+        formatDecimalInput({ target: irpfValue });
       }
     };
   }
