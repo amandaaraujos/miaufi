@@ -1,5 +1,4 @@
 * {
-
   margin: 0;
   padding: 0;
   box-sizing: border-box;
@@ -8,7 +7,6 @@
 }
 
 body {
-
   background: #f5efe6;
   color: #2d1b46;
 
@@ -16,7 +14,6 @@ body {
 }
 
 .header {
-
   display: flex;
 
   justify-content: space-between;
@@ -27,7 +24,6 @@ body {
 
 .menu-btn,
 button {
-
   background: #4b2a7b;
   color: white;
 
@@ -44,14 +40,12 @@ button {
 
 button:hover,
 .menu-btn:hover {
-
   opacity: 0.9;
 
   transform: translateY(-2px);
 }
 
 .menu {
-
   display: none;
 
   flex-direction: column;
@@ -62,7 +56,6 @@ button:hover,
 }
 
 .card {
-
   background: white;
 
   border-radius: 18px;
@@ -75,12 +68,10 @@ button:hover,
 }
 
 .center {
-
   text-align: center;
 }
 
 .saldo {
-
   font-size: 36px;
 
   font-weight: bold;
@@ -89,21 +80,18 @@ button:hover,
 }
 
 .positive {
-
   color: green;
 
   font-weight: bold;
 }
 
 .negative {
-
   color: red;
 
   font-weight: bold;
 }
 
 .grid {
-
   display: grid;
 
   grid-template-columns:
@@ -114,7 +102,6 @@ button:hover,
 
 input,
 select {
-
   width: 100%;
 
   padding: 12px;
@@ -127,7 +114,6 @@ select {
 }
 
 .transaction {
-
   display: flex;
 
   justify-content: space-between;
@@ -138,17 +124,14 @@ select {
 }
 
 .page {
-
   display: none;
 }
 
 .active {
-
   display: block;
 }
 
 .checkbox {
-
   display: flex;
 
   gap: 10px;
@@ -158,20 +141,23 @@ select {
   align-items: center;
 }
 
-canvas {
+.checkbox input {
+  width: auto;
 
+  margin-top: 0;
+}
+
+canvas {
   margin-top: 20px;
 
   width: 100% !important;
 }
 
 details {
-
   margin-top: 20px;
 }
 
 summary {
-
   cursor: pointer;
 
   font-weight: bold;
@@ -180,7 +166,6 @@ summary {
 }
 
 .modal-overlay {
-
   position: fixed;
 
   top: 0;
@@ -189,7 +174,7 @@ summary {
   width: 100%;
   height: 100%;
 
-  background: rgba(0,0,0,0.5);
+  background: rgba(45, 27, 70, 0.55);
 
   display: flex;
 
@@ -197,54 +182,54 @@ summary {
   align-items: center;
 
   z-index: 999;
+
+  padding: 20px;
 }
 
 .modal {
-
   background: white;
 
-  width: 90%;
-  max-width: 400px;
+  width: 100%;
+  max-width: 420px;
 
-  padding: 30px;
+  padding: 32px;
 
-  border-radius: 20px;
+  border-radius: 24px;
 
-  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+  box-shadow: 0 16px 40px rgba(0,0,0,0.22);
 
   display: flex;
   flex-direction: column;
 
-  gap: 15px;
+  gap: 14px;
 
-  animation: fadeIn 0.3s ease;
+  animation: fadeIn 0.25s ease;
 }
 
 .modal h2 {
-
   text-align: center;
 
   color: #2d1b46;
 }
 
 .modal p {
-
   text-align: center;
 
   opacity: 0.7;
 }
 
+.modal button {
+  margin-top: 10px;
+}
+
 @keyframes fadeIn {
-
   from {
-
     opacity: 0;
 
-    transform: translateY(20px);
+    transform: translateY(16px);
   }
 
   to {
-
     opacity: 1;
 
     transform: translateY(0);
