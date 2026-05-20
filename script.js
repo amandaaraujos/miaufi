@@ -42,75 +42,6 @@ const hasInstallments =
 const installmentsBox =
   document.getElementById('installmentsBox');
 
-if(Notification.permission !== 'granted'){
-  Notification.requestPermission();
-}
-
-setInterval(() => {
-  const now = new Date();
-
-  if(
-    now.getHours() === 21 &&
-    now.getMinutes() === 0
-  ){
-    if(Notification.permission === 'granted'){
-      new Notification(
-        '💰 Registre os gastos de hoje!'
-      );
-    }
-  }
-}, 60000);
-
-amountInput.addEventListener(
-  'input',
-  formatMoney
-);
-
-anotherMonth.addEventListener(
-  'change',
-  () => {
-    document.getElementById('month')
-      .style.display =
-        anotherMonth.checked
-          ? 'block'
-          : 'none';
-  }
-);
-
-hasInstallments.addEventListener(
-  'change',
-  () => {
-    installmentsBox.style.display =
-      hasInstallments.checked
-        ? 'block'
-        : 'none';
-
-    if(!hasInstallments.checked){
-      document.getElementById('installments').value = 1;
-    }
-  }
-);
-
-function saveUsers(){
-  localStorage.setItem(
-    'users',
-    JSON.stringify(users)
-  );
-}
-
-function saveData(){
-  if(!user || !currentUserEmail){
-    return;
-  }
-
-  user.transactions = transactions;
-  user.carryOver = carryOver;
-
-  users[currentUserEmail] = user;
-
-  saveUsers();
-}
-
 function showLoginForm(){
   authChoice.classList.add('hidden');
   createAccountForm.classList.add('hidden');
@@ -127,6 +58,13 @@ function backToAuthChoice(){
   loginForm.classList.add('hidden');
   createAccountForm.classList.add('hidden');
   authChoice.classList.remove('hidden');
+}
+
+function saveUsers(){
+  localStorage.setItem(
+    'users',
+    JSON.stringify(users)
+  );
 }
 
 function createUserAccount(){
@@ -176,7 +114,6 @@ function createUserAccount(){
   );
 
   saveUsers();
-
   openApp();
 }
 
@@ -192,8 +129,13 @@ function loginUser(){
     return;
   }
 
-  if(!users[email] || users[email].password !== password){
-    alert('E-mail ou senha inválidos');
+  if(!users[email]){
+    alert('Conta não encontrada');
+    return;
+  }
+
+  if(users[email].password !== password){
+    alert('Senha incorreta');
     return;
   }
 
@@ -231,8 +173,69 @@ function openApp(){
   appContent.style.display = 'block';
 
   showPage('home');
-
   render();
+}
+
+if(Notification.permission !== 'granted'){
+  Notification.requestPermission();
+}
+
+setInterval(() => {
+  const now = new Date();
+
+  if(
+    now.getHours() === 21 &&
+    now.getMinutes() === 0
+  ){
+    if(Notification.permission === 'granted'){
+      new Notification(
+        '💰 Registre os gastos de hoje!'
+      );
+    }
+  }
+}, 60000);
+
+amountInput.addEventListener(
+  'input',
+  formatMoney
+);
+
+anotherMonth.addEventListener(
+  'change',
+  () => {
+    document.getElementById('month')
+      .style.display =
+        anotherMonth.checked
+          ? 'block'
+          : 'none';
+  }
+);
+
+hasInstallments.addEventListener(
+  'change',
+  () => {
+    installmentsBox.style.display =
+      hasInstallments.checked
+        ? 'block'
+        : 'none';
+
+    if(!hasInstallments.checked){
+      document.getElementById('installments').value = 1;
+    }
+  }
+);
+
+function saveData(){
+  if(!user || !currentUserEmail){
+    return;
+  }
+
+  user.transactions = transactions;
+  user.carryOver = carryOver;
+
+  users[currentUserEmail] = user;
+
+  saveUsers();
 }
 
 function toggleMenu(){
@@ -348,9 +351,7 @@ function addTransaction(){
 
     transactions.push({
       id: crypto.randomUUID(),
-
       type,
-
       name,
 
       amount: fixed
@@ -358,9 +359,7 @@ function addTransaction(){
         : signedAmount / installments,
 
       category,
-
       month: finalMonth,
-
       fixed,
 
       installment: fixed || installments === 1
@@ -372,32 +371,21 @@ function addTransaction(){
   }
 
   saveData();
-
   clearForm();
-
   render();
 }
 
 function clearForm(){
   document.getElementById('name').value = '';
-
   document.getElementById('amount').value = '';
-
   document.getElementById('category').value = '';
-
   document.getElementById('installments').value = 1;
-
   document.getElementById('fixed').checked = false;
-
   document.getElementById('hasInstallments').checked = false;
-
   document.getElementById('anotherMonth').checked = false;
+  document.getElementById('month').style.display = 'none';
 
-  document.getElementById('month').style.display =
-    'none';
-
-  installmentsBox.style.display =
-    'none';
+  installmentsBox.style.display = 'none';
 }
 
 function formatCurrency(value){
@@ -475,7 +463,6 @@ function render(){
       : 'saldo negative';
 
   renderTransactions(month);
-
   renderInsights(month);
 }
 
@@ -499,7 +486,8 @@ function renderTransactions(month){
   list.innerHTML = '';
 
   if(currentTransactions.length === 0){
-    list.innerHTML = '<p>Sem movimentações neste mês</p>';
+    list.innerHTML =
+      '<p>Sem movimentações neste mês</p>';
     return;
   }
 
@@ -547,7 +535,9 @@ function renderInsights(month){
   const biggest =
     currentTransactions
       .filter(t => t.type === 'expense')
-      .sort((a,b) => Math.abs(b.amount) - Math.abs(a.amount))[0];
+      .sort((a,b) =>
+        Math.abs(b.amount) - Math.abs(a.amount)
+      )[0];
 
   document.getElementById('biggestExpense')
     .innerText = biggest
@@ -758,9 +748,7 @@ function renderHistory(){
             );
 
           saveData();
-
           render();
-
           renderHistory();
         }
       };
@@ -787,9 +775,7 @@ function renderHistory(){
       transactions = [];
 
       saveData();
-
       render();
-
       renderHistory();
     }
   };
@@ -911,9 +897,7 @@ function removeCategory(category){
       );
 
     saveData();
-
     renderCategories();
-
     render();
   }
 }
@@ -923,4 +907,8 @@ if(user && currentUserEmail){
 } else {
   authModal.style.display = 'flex';
   appContent.style.display = 'none';
+
+  authChoice.classList.remove('hidden');
+  loginForm.classList.add('hidden');
+  createAccountForm.classList.add('hidden');
 }
