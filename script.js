@@ -42,6 +42,39 @@ const hasInstallments =
 const installmentsBox =
   document.getElementById('installmentsBox');
 
+if(Notification.permission !== 'granted'){
+  Notification.requestPermission();
+}
+
+setInterval(() => {
+  const now = new Date();
+
+  if(
+    now.getHours() === 21 &&
+    now.getMinutes() === 0
+  ){
+    if(Notification.permission === 'granted'){
+      new Notification('💰 Registre os gastos de hoje!');
+    }
+  }
+}, 60000);
+
+amountInput.addEventListener('input', formatMoney);
+
+anotherMonth.addEventListener('change', () => {
+  document.getElementById('month').style.display =
+    anotherMonth.checked ? 'block' : 'none';
+});
+
+hasInstallments.addEventListener('change', () => {
+  installmentsBox.style.display =
+    hasInstallments.checked ? 'block' : 'none';
+
+  if(!hasInstallments.checked){
+    document.getElementById('installments').value = 1;
+  }
+});
+
 function showLoginForm(){
   authChoice.classList.add('hidden');
   createAccountForm.classList.add('hidden');
@@ -176,55 +209,6 @@ function openApp(){
   render();
 }
 
-if(Notification.permission !== 'granted'){
-  Notification.requestPermission();
-}
-
-setInterval(() => {
-  const now = new Date();
-
-  if(
-    now.getHours() === 21 &&
-    now.getMinutes() === 0
-  ){
-    if(Notification.permission === 'granted'){
-      new Notification(
-        '💰 Registre os gastos de hoje!'
-      );
-    }
-  }
-}, 60000);
-
-amountInput.addEventListener(
-  'input',
-  formatMoney
-);
-
-anotherMonth.addEventListener(
-  'change',
-  () => {
-    document.getElementById('month')
-      .style.display =
-        anotherMonth.checked
-          ? 'block'
-          : 'none';
-  }
-);
-
-hasInstallments.addEventListener(
-  'change',
-  () => {
-    installmentsBox.style.display =
-      hasInstallments.checked
-        ? 'block'
-        : 'none';
-
-    if(!hasInstallments.checked){
-      document.getElementById('installments').value = 1;
-    }
-  }
-);
-
 function saveData(){
   if(!user || !currentUserEmail){
     return;
@@ -298,12 +282,13 @@ function addTransaction(){
   const name =
     document.getElementById('name').value.trim();
 
-  const amount = Number(
-    document.getElementById('amount')
-      .value
-      .replace(/[R$.\s]/g, '')
-      .replace(',', '.')
-  ) / 100;
+  const amount =
+    Number(
+      document.getElementById('amount')
+        .value
+        .replace(/[R$.\s]/g, '')
+        .replace(',', '.')
+    ) / 100;
 
   const signedAmount =
     type === 'expense'
@@ -313,9 +298,10 @@ function addTransaction(){
   const category =
     document.getElementById('category').value.trim();
 
-  const installments = hasInstallments.checked
-    ? Number(document.getElementById('installments').value)
-    : 1;
+  const installments =
+    hasInstallments.checked
+      ? Number(document.getElementById('installments').value)
+      : 1;
 
   const fixed =
     document.getElementById('fixed').checked;
@@ -353,19 +339,15 @@ function addTransaction(){
       id: crypto.randomUUID(),
       type,
       name,
-
       amount: fixed
         ? signedAmount
         : signedAmount / installments,
-
       category,
       month: finalMonth,
       fixed,
-
       installment: fixed || installments === 1
         ? null
         : `${i + 1}/${installments}`,
-
       createdAt
     });
   }
@@ -380,9 +362,11 @@ function clearForm(){
   document.getElementById('amount').value = '';
   document.getElementById('category').value = '';
   document.getElementById('installments').value = 1;
+
   document.getElementById('fixed').checked = false;
   document.getElementById('hasInstallments').checked = false;
   document.getElementById('anotherMonth').checked = false;
+
   document.getElementById('month').style.display = 'none';
 
   installmentsBox.style.display = 'none';
@@ -390,9 +374,7 @@ function clearForm(){
 
 function formatCurrency(value){
   const signal =
-    value >= 0
-      ? '+'
-      : '-';
+    value >= 0 ? '+' : '-';
 
   return `${signal}R$${Math.abs(value)
     .toLocaleString('pt-BR', {
@@ -403,26 +385,20 @@ function formatCurrency(value){
 
 function calculateMonthlyBalance(month){
   const monthly =
-    transactions.filter(
-      t => t.month === month
-    );
+    transactions.filter(t => t.month === month);
 
   let total =
     Number(user.salary);
 
   if(carryOver){
     const previousMonths =
-      [...new Set(
-        transactions.map(t => t.month)
-      )]
-      .filter(m => m < month)
-      .sort();
+      [...new Set(transactions.map(t => t.month))]
+        .filter(m => m < month)
+        .sort();
 
     previousMonths.forEach(m => {
       const monthTransactions =
-        transactions.filter(
-          t => t.month === m
-        );
+        transactions.filter(t => t.month === m);
 
       let subtotal =
         Number(user.salary);
@@ -443,7 +419,8 @@ function calculateMonthlyBalance(month){
 }
 
 function render(){
-  const month = currentMonth();
+  const month =
+    currentMonth();
 
   document.getElementById('welcome')
     .innerText = `Olá, ${user.name}`;
@@ -497,9 +474,7 @@ function renderTransactions(month){
         <div>
           <strong>${t.name}</strong>
 
-          <p>
-            ${t.category || 'Sem categoria'}
-          </p>
+          <p>${t.category || 'Sem categoria'}</p>
 
           ${
             t.installment
@@ -514,11 +489,7 @@ function renderTransactions(month){
           }
         </div>
 
-        <div class="${
-          t.amount >= 0
-            ? 'positive'
-            : 'negative'
-        }">
+        <div class="${t.amount >= 0 ? 'positive' : 'negative'}">
           ${formatCurrency(t.amount)}
         </div>
       </div>
@@ -528,9 +499,7 @@ function renderTransactions(month){
 
 function renderInsights(month){
   const currentTransactions =
-    transactions.filter(
-      t => t.month === month
-    );
+    transactions.filter(t => t.month === month);
 
   const biggest =
     currentTransactions
@@ -567,9 +536,11 @@ function renderInsights(month){
       : 'Nenhuma';
 
   const months =
-    [...new Set(
-      transactions.map(t => t.month)
-    )].sort();
+    [...new Set(transactions.map(t => t.month))]
+      .sort();
+
+  const comparison =
+    document.getElementById('comparison');
 
   if(months.length >= 2){
     const current =
@@ -582,10 +553,8 @@ function renderInsights(month){
         months[months.length - 2]
       );
 
-    const diff = current - previous;
-
-    const comparison =
-      document.getElementById('comparison');
+    const diff =
+      current - previous;
 
     comparison.innerText =
       diff >= 0
@@ -593,9 +562,10 @@ function renderInsights(month){
         : `Gasto de ${formatCurrency(diff)}`;
 
     comparison.className =
-      diff >= 0
-        ? 'positive'
-        : 'negative';
+      diff >= 0 ? 'positive' : 'negative';
+  } else {
+    comparison.innerText = 'Sem comparação';
+    comparison.className = '';
   }
 }
 
@@ -625,9 +595,11 @@ function renderHistory(){
   const container =
     document.createElement('div');
 
-  container.id = 'historyDetails';
+  container.id =
+    'historyDetails';
 
-  const currentDate = new Date();
+  const currentDate =
+    new Date();
 
   const currentYear =
     currentDate.getFullYear();
@@ -647,7 +619,8 @@ function renderHistory(){
     const details =
       document.createElement('details');
 
-    details.className = 'card';
+    details.className =
+      'card';
 
     const summary =
       document.createElement('summary');
@@ -661,7 +634,8 @@ function renderHistory(){
         year: 'numeric'
       });
 
-    summary.innerText = monthName;
+    summary.innerText =
+      monthName;
 
     details.appendChild(summary);
 
@@ -672,13 +646,13 @@ function renderHistory(){
       const empty =
         document.createElement('p');
 
-      empty.style.marginTop = '15px';
+      empty.style.marginTop =
+        '15px';
 
       empty.innerText =
         'Sem registros';
 
       details.appendChild(empty);
-
     } else {
       monthTransactions
         .sort((a,b) => {
@@ -694,15 +668,14 @@ function renderHistory(){
           const item =
             document.createElement('div');
 
-          item.className = 'transaction';
+          item.className =
+            'transaction';
 
           item.innerHTML = `
             <div>
               <strong>${t.name}</strong>
 
-              <p>
-                ${t.category || 'Sem categoria'}
-              </p>
+              <p>${t.category || 'Sem categoria'}</p>
 
               ${
                 t.installment
@@ -717,11 +690,7 @@ function renderHistory(){
               }
             </div>
 
-            <div class="${
-              t.amount >= 0
-                ? 'positive'
-                : 'negative'
-            }">
+            <div class="${t.amount >= 0 ? 'positive' : 'negative'}">
               ${formatCurrency(t.amount)}
             </div>
           `;
@@ -739,9 +708,7 @@ function renderHistory(){
         '15px';
 
       deleteBtn.onclick = () => {
-        if(confirm(
-          'Deseja excluir esse histórico?'
-        )){
+        if(confirm('Deseja excluir esse histórico?')){
           transactions =
             transactions.filter(
               t => t.month !== monthKey
@@ -769,9 +736,7 @@ function renderHistory(){
     '20px';
 
   clearAll.onclick = () => {
-    if(confirm(
-      'Deseja apagar todo histórico?'
-    )){
+    if(confirm('Deseja apagar todo histórico?')){
       transactions = [];
 
       saveData();
@@ -781,7 +746,6 @@ function renderHistory(){
   };
 
   container.appendChild(clearAll);
-
   historyPage.appendChild(container);
 }
 
@@ -815,29 +779,29 @@ function renderChart(grouped){
     window.chartInstance.destroy();
   }
 
-  window.chartInstance = new Chart(ctx, {
-    type: 'line',
+  window.chartInstance =
+    new Chart(ctx, {
+      type: 'line',
 
-    data: {
-      labels,
+      data: {
+        labels,
 
-      datasets: [
-        {
-          label: 'Receitas',
-          data: incomes,
-          borderColor: 'green',
-          tension: 0.3
-        },
-
-        {
-          label: 'Despesas',
-          data: expenses,
-          borderColor: 'red',
-          tension: 0.3
-        }
-      ]
-    }
-  });
+        datasets: [
+          {
+            label: 'Receitas',
+            data: incomes,
+            borderColor: 'green',
+            tension: 0.3
+          },
+          {
+            label: 'Despesas',
+            data: expenses,
+            borderColor: 'red',
+            tension: 0.3
+          }
+        ]
+      }
+    });
 }
 
 function renderCategories(){
@@ -856,9 +820,7 @@ function renderCategories(){
   categories.forEach(category => {
     const total =
       transactions
-        .filter(
-          t => t.category === category
-        )
+        .filter(t => t.category === category)
         .reduce((acc,t) => {
           return acc + t.amount;
         },0);
@@ -868,18 +830,12 @@ function renderCategories(){
         <div>
           <strong>${category}</strong>
 
-          <p class="${
-            total >= 0
-              ? 'positive'
-              : 'negative'
-          }">
+          <p class="${total >= 0 ? 'positive' : 'negative'}">
             ${formatCurrency(total)}
           </p>
         </div>
 
-        <button
-          onclick="removeCategory('${category}')"
-        >
+        <button onclick="removeCategory('${category}')">
           Excluir
         </button>
       </div>
@@ -888,9 +844,7 @@ function renderCategories(){
 }
 
 function removeCategory(category){
-  if(confirm(
-    'Deseja excluir esta categoria?'
-  )){
+  if(confirm('Deseja excluir esta categoria?')){
     transactions =
       transactions.filter(
         t => t.category !== category
@@ -901,6 +855,17 @@ function removeCategory(category){
     render();
   }
 }
+
+window.showLoginForm = showLoginForm;
+window.showCreateAccountForm = showCreateAccountForm;
+window.backToAuthChoice = backToAuthChoice;
+window.createUserAccount = createUserAccount;
+window.loginUser = loginUser;
+window.logoutUser = logoutUser;
+window.toggleMenu = toggleMenu;
+window.showPage = showPage;
+window.addTransaction = addTransaction;
+window.removeCategory = removeCategory;
 
 if(user && currentUserEmail){
   openApp();
