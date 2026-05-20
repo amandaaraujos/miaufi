@@ -1,21 +1,12 @@
 let user = JSON.parse(localStorage.getItem('user')) || null;
-let transactions = JSON.parse(localStorage.getItem('transactions')) || [];
-let carryOver = JSON.parse(localStorage.getItem('carryOver')) || false;
 
-if(!user){
+let transactions =
+  JSON.parse(localStorage.getItem('transactions'))
+  || [];
 
-  const name = prompt('Qual seu nome?');
-  const salary = Number(prompt('Qual seu salário?'));
-  const type = prompt('Seu salário é bruto ou líquido?');
-
-  user = {
-    name,
-    salary,
-    type
-  };
-
-  localStorage.setItem('user', JSON.stringify(user));
-}
+let carryOver =
+  JSON.parse(localStorage.getItem('carryOver'))
+  || false;
 
 if(Notification.permission !== 'granted'){
   Notification.requestPermission();
@@ -25,10 +16,16 @@ setInterval(() => {
 
   const now = new Date();
 
-  if(now.getHours() === 21 && now.getMinutes() === 0){
+  if(
+    now.getHours() === 21 &&
+    now.getMinutes() === 0
+  ){
 
     if(Notification.permission === 'granted'){
-      new Notification('💰 Registre os gastos de hoje!');
+
+      new Notification(
+        '💰 Registre os gastos de hoje!'
+      );
     }
   }
 
@@ -49,7 +46,8 @@ function saveData(){
 
 function toggleMenu(){
 
-  const menu = document.getElementById('menu');
+  const menu =
+    document.getElementById('menu');
 
   menu.style.display =
     menu.style.display === 'flex'
@@ -79,13 +77,43 @@ function showPage(page){
 const anotherMonth =
   document.getElementById('anotherMonth');
 
-anotherMonth.addEventListener('change', () => {
+const amountInput =
+  document.getElementById('amount');
 
-  document.getElementById('month').style.display =
-    anotherMonth.checked
-      ? 'block'
-      : 'none';
-});
+amountInput.addEventListener(
+  'input',
+  formatMoney
+);
+
+function formatMoney(e){
+
+  let value = e.target.value;
+
+  value = value.replace(/\D/g, '');
+
+  value = (Number(value) / 100)
+    .toFixed(2)
+    .replace('.', ',');
+
+  value = value.replace(
+    /\B(?=(\d{3})+(?!\d))/g,
+    '.'
+  );
+
+  e.target.value = `R$ ${value}`;
+}
+
+anotherMonth.addEventListener(
+  'change',
+  () => {
+
+    document.getElementById('month')
+      .style.display =
+        anotherMonth.checked
+          ? 'block'
+          : 'none';
+  }
+);
 
 function currentMonth(){
 
@@ -105,8 +133,11 @@ function addTransaction(){
     document.getElementById('name').value;
 
   const amount = Number(
-    document.getElementById('amount').value
-  );
+    document.getElementById('amount')
+      .value
+      .replace(/[R$.\s]/g, '')
+      .replace(',', '.')
+  ) / 100;
 
   const category =
     document.getElementById('category').value;
@@ -124,6 +155,7 @@ function addTransaction(){
   if(!name || !amount){
 
     alert('Preencha nome e valor');
+
     return;
   }
 
@@ -139,7 +171,8 @@ function addTransaction(){
 
   for(let i = 0; i < recurringMonths; i++){
 
-    const date = new Date(month + '-01');
+    const date =
+      new Date(month + '-01');
 
     date.setMonth(date.getMonth() + i);
 
@@ -182,7 +215,9 @@ function addTransaction(){
 function clearForm(){
 
   document.getElementById('name').value = '';
+
   document.getElementById('amount').value = '';
+
   document.getElementById('category').value = '';
 
   document.getElementById('installments').value = 1;
@@ -191,19 +226,22 @@ function clearForm(){
 
   document.getElementById('anotherMonth').checked = false;
 
-  document.getElementById('month').style.display = 'none';
+  document.getElementById('month').style.display =
+    'none';
 }
 
 function formatCurrency(value){
 
-  const signal = value >= 0
-    ? '+'
-    : '-';
+  const signal =
+    value >= 0
+      ? '+'
+      : '-';
 
   return `${signal}R$${Math.abs(value)
     .toLocaleString('pt-BR', {
 
       minimumFractionDigits: 2,
+
       maximumFractionDigits: 2
     })}`;
 }
@@ -211,23 +249,31 @@ function formatCurrency(value){
 function calculateMonthlyBalance(month){
 
   const monthly =
-    transactions.filter(t => t.month === month);
+    transactions.filter(
+      t => t.month === month
+    );
 
-  let total = Number(user.salary);
+  let total =
+    Number(user.salary);
 
   if(carryOver){
 
     const previousMonths =
-      [...new Set(transactions.map(t => t.month))]
-        .filter(m => m < month)
-        .sort();
+      [...new Set(
+        transactions.map(t => t.month)
+      )]
+      .filter(m => m < month)
+      .sort();
 
     previousMonths.forEach(m => {
 
       const monthTransactions =
-        transactions.filter(t => t.month === m);
+        transactions.filter(
+          t => t.month === m
+        );
 
-      let subtotal = Number(user.salary);
+      let subtotal =
+        Number(user.salary);
 
       monthTransactions.forEach(t => {
 
@@ -281,7 +327,9 @@ function render(){
 function renderTransactions(month){
 
   const currentTransactions =
-    transactions.filter(t => t.month === month);
+    transactions.filter(
+      t => t.month === month
+    );
 
   const list =
     document.getElementById('transactions');
@@ -289,7 +337,9 @@ function renderTransactions(month){
   list.innerHTML = '';
 
   currentTransactions
-    .sort((a,b) => a.type.localeCompare(b.type))
+    .sort((a,b) =>
+      a.type.localeCompare(b.type)
+    )
     .forEach(t => {
 
       list.innerHTML += `
@@ -300,11 +350,15 @@ function renderTransactions(month){
 
             <strong>${t.name}</strong>
 
-            <p>${t.category || 'Sem categoria'}</p>
+            <p>
+              ${t.category || 'Sem categoria'}
+            </p>
 
             ${
               t.installment
-                ? `<small>Parcela ${t.installment}</small>`
+                ? `<small>
+                    Parcela ${t.installment}
+                  </small>`
                 : ''
             }
 
@@ -338,7 +392,9 @@ function renderTransactions(month){
 function renderInsights(month){
 
   const currentTransactions =
-    transactions.filter(t => t.month === month);
+    transactions.filter(
+      t => t.month === month
+    );
 
   const biggest =
     currentTransactions
@@ -347,7 +403,8 @@ function renderInsights(month){
 
   document.getElementById('biggestExpense')
     .innerText = biggest
-      ? `${biggest.name} ${formatCurrency(-biggest.amount)}`
+      ? `${biggest.name}
+         ${formatCurrency(-biggest.amount)}`
       : 'Nenhuma';
 
   const categoryTotals = {};
@@ -370,12 +427,14 @@ function renderInsights(month){
 
   document.getElementById('bestCategory')
     .innerText = best
-      ? `${best[0]} ${formatCurrency(best[1])}`
+      ? `${best[0]}
+         ${formatCurrency(best[1])}`
       : 'Nenhuma';
 
   const months =
-    [...new Set(transactions.map(t => t.month))]
-      .sort();
+    [...new Set(
+      transactions.map(t => t.month)
+    )].sort();
 
   if(months.length >= 2){
 
@@ -436,24 +495,64 @@ function renderHistory(){
 
   container.id = 'historyDetails';
 
-  Object.keys(grouped)
-    .sort()
-    .reverse()
-    .forEach(month => {
+  const currentDate = new Date();
 
-      const details =
-        document.createElement('details');
+  const currentYear =
+    currentDate.getFullYear();
 
-      details.className = 'card';
+  const currentMonthIndex =
+    currentDate.getMonth() + 1;
 
-      const summary =
-        document.createElement('summary');
+  for(
+    let month = 1;
+    month <= currentMonthIndex;
+    month++
+  ){
 
-      summary.innerText = month;
+    const monthKey =
+      `${currentYear}-${String(month)
+        .padStart(2, '0')}`;
 
-      details.appendChild(summary);
+    const details =
+      document.createElement('details');
 
-      grouped[month].forEach(t => {
+    details.className = 'card';
+
+    const summary =
+      document.createElement('summary');
+
+    const monthName =
+      new Date(
+        currentYear,
+        month - 1
+      ).toLocaleString('pt-BR', {
+
+        month: 'long',
+        year: 'numeric'
+      });
+
+    summary.innerText = monthName;
+
+    details.appendChild(summary);
+
+    const monthTransactions =
+      grouped[monthKey] || [];
+
+    if(monthTransactions.length === 0){
+
+      const empty =
+        document.createElement('p');
+
+      empty.style.marginTop = '15px';
+
+      empty.innerText =
+        'Sem registros';
+
+      details.appendChild(empty);
+
+    } else {
+
+      monthTransactions.forEach(t => {
 
         const item =
           document.createElement('div');
@@ -466,7 +565,23 @@ function renderHistory(){
 
             <strong>${t.name}</strong>
 
-            <p>${t.category || 'Sem categoria'}</p>
+            <p>
+              ${t.category || 'Sem categoria'}
+            </p>
+
+            ${
+              t.installment
+                ? `<small>
+                    Parcela ${t.installment}
+                  </small>`
+                : ''
+            }
+
+            ${
+              t.fixed
+                ? `<small> • Fixo</small>`
+                : ''
+            }
 
           </div>
 
@@ -504,7 +619,7 @@ function renderHistory(){
 
           transactions =
             transactions.filter(
-              t => t.month !== month
+              t => t.month !== monthKey
             );
 
           saveData();
@@ -516,15 +631,18 @@ function renderHistory(){
       };
 
       details.appendChild(deleteBtn);
+    }
 
-      container.appendChild(details);
-    });
+    container.appendChild(details);
+  }
 
   const clearAll =
     document.createElement('button');
 
   clearAll.innerText =
     'Apagar histórico completo';
+
+  clearAll.style.marginTop = '20px';
 
   clearAll.onclick = () => {
 
@@ -628,7 +746,9 @@ function renderCategories(){
 
     const total =
       transactions
-        .filter(t => t.category === category)
+        .filter(
+          t => t.category === category
+        )
         .reduce((acc,t) => {
 
           return acc + (
@@ -689,4 +809,46 @@ function removeCategory(category){
   }
 }
 
-render();
+function saveUserData(){
+
+  const name =
+    document.getElementById('userName').value;
+
+  const salary = Number(
+    document.getElementById('userSalary').value
+  );
+
+  const type =
+    document.getElementById('salaryType').value;
+
+  if(!name || !salary){
+
+    alert('Preencha todos os campos');
+
+    return;
+  }
+
+  user = {
+    name,
+    salary,
+    type
+  };
+
+  localStorage.setItem(
+    'user',
+    JSON.stringify(user)
+  );
+
+  document.getElementById('welcomeModal')
+    .style.display = 'none';
+
+  render();
+}
+
+if(user){
+
+  document.getElementById('welcomeModal')
+    .style.display = 'none';
+
+  render();
+}
