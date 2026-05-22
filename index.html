@@ -853,56 +853,6 @@
 
       </div>
 
-      <div class="support-grid">
-
-        <a
-          class="support-card"
-          href="tel:+550000000000"
-        >
-
-          <div class="summary-icon">
-            ☎️
-          </div>
-
-          <strong>
-            Telefone
-          </strong>
-
-          <p>
-            Fale com o suporte do Miaufi
-          </p>
-
-          <span>
-            Ligar agora
-          </span>
-
-        </a>
-
-        <button
-          class="support-card"
-          onclick="startHelpChat()"
-        >
-
-          <div class="summary-icon">
-            💬
-          </div>
-
-          <strong>
-            Chat
-          </strong>
-
-          <p>
-            Tire dúvidas pelo atendimento online
-          </p>
-
-          <span>
-            Iniciar conversa
-          </span>
-
-        </button>
-
-      </div>
-
       <div class="card">
 
         <div class="section-header">
@@ -912,70 +862,185 @@
           </h2>
 
           <p>
-            Guias rápidos para usar melhor o Miaufi
+            Escolha um tema para encontrar respostas sobre o Miaufi
           </p>
 
         </div>
 
-        <div class="help-category">
+        <div class="help-categories-grid">
 
-          <h3>
-            Primeiros passos
-          </h3>
+          <button
+            class="help-category-card"
+            onclick="openHelpCategory('primeiros-passos')"
+          >
 
-          <button class="article-button">
-            Artigo 1
+            <div class="summary-icon">
+              🐾
+            </div>
+
+            <strong>
+              Primeiros passos
+            </strong>
+
+            <p>
+              Aprenda a configurar sua conta e começar a usar o Miaufi.
+            </p>
+
+            <span>
+              Ver mais
+            </span>
+
           </button>
 
-          <button class="article-button">
-            Artigo 2
+          <button
+            class="help-category-card"
+            onclick="openHelpCategory('movimentacoes')"
+          >
+
+            <div class="summary-icon">
+              💸
+            </div>
+
+            <strong>
+              Movimentações e categorias
+            </strong>
+
+            <p>
+              Entenda como registrar gastos, entradas, parcelas e categorias.
+            </p>
+
+            <span>
+              Ver mais
+            </span>
+
           </button>
 
-          <button class="article-button">
-            Artigo 3
+          <button
+            class="help-category-card"
+            onclick="openHelpCategory('conta-seguranca')"
+          >
+
+            <div class="summary-icon">
+              🔐
+            </div>
+
+            <strong>
+              Conta, segurança e histórico
+            </strong>
+
+            <p>
+              Veja como cuidar da sua conta, senha, histórico e dados salvos.
+            </p>
+
+            <span>
+              Ver mais
+            </span>
+
           </button>
 
         </div>
 
-        <div class="help-category">
+      </div>
 
-          <h3>
-            Movimentações e categorias
-          </h3>
+      <div class="card">
 
-          <button class="article-button">
-            Artigo 1
-          </button>
+        <div class="section-header">
 
-          <button class="article-button">
-            Artigo 2
-          </button>
+          <h2>
+            Canais de atendimento
+          </h2>
 
-          <button class="article-button">
-            Artigo 3
+          <p>
+            Se precisar de ajuda, escolha um canal para falar com o Miaufi
+          </p>
+
+        </div>
+
+        <div class="support-grid">
+
+          <a
+            class="support-card"
+            href="tel:+550000000000"
+          >
+
+            <div class="summary-icon support-icon">
+              ☎️
+            </div>
+
+            <strong>
+              Telefone
+            </strong>
+
+            <p>
+              Fale com o suporte do Miaufi.
+            </p>
+
+            <span>
+              Ligar agora
+            </span>
+
+          </a>
+
+          <button
+            class="support-card"
+            onclick="startHelpChat()"
+          >
+
+            <div class="summary-icon support-icon">
+              💬
+            </div>
+
+            <strong>
+              Chat
+            </strong>
+
+            <p>
+              Tire dúvidas pelo atendimento online.
+            </p>
+
+            <span>
+              Falar no chat
+            </span>
+
           </button>
 
         </div>
 
-        <div class="help-category">
+      </div>
 
-          <h3>
-            Conta, segurança e histórico
-          </h3>
+    </section>
 
-          <button class="article-button">
-            Artigo 1
-          </button>
+    <section
+      id="helpCategoryDetail"
+      class="page"
+    >
 
-          <button class="article-button">
-            Artigo 2
-          </button>
+      <div class="card">
 
-          <button class="article-button">
-            Artigo 3
+        <div class="section-header detail-header">
+
+          <div>
+
+            <h2 id="helpCategoryTitle">
+              Categoria de ajuda
+            </h2>
+
+            <p id="helpCategoryDescription">
+              Artigos disponíveis
+            </p>
+
+          </div>
+
+          <button
+            class="secondary-btn small-button"
+            onclick="showPage('help')"
+          >
+            Voltar
           </button>
 
         </div>
+
+        <div id="helpArticlesList"></div>
 
       </div>
 
