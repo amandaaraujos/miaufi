@@ -29,11 +29,13 @@ body{
   padding:20px;
 }
 
+/* ========================= */
 /* TOPBAR */
+/* ========================= */
 
 .topbar{
   display:grid;
-  grid-template-columns:72px 1fr 72px;
+  grid-template-columns:78px 1fr 52px;
   align-items:center;
   gap:12px;
   margin-bottom:24px;
@@ -43,7 +45,7 @@ body{
   display:flex;
   align-items:center;
   justify-content:center;
-  gap:12px;
+  gap:14px;
   width:100%;
   min-width:0;
   overflow:visible;
@@ -66,7 +68,7 @@ body{
 }
 
 .brand-text h1{
-  font-size:24px;
+  font-size:26px;
   font-weight:700;
   color:var(--primary);
   line-height:1.1;
@@ -80,23 +82,33 @@ body{
 }
 
 .logo{
-  width:72px !important;
-  height:72px !important;
-  min-width:72px !important;
-  min-height:72px !important;
-  max-width:72px !important;
-  max-height:72px !important;
+  width:78px !important;
+  height:78px !important;
+  min-width:78px !important;
+  min-height:78px !important;
+  max-width:78px !important;
+  max-height:78px !important;
   object-fit:contain;
   display:block;
   flex-shrink:0;
 }
 
-.header-space{
-  width:72px;
-  height:72px;
+.help-header-button{
+  width:52px;
+  height:52px;
+  border-radius:18px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:22px;
+  padding:0;
+  background:var(--primary);
+  color:white;
 }
 
+/* ========================= */
 /* MENU */
+/* ========================= */
 
 .menu{
   display:none;
@@ -110,7 +122,9 @@ body{
   width:100%;
 }
 
+/* ========================= */
 /* BOTÕES */
+/* ========================= */
 
 button{
   border:none;
@@ -160,17 +174,19 @@ button:active{
 }
 
 .menu-btn{
-  width:72px;
-  height:72px;
-  border-radius:22px;
+  width:78px;
+  height:78px;
+  border-radius:24px;
   display:flex;
   align-items:center;
   justify-content:center;
-  font-size:26px;
+  font-size:28px;
   padding:0;
 }
 
+/* ========================= */
 /* HERO */
+/* ========================= */
 
 .hero-card{
   background:linear-gradient(135deg,#4B247A 0%,#6A3DA6 100%);
@@ -219,10 +235,20 @@ button:active{
   font-size:14px;
 }
 
+.wool-hero{
+  background:linear-gradient(135deg,#8054B8 0%,#4B247A 100%);
+}
+
+.help-hero{
+  background:linear-gradient(135deg,#5A2E8A 0%,#241236 100%);
+}
+
+/* ========================= */
 /* CARDS */
+/* ========================= */
 
 .card{
-  background:rgba(255,255,255,0.85);
+  background:rgba(255,255,255,0.92);
   backdrop-filter:blur(10px);
   border:1px solid var(--border);
   border-radius:28px;
@@ -292,7 +318,9 @@ button:active{
   font-size:16px;
 }
 
+/* ========================= */
 /* CATEGORY DETAIL */
+/* ========================= */
 
 .detail-header{
   display:flex;
@@ -302,7 +330,11 @@ button:active{
 }
 
 .category-total-box{
-  background:linear-gradient(135deg,rgba(75,36,122,0.08),rgba(106,61,166,0.12));
+  background:linear-gradient(
+    135deg,
+    rgba(75,36,122,0.08),
+    rgba(106,61,166,0.12)
+  );
   border:1px solid rgba(75,36,122,0.12);
   padding:22px;
   border-radius:22px;
@@ -311,7 +343,9 @@ button:active{
   font-weight:700;
 }
 
+/* ========================= */
 /* CATEGORIAS */
+/* ========================= */
 
 #categoriesList{
   display:flex;
@@ -319,7 +353,6 @@ button:active{
   gap:18px;
 }
 
-#categoriesList .category-row,
 .category-row{
   width:100%;
   background:#FFFFFF !important;
@@ -333,24 +366,17 @@ button:active{
   gap:16px;
   box-shadow:0 8px 20px rgba(36,18,54,0.04);
   text-align:left;
-  margin:0;
 }
 
-#categoriesList .category-row:hover,
 .category-row:hover{
   background:#FFFFFF !important;
-  color:var(--primary-dark) !important;
-  transform:translateY(-2px);
-  box-shadow:var(--shadow-hover);
 }
 
-#categoriesList .category-row strong,
 .category-row strong{
   color:var(--primary-dark);
   font-size:16px;
 }
 
-#categoriesList .category-row p,
 .category-row p{
   color:var(--text-secondary);
   font-size:13px;
@@ -358,35 +384,75 @@ button:active{
   font-weight:500;
 }
 
-#categoriesList .category-row div:last-child,
-.category-row div:last-child{
-  white-space:nowrap;
+/* ========================= */
+/* SUPORTE */
+/* ========================= */
+
+.support-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+  gap:18px;
+  margin-bottom:24px;
+}
+
+.support-card{
+  background:white;
+  border:1px solid var(--border);
+  border-radius:24px;
+  padding:24px;
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+  text-decoration:none;
+  color:var(--primary-dark);
+  box-shadow:0 8px 20px rgba(36,18,54,0.04);
+  transition:0.25s;
+}
+
+.support-card:hover{
+  transform:translateY(-2px);
+  box-shadow:var(--shadow-hover);
+}
+
+.support-card strong{
+  font-size:18px;
+}
+
+.support-card p{
+  color:var(--text-secondary);
+  line-height:1.5;
+}
+
+.support-card span{
+  color:var(--primary);
   font-weight:700;
 }
 
-.category-item{
-  display:flex;
-  justify-content:space-between;
-  gap:16px;
-  padding:18px 0;
-  border-bottom:1px solid var(--border);
+.help-category{
+  margin-bottom:28px;
 }
 
-.category-item:last-child{
-  border-bottom:none;
+.help-category h3{
+  margin-bottom:14px;
+  color:var(--primary-dark);
 }
 
-.category-item strong{
-  font-size:15px;
+.article-button{
+  width:100%;
+  margin-bottom:10px;
+  background:white;
+  color:var(--primary-dark);
+  border:1px solid var(--border);
+  text-align:left;
 }
 
-.category-item p{
-  font-size:13px;
-  color:var(--text-secondary);
-  margin-top:4px;
+.article-button:hover{
+  background:#FFFFFF;
 }
 
+/* ========================= */
 /* SECTIONS */
+/* ========================= */
 
 .section-header{
   margin-bottom:22px;
@@ -404,7 +470,9 @@ button:active{
   line-height:1.5;
 }
 
+/* ========================= */
 /* FORMULÁRIOS */
+/* ========================= */
 
 .form-card label,
 label{
@@ -444,7 +512,9 @@ select:focus{
   width:100%;
 }
 
+/* ========================= */
 /* CHECKBOX */
+/* ========================= */
 
 .checkbox{
   display:flex;
@@ -464,7 +534,9 @@ select:focus{
   font-size:14px;
 }
 
+/* ========================= */
 /* TRANSAÇÕES */
+/* ========================= */
 
 .transaction{
   display:flex;
@@ -510,7 +582,9 @@ select:focus{
   white-space:nowrap;
 }
 
+/* ========================= */
 /* TEXTO */
+/* ========================= */
 
 .positive{
   color:var(--positive) !important;
@@ -522,7 +596,9 @@ select:focus{
   font-weight:700;
 }
 
+/* ========================= */
 /* MODAIS */
+/* ========================= */
 
 .modal-overlay{
   position:fixed;
@@ -590,7 +666,9 @@ select:focus{
   color:var(--primary-dark);
 }
 
+/* ========================= */
 /* SETTINGS */
+/* ========================= */
 
 .settings-title{
   margin-top:10px;
@@ -604,7 +682,9 @@ select:focus{
   margin:24px 0;
 }
 
+/* ========================= */
 /* PÁGINAS */
+/* ========================= */
 
 .page{
   display:none;
@@ -615,13 +695,17 @@ select:focus{
   animation:fadeIn 0.25s ease;
 }
 
+/* ========================= */
 /* UTILITÁRIOS */
+/* ========================= */
 
 .hidden{
   display:none !important;
 }
 
+/* ========================= */
 /* ANIMAÇÕES */
+/* ========================= */
 
 @keyframes fadeIn{
   from{
@@ -647,7 +731,9 @@ select:focus{
   }
 }
 
+/* ========================= */
 /* RESPONSIVO */
+/* ========================= */
 
 @media(max-width:768px){
 
@@ -656,78 +742,33 @@ select:focus{
   }
 
   .topbar{
-    grid-template-columns:68px 1fr 68px;
-    gap:8px;
-  }
-
-  .menu-btn{
-    width:68px;
-    height:68px;
-    border-radius:22px;
-  }
-
-  .header-space{
-    width:68px;
-    height:68px;
-  }
-
-  .brand{
-    justify-content:center;
+    grid-template-columns:72px 1fr 48px;
     gap:10px;
   }
 
-  .brand-text h1{
-    font-size:20px;
-  }
-
-  .brand-text p{
-    font-size:11px;
+  .menu-btn{
+    width:72px;
+    height:72px;
+    border-radius:22px;
   }
 
   .logo{
-    width:68px !important;
-    height:68px !important;
-    min-width:68px !important;
-    min-height:68px !important;
-    max-width:68px !important;
-    max-height:68px !important;
+    width:72px !important;
+    height:72px !important;
+    min-width:72px !important;
+    min-height:72px !important;
   }
 
-  .auth-logo{
-    width:100px;
-    height:100px;
-  }
-
-  .mini-logo{
-    width:60px;
-    height:60px;
-  }
-
-  .hero-card{
-    padding:24px;
-    border-radius:24px;
-  }
-
-  .saldo{
-    font-size:36px;
-  }
-
-  .card{
-    padding:20px;
-    border-radius:22px;
+  .brand{
+    justify-content:flex-start;
   }
 
   .summary-grid{
     grid-template-columns:1fr;
   }
 
-  .modal{
-    padding:24px;
-    border-radius:26px;
-  }
-
-  .detail-header{
-    flex-direction:column;
+  .support-grid{
+    grid-template-columns:1fr;
   }
 
 }
@@ -739,81 +780,40 @@ select:focus{
   }
 
   .topbar{
-    grid-template-columns:64px 1fr 64px;
-    margin-bottom:18px;
+    grid-template-columns:68px 1fr 44px;
   }
 
   .menu-btn{
-    width:64px;
-    height:64px;
-    border-radius:20px;
+    width:68px;
+    height:68px;
+    font-size:24px;
   }
 
-  .header-space{
-    width:64px;
-    height:64px;
-  }
-
-  .brand{
-    gap:8px;
+  .logo{
+    width:68px !important;
+    height:68px !important;
+    min-width:68px !important;
+    min-height:68px !important;
   }
 
   .brand-text h1{
-    font-size:18px;
+    font-size:20px;
   }
 
   .brand-text p{
     display:none;
   }
 
-  .logo{
-    width:64px !important;
-    height:64px !important;
-    min-width:64px !important;
-    min-height:64px !important;
-    max-width:64px !important;
-    max-height:64px !important;
-  }
-
-  .auth-logo{
-    width:88px;
-    height:88px;
-  }
-
-  .mini-logo{
-    width:54px;
-    height:54px;
-  }
-
   .hero-card{
-    padding:20px;
-  }
-
-  .saldo{
-    font-size:30px;
-  }
-
-  .hero-title{
-    font-size:16px;
-  }
-
-  .section-header h2{
-    font-size:20px;
-  }
-
-  input,
-  select,
-  button{
-    font-size:14px;
-  }
-
-  .modal{
     padding:22px;
   }
 
-  .category-row{
-    padding:18px;
-    border-radius:22px;
+  .saldo{
+    font-size:34px;
+  }
+
+  .card{
+    padding:20px;
   }
 
 }
