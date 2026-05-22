@@ -30,6 +30,68 @@ let featuredCategory =
 let selectedCategory =
   null;
 
+let selectedHelpCategory =
+  null;
+
+const helpCategories = {
+  'primeiros-passos': {
+    title: 'Primeiros passos',
+    description: 'Aprenda a configurar sua conta e começar a usar o Miaufi.',
+    articles: [
+      {
+        title: 'Artigo 1',
+        description: 'Como criar sua conta no Miaufi.'
+      },
+      {
+        title: 'Artigo 2',
+        description: 'Como informar seu salário.'
+      },
+      {
+        title: 'Artigo 3',
+        description: 'Como entender seu saldo disponível.'
+      }
+    ]
+  },
+
+  movimentacoes: {
+    title: 'Movimentações e categorias',
+    description: 'Entenda como registrar gastos, entradas, parcelas e categorias.',
+    articles: [
+      {
+        title: 'Artigo 1',
+        description: 'Como adicionar uma entrada ou gasto.'
+      },
+      {
+        title: 'Artigo 2',
+        description: 'Como dividir uma compra em parcelas.'
+      },
+      {
+        title: 'Artigo 3',
+        description: 'Como usar categorias para organizar seus registros.'
+      }
+    ]
+  },
+
+  'conta-seguranca': {
+    title: 'Conta, segurança e histórico',
+    description: 'Veja como cuidar da sua conta, senha, histórico e dados salvos.',
+    articles: [
+      {
+        title: 'Artigo 1',
+        description: 'Como recuperar sua senha.'
+      },
+      {
+        title: 'Artigo 2',
+        description: 'Como consultar o extrato mensal.'
+      },
+      {
+        title: 'Artigo 3',
+        description: 'Como apagar registros do histórico.'
+      }
+    ]
+  }
+};
+
 const appContent = document.getElementById('appContent');
 const authModal = document.getElementById('authModal');
 const authChoice = document.getElementById('authChoice');
@@ -364,6 +426,7 @@ function logoutUser(){
   carryOver = false;
   selectedCategory = null;
   featuredCategory = null;
+  selectedHelpCategory = null;
 
   fixedTaxes = {
     inss: { enabled: false, type: 'percent', value: 0 },
@@ -448,6 +511,10 @@ function showPage(page){
 
   if(page === 'woolBall'){
     renderWoolBall();
+  }
+
+  if(page === 'helpCategoryDetail'){
+    renderHelpCategoryDetail();
   }
 }
 
@@ -1496,6 +1563,55 @@ function renderWoolBall(){
     });
 }
 
+function openHelpCategory(categoryId){
+  selectedHelpCategory =
+    categoryId;
+
+  showPage('helpCategoryDetail');
+}
+
+function renderHelpCategoryDetail(){
+  if(!selectedHelpCategory || !helpCategories[selectedHelpCategory]){
+    showPage('help');
+    return;
+  }
+
+  const category =
+    helpCategories[selectedHelpCategory];
+
+  const title =
+    document.getElementById('helpCategoryTitle');
+
+  const description =
+    document.getElementById('helpCategoryDescription');
+
+  const list =
+    document.getElementById('helpArticlesList');
+
+  title.innerText =
+    category.title;
+
+  description.innerText =
+    category.description;
+
+  list.innerHTML = '';
+
+  category.articles.forEach(article => {
+    list.innerHTML += `
+      <button class="article-row">
+        <div>
+          <strong>${article.title}</strong>
+          <p>${article.description}</p>
+        </div>
+
+        <span>
+          Abrir
+        </span>
+      </button>
+    `;
+  });
+}
+
 function startHelpChat(){
   alert('Chat do Miaufi em breve. Por enquanto, use o telefone ou os artigos de ajuda.');
 }
@@ -1659,6 +1775,7 @@ window.openFeaturedCategoryDetail = openFeaturedCategoryDetail;
 window.openCategoryDetail = openCategoryDetail;
 window.saveWoolBallMovement = saveWoolBallMovement;
 window.startHelpChat = startHelpChat;
+window.openHelpCategory = openHelpCategory;
 
 setupInputs();
 
