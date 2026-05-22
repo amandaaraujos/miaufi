@@ -12,6 +12,9 @@ let user =
 let transactions =
   user?.transactions || [];
 
+let woolBallMovements =
+  user?.woolBallMovements || [];
+
 let carryOver =
   user?.carryOver || false;
 
@@ -78,9 +81,13 @@ function parseBrazilianNumber(value){
       .trim();
 
   if(cleanValue.includes(',') && cleanValue.includes('.')){
-    cleanValue = cleanValue.replace(/\./g, '').replace(',', '.');
+    cleanValue =
+      cleanValue
+        .replace(/\./g, '')
+        .replace(',', '.');
   } else if(cleanValue.includes(',')){
-    cleanValue = cleanValue.replace(',', '.');
+    cleanValue =
+      cleanValue.replace(',', '.');
   }
 
   return Number(cleanValue);
@@ -95,7 +102,8 @@ function formatDecimalInput(e){
 }
 
 function formatCurrency(value){
-  const signal = value >= 0 ? '+' : '-';
+  const signal =
+    value >= 0 ? '+' : '-';
 
   return `${signal}R$${Math.abs(value)
     .toLocaleString('pt-BR', {
@@ -215,6 +223,7 @@ function createUserAccount(){
     salary,
     type,
     transactions: [],
+    woolBallMovements: [],
     carryOver: false,
     fixedTaxes: {
       inss: { enabled: false, type: 'percent', value: 0 },
@@ -225,6 +234,7 @@ function createUserAccount(){
   currentUserEmail = email;
   user = users[email];
   transactions = user.transactions;
+  woolBallMovements = user.woolBallMovements;
   carryOver = user.carryOver;
   fixedTaxes = user.fixedTaxes;
 
@@ -285,6 +295,7 @@ function loginUser(){
   currentUserEmail = email;
   user = users[email];
   transactions = user.transactions || [];
+  woolBallMovements = user.woolBallMovements || [];
   carryOver = user.carryOver || false;
 
   fixedTaxes =
@@ -349,6 +360,7 @@ function logoutUser(){
   currentUserEmail = null;
   user = null;
   transactions = [];
+  woolBallMovements = [];
   carryOver = false;
   selectedCategory = null;
   featuredCategory = null;
@@ -379,12 +391,22 @@ function saveData(){
   }
 
   user.transactions = transactions;
+  user.woolBallMovements = woolBallMovements;
   user.carryOver = carryOver;
   user.fixedTaxes = fixedTaxes;
 
   users[currentUserEmail] = user;
 
   saveUsers();
+}
+
+function closeMenu(){
+  const menu =
+    document.getElementById('menu');
+
+  if(menu){
+    menu.style.display = 'none';
+  }
 }
 
 function toggleMenu(){
@@ -406,6 +428,8 @@ function showPage(page){
   document.getElementById(page)
     .classList.add('active');
 
+  closeMenu();
+
   if(page === 'history'){
     renderHistory();
   }
@@ -421,10 +445,15 @@ function showPage(page){
   if(page === 'categoryDetail'){
     renderCategoryDetail();
   }
+
+  if(page === 'woolBall'){
+    renderWoolBall();
+  }
 }
 
 function currentMonth(){
-  const now = new Date();
+  const now =
+    new Date();
 
   return `${now.getFullYear()}-${String(
     now.getMonth() + 1
@@ -655,7 +684,7 @@ function calculateMonthlyBalance(month){
 
 function getAllVisibleMonths(){
   const months =
-    new Set(transactions.map(t => t.month));
+    new Set();
 
   const now =
     new Date();
@@ -663,17 +692,19 @@ function getAllVisibleMonths(){
   const currentYear =
     now.getFullYear();
 
-  const currentMonthIndex =
-    now.getMonth() + 1;
-
-  for(let month = 1; month <= currentMonthIndex; month++){
+  for(let month = 1; month <= 12; month++){
     months.add(
       `${currentYear}-${String(month).padStart(2, '0')}`
     );
   }
 
   transactions.forEach(t => {
-    months.add(t.month);
+    const transactionYear =
+      Number(t.month.split('-')[0]);
+
+    if(transactionYear === currentYear){
+      months.add(t.month);
+    }
   });
 
   return [...months].sort();
@@ -1352,6 +1383,123 @@ function removeCategory(category){
   }
 }
 
+function getWoolBallTotal(){
+  return woolBallMovements.reduce((acc, movement) => {
+    return acc + movement.amount;
+  }, 0);
+}
+
+function saveWoolBallMovement(){
+  const action =
+    document.getElementById('woolBallAction').value;
+
+  const value =
+    parseBrazilianNumber(
+      document.getElementById('woolBallAmount').value
+    );
+
+  const note =
+    document.getElementById('woolBallNote').value.trim();
+
+  if(!value){
+    alert('Informe um valor válido.');
+    return;
+  }
+
+  const currentTotal =
+    getWoolBallTotal();
+
+  let amount = 0;
+  let label = '';
+
+  if(action === 'deposit'){
+    amount = Math.abs(value);
+    label = 'Valor guardado';
+  }
+
+  if(action === 'withdraw'){
+    amount = -Math.abs(value);
+    label = 'Valor retirado';
+  }
+
+  if(action === 'set'){
+    amount = value - currentTotal;
+    label = 'Valor total corrigido';
+  }
+
+  woolBallMovements.push({
+    id: crypto.randomUUID(),
+    action,
+    label,
+    note,
+    amount,
+    totalAfter: currentTotal + amount,
+    createdAt: new Date().toISOString()
+  });
+
+  saveData();
+
+  document.getElementById('woolBallAmount').value = '';
+  document.getElementById('woolBallNote').value = '';
+
+  renderWoolBall();
+}
+
+function renderWoolBall(){
+  const total =
+    getWoolBallTotal();
+
+  const totalElement =
+    document.getElementById('woolBallTotal');
+
+  const history =
+    document.getElementById('woolBallHistory');
+
+  totalElement.innerText =
+    formatCurrency(total);
+
+  totalElement.className =
+    total >= 0
+      ? 'saldo positive'
+      : 'saldo negative';
+
+  history.innerHTML = '';
+
+  if(woolBallMovements.length === 0){
+    history.innerHTML =
+      '<p>Nenhuma movimentação no Novelo de lã ainda.</p>';
+    return;
+  }
+
+  [...woolBallMovements]
+    .sort((a,b) => {
+      return new Date(b.createdAt) - new Date(a.createdAt);
+    })
+    .forEach(movement => {
+      const date =
+        new Date(movement.createdAt)
+          .toLocaleDateString('pt-BR');
+
+      history.innerHTML += `
+        <div class="transaction">
+          <div>
+            <strong>${movement.label}</strong>
+            <p>${movement.note || 'Sem descrição'} • ${date}</p>
+            <small>Total após movimento: ${formatCurrency(movement.totalAfter)}</small>
+          </div>
+
+          <div class="${movement.amount >= 0 ? 'positive' : 'negative'}">
+            ${formatCurrency(movement.amount)}
+          </div>
+        </div>
+      `;
+    });
+}
+
+function startHelpChat(){
+  alert('Chat do Miaufi em breve. Por enquanto, use o telefone ou os artigos de ajuda.');
+}
+
 function renderAccountSettings(){
   document.getElementById('settingsName').value =
     user.name || '';
@@ -1410,7 +1558,8 @@ function setupInputs(){
       document.getElementById('settingsSalary'),
       document.getElementById('inssValue'),
       document.getElementById('irpfValue'),
-      document.getElementById('editAmount')
+      document.getElementById('editAmount'),
+      document.getElementById('woolBallAmount')
     ];
 
   inputs.forEach(input => {
@@ -1508,6 +1657,8 @@ window.saveEditedTransaction = saveEditedTransaction;
 window.deleteTransaction = deleteTransaction;
 window.openFeaturedCategoryDetail = openFeaturedCategoryDetail;
 window.openCategoryDetail = openCategoryDetail;
+window.saveWoolBallMovement = saveWoolBallMovement;
+window.startHelpChat = startHelpChat;
 
 setupInputs();
 
