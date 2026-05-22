@@ -352,7 +352,13 @@
 
       </button>
 
-      <div class="header-space"></div>
+      <button
+        class="help-header-button"
+        onclick="showPage('help')"
+        aria-label="Abrir central de ajuda"
+      >
+        ?
+      </button>
 
     </header>
 
@@ -371,6 +377,14 @@
 
       <button onclick="showPage('categories')">
         Categorias
+      </button>
+
+      <button onclick="showPage('woolBall')">
+        Novelo de lã
+      </button>
+
+      <button onclick="showPage('help')">
+        Central de ajuda
       </button>
 
       <button onclick="showPage('settings')">
@@ -702,6 +716,266 @@
         ></div>
 
         <div id="categoryDetailList"></div>
+
+      </div>
+
+    </section>
+
+    <section
+      id="woolBall"
+      class="page"
+    >
+
+      <div class="hero-card wool-hero">
+
+        <p class="welcome-text">
+          Novelo de lã
+        </p>
+
+        <h2 class="hero-title">
+          Seu dinheiro guardado
+        </h2>
+
+        <div
+          class="saldo"
+          id="woolBallTotal"
+        >
+          +R$0,00
+        </div>
+
+        <p class="saldo-description">
+          Esse valor não entra no saldo disponível do mês
+        </p>
+
+      </div>
+
+      <div class="card form-card">
+
+        <div class="section-header">
+
+          <h2>
+            Movimentar caixinha
+          </h2>
+
+          <p>
+            Guarde, retire ou ajuste o total do seu Novelo de lã
+          </p>
+
+        </div>
+
+        <label for="woolBallAction">
+          O que você quer fazer?
+        </label>
+
+        <select id="woolBallAction">
+
+          <option value="deposit">
+            Guardar dinheiro
+          </option>
+
+          <option value="withdraw">
+            Retirar dinheiro
+          </option>
+
+          <option value="set">
+            Corrigir valor total
+          </option>
+
+        </select>
+
+        <label for="woolBallAmount">
+          Valor
+        </label>
+
+        <input
+          type="text"
+          id="woolBallAmount"
+          placeholder="Ex: 100,00"
+        />
+
+        <label for="woolBallNote">
+          Descrição
+        </label>
+
+        <input
+          type="text"
+          id="woolBallNote"
+          placeholder="Ex: Reserva, objetivo ou ajuste"
+        />
+
+        <button
+          class="primary-button"
+          onclick="saveWoolBallMovement()"
+        >
+          Salvar no Novelo
+        </button>
+
+      </div>
+
+      <div class="card">
+
+        <div class="section-header">
+
+          <h2>
+            Histórico do Novelo
+          </h2>
+
+          <p>
+            Entradas, retiradas e ajustes da sua caixinha
+          </p>
+
+        </div>
+
+        <div id="woolBallHistory"></div>
+
+      </div>
+
+    </section>
+
+    <section
+      id="help"
+      class="page"
+    >
+
+      <div class="hero-card help-hero">
+
+        <p class="welcome-text">
+          Central de ajuda
+        </p>
+
+        <h2 class="hero-title">
+          Como podemos te ajudar?
+        </h2>
+
+        <p class="saldo-description">
+          Encontre respostas rápidas ou fale com a gente
+        </p>
+
+      </div>
+
+      <div class="support-grid">
+
+        <a
+          class="support-card"
+          href="tel:+550000000000"
+        >
+
+          <div class="summary-icon">
+            ☎️
+          </div>
+
+          <strong>
+            Telefone
+          </strong>
+
+          <p>
+            Fale com o suporte do Miaufi
+          </p>
+
+          <span>
+            Ligar agora
+          </span>
+
+        </a>
+
+        <button
+          class="support-card"
+          onclick="startHelpChat()"
+        >
+
+          <div class="summary-icon">
+            💬
+          </div>
+
+          <strong>
+            Chat
+          </strong>
+
+          <p>
+            Tire dúvidas pelo atendimento online
+          </p>
+
+          <span>
+            Iniciar conversa
+          </span>
+
+        </button>
+
+      </div>
+
+      <div class="card">
+
+        <div class="section-header">
+
+          <h2>
+            Artigos de ajuda
+          </h2>
+
+          <p>
+            Guias rápidos para usar melhor o Miaufi
+          </p>
+
+        </div>
+
+        <div class="help-category">
+
+          <h3>
+            Primeiros passos
+          </h3>
+
+          <button class="article-button">
+            Artigo 1
+          </button>
+
+          <button class="article-button">
+            Artigo 2
+          </button>
+
+          <button class="article-button">
+            Artigo 3
+          </button>
+
+        </div>
+
+        <div class="help-category">
+
+          <h3>
+            Movimentações e categorias
+          </h3>
+
+          <button class="article-button">
+            Artigo 1
+          </button>
+
+          <button class="article-button">
+            Artigo 2
+          </button>
+
+          <button class="article-button">
+            Artigo 3
+          </button>
+
+        </div>
+
+        <div class="help-category">
+
+          <h3>
+            Conta, segurança e histórico
+          </h3>
+
+          <button class="article-button">
+            Artigo 1
+          </button>
+
+          <button class="article-button">
+            Artigo 2
+          </button>
+
+          <button class="article-button">
+            Artigo 3
+          </button>
+
+        </div>
 
       </div>
 
