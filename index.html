@@ -7,6 +7,7 @@
 
   <meta
     name="viewport"
+    name="viewport"
     content="width=device-width, initial-scale=1.0"
   />
 
@@ -58,50 +59,77 @@
     </div>
 
     <div
-      class="modal hidden"
+      class="modal auth-card"
       id="loginForm"
+      style="display: none;"
     >
 
-      <img
-        src="logo-miaufi.png"
-        alt="Logo Miaufi"
-        class="mini-logo"
-      />
-
-      <h2>
+      <h2 class="auth-title">
         Entrar
       </h2>
-
-      <p class="modal-description">
-        Continue de onde parou.
-      </p>
 
       <input
         type="email"
         id="loginEmail"
-        placeholder="Seu e-mail"
+        placeholder="E-mail"
       />
 
       <input
         type="password"
         id="loginPassword"
-        placeholder="Sua senha"
+        placeholder="Senha"
       />
-
-      <p
-        id="loginError"
-        class="negative"
-      ></p>
 
       <button onclick="loginUser()">
         Entrar
       </button>
 
-      <button
-        class="secondary-btn"
+      <p
+        class="auth-link"
         onclick="showPasswordRecoveryForm()"
       >
-        Recuperar senha
+        Esqueceu sua senha?
+      </p>
+
+      <button
+        class="secondary-btn"
+        onclick="backToAuthChoice()"
+      >
+        Voltar
+      </button>
+
+    </div>
+
+    <div
+      class="modal auth-card"
+      id="createAccountForm"
+      style="display: none;"
+    >
+
+      <h2 class="auth-title">
+        Criar conta
+      </h2>
+
+      <input
+        type="text"
+        id="createName"
+        placeholder="Nome completo"
+      />
+
+      <input
+        type="email"
+        id="createEmail"
+        placeholder="E-mail"
+      />
+
+      <input
+        type="password"
+        id="createPassword"
+        placeholder="Senha"
+      />
+
+      <button onclick="createUserAccount()">
+        Cadastrar
       </button>
 
       <button
@@ -114,106 +142,27 @@
     </div>
 
     <div
-      class="modal hidden"
-      id="passwordRecoveryForm"
+      class="modal auth-card"
+      id="recoveryForm"
+      style="display: none;"
     >
 
-      <img
-        src="logo-miaufi.png"
-        alt="Logo Miaufi"
-        class="mini-logo"
-      />
-
-      <h2>
-        Nova senha
+      <h2 class="auth-title">
+        Recuperar senha
       </h2>
 
-      <p class="modal-description">
-        Seus dados serão mantidos.
+      <p class="auth-subtitle">
+        Digite seu e-mail cadastrado para redefinir sua senha.
       </p>
 
       <input
         type="email"
         id="recoveryEmail"
-        placeholder="Seu e-mail"
-      />
-
-      <input
-        type="password"
-        id="recoveryPassword"
-        placeholder="Nova senha"
+        placeholder="E-mail"
       />
 
       <button onclick="resetPassword()">
-        Salvar nova senha
-      </button>
-
-      <button
-        class="secondary-btn"
-        onclick="showLoginForm()"
-      >
-        Voltar
-      </button>
-
-    </div>
-
-    <div
-      class="modal hidden"
-      id="createAccountForm"
-    >
-
-      <img
-        src="logo-miaufi.png"
-        alt="Logo Miaufi"
-        class="mini-logo"
-      />
-
-      <h2>
-        Criar conta
-      </h2>
-
-      <p class="modal-description">
-        Organize sua vida financeira de forma simples.
-      </p>
-
-      <input
-        type="text"
-        id="userName"
-        placeholder="Seu nome"
-      />
-
-      <input
-        type="email"
-        id="userEmail"
-        placeholder="Seu e-mail"
-      />
-
-      <input
-        type="password"
-        id="userPassword"
-        placeholder="Crie uma senha"
-      />
-
-      <input
-        type="text"
-        id="userSalary"
-        placeholder="Seu salário"
-      />
-
-      <select id="salaryType">
-
-        <option value="bruto">
-          Salário bruto
-        </option>
-
-        <option value="liquido">
-          Salário líquido
-        </option>
-
-      </select>
-
-      <button onclick="createUserAccount()">
-        Criar conta
+        Enviar e-mail de recuperação
       </button>
 
       <button
@@ -221,90 +170,6 @@
         onclick="backToAuthChoice()"
       >
         Voltar
-      </button>
-
-    </div>
-
-  </div>
-
-  <div
-    class="modal-overlay hidden"
-    id="transactionModal"
-  >
-
-    <div class="modal">
-
-      <h2>
-        Editar movimentação
-      </h2>
-
-      <input
-        type="hidden"
-        id="editTransactionId"
-      />
-
-      <label for="editType">
-        Tipo
-      </label>
-
-      <select id="editType">
-
-        <option value="expense">
-          Gasto
-        </option>
-
-        <option value="income">
-          Entrada
-        </option>
-
-      </select>
-
-      <label for="editName">
-        Nome da movimentação
-      </label>
-
-      <input
-        type="text"
-        id="editName"
-        placeholder="Ex: Mercado"
-      />
-
-      <label for="editCategory">
-        Categoria
-      </label>
-
-      <input
-        type="text"
-        id="editCategory"
-        placeholder="Ex: Alimentação"
-      />
-
-      <label for="editAmount">
-        Valor
-      </label>
-
-      <input
-        type="text"
-        id="editAmount"
-        placeholder="Ex: 1000,00"
-      />
-
-      <button onclick="saveEditedTransaction()">
-        Salvar alterações
-      </button>
-
-      <button
-        class="danger-btn"
-        onclick="deleteTransaction()"
-      >
-        Excluir movimentação
-      </button>
-
-      <button
-        class="secondary-btn"
-        onclick="closeTransactionModal()"
-      >
-        Cancelar
       </button>
 
     </div>
@@ -313,7 +178,7 @@
 
   <div
     id="appContent"
-    style="display:none"
+    style="display: none;"
   >
 
     <header class="topbar">
@@ -321,16 +186,22 @@
       <button
         class="menu-btn"
         onclick="toggleMenu()"
-        aria-label="Abrir menu"
       >
-        ☰
+
+        <svg
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2.5"
+        >
+          <path d="M3 12h18M3 6h18M3 18h18" />
+        </svg>
+
       </button>
 
-      <button
-        class="brand"
-        onclick="showPage('home')"
-        aria-label="Ir para o início"
-      >
+      <div class="brand">
 
         <img
           src="logo-miaufi.png"
@@ -338,885 +209,558 @@
           class="logo"
         />
 
-        <div class="brand-text">
+        <span class="brand-name">
+          Miaufi
+        </span>
 
-          <h1>
-            Miaufi
-          </h1>
-
-          <p>
-            Seu assistente financeiro pessoal
-          </p>
-
-        </div>
-
-      </button>
+      </div>
 
       <button
-        class="help-header-button"
-        onclick="showPage('help')"
-        aria-label="Abrir central de ajuda"
+        class="avatar-btn"
+        onclick="showPage('settings')"
       >
-        ?
+        M
       </button>
 
     </header>
 
     <nav
-      class="menu"
-      id="menu"
+      class="sidebar"
+      id="sidebar"
     >
 
-      <button onclick="showPage('home')">
-        Início
-      </button>
+      <div class="sidebar-links">
 
-      <button onclick="showPage('history')">
-        Extrato mensal
-      </button>
+        <a
+          href="#"
+          onclick="showPage('home')"
+          class="active"
+          id="nav-home"
+        >
+          Início
+        </a>
 
-      <button onclick="showPage('categories')">
-        Categorias
-      </button>
+        <a
+          href="#"
+          onclick="showPage('categories')"
+          id="nav-categories"
+        >
+          Categorias
+        </a>
 
-      <button onclick="showPage('woolBall')">
-        Novelo de lã
-      </button>
+        <a
+          href="#"
+          onclick="showPage('wool-ball')"
+          id="nav-wool-ball"
+        >
+          Novelo de Lã
+        </a>
 
-      <button onclick="showPage('help')">
-        Central de ajuda
-      </button>
+        <a
+          href="#"
+          onclick="showPage('support')"
+          id="nav-support"
+        >
+          Ajuda & Suporte
+        </a>
 
-      <button onclick="showPage('settings')">
-        Minha conta
-      </button>
+        <a
+          href="#"
+          onclick="showPage('settings')"
+          id="nav-settings"
+        >
+          Configurações
+        </a>
 
-      <button onclick="logoutUser()">
-        Sair
+      </div>
+
+      <button
+        class="logout-btn"
+        onclick="logoutUser()"
+      >
+        Sair da conta
       </button>
 
     </nav>
 
-    <section
-      id="home"
-      class="page active"
-    >
+    <main class="main-content">
 
-      <div class="hero-card">
+      <section
+        id="home"
+        class="page active"
+      >
 
-        <p
-          class="welcome-text"
-          id="welcome"
-        ></p>
+        <div class="card month-filter-card" style="margin-bottom: 24px;">
+          <label for="homeMonthFilter" style="font-weight: 600; margin-right: 10px;">Filtrar mês visualizado:</label>
+          <input type="month" id="homeMonthFilter" onchange="changeGlobalMonth(this.value)" />
+        </div>
 
-        <h2 class="hero-title">
-          Você tem disponível
-        </h2>
+        <div class="hero-card">
 
-        <div
-          class="saldo"
-          id="saldo"
-        ></div>
-
-        <p class="saldo-description">
-          Atualizado automaticamente
-        </p>
-
-      </div>
-
-      <div class="summary-grid">
-
-        <div class="summary-card">
-
-          <div class="summary-icon">
-            🐾
-          </div>
-
-          <p class="summary-label">
-            Maior gasto
+          <p
+            class="welcome-text"
+            id="welcome"
+          >
+            Olá, Amanda
           </p>
 
-          <p id="biggestExpense">
-            Nenhum registro
+          <h2 class="hero-title">
+            Você tem disponível
+          </h2>
+
+          <div
+            class="saldo"
+            id="saldo"
+          >
+            R$ 0,00
+          </div>
+
+          <p class="saldo-description">
+            Atualizado automaticamente
           </p>
 
         </div>
 
-        <button
-          class="summary-card clickable-card"
-          id="bestCategoryCard"
-          onclick="openFeaturedCategoryDetail()"
-          aria-label="Ver detalhes da categoria em destaque"
-        >
+        <div class="summary-grid">
 
-          <div class="summary-icon">
-            📈
+          <div
+            class="summary-card highlight"
+            id="featuredCategoryCard"
+            style="cursor: pointer;"
+            onclick="openFeaturedCategoryDetail()"
+          >
+
+            <h3 class="summary-title">
+              Categoria em destaque
+            </h3>
+
+            <div
+              class="summary-value"
+              id="featuredCategoryName"
+            >
+              Nenhuma
+            </div>
+
+            <p
+              class="summary-desc"
+              id="featuredCategoryTotal"
+            >
+              R$ 0,00 gastos este mês
+            </p>
+
           </div>
 
-          <p class="summary-label">
-            Categoria em destaque
-          </p>
+          <div class="summary-card">
 
-          <p id="bestCategory">
-            Nenhuma categoria
-          </p>
+            <h3 class="summary-title">
+              Maior gasto registrado
+            </h3>
 
-        </button>
+            <div
+              class="summary-value"
+              id="highestExpenseName"
+            >
+              Nenhum
+            </div>
 
-        <div class="summary-card">
+            <p
+              class="summary-desc"
+              id="highestExpenseValue"
+            >
+              R$ 0,00
+            </p>
 
-          <div class="summary-icon">
-            📅
           </div>
-
-          <p class="summary-label">
-            Comparação mensal
-          </p>
-
-          <p id="comparison">
-            Sem comparação
-          </p>
 
         </div>
-
-      </div>
-
-      <div class="card form-card">
 
         <div class="section-header">
 
-          <h2>
-            Adicionar entrada ou gasto
+          <h2 class="section-title">
+            Movimentações do Mês
           </h2>
 
-          <p>
-            Registre movimentações do seu mês
-          </p>
-
-        </div>
-
-        <label for="type">
-          Tipo de movimentação
-        </label>
-
-        <select id="type">
-
-          <option value="expense">
-            Gasto
-          </option>
-
-          <option value="income">
-            Entrada
-          </option>
-
-        </select>
-
-        <label for="name">
-          Nome da movimentação
-        </label>
-
-        <input
-          type="text"
-          id="name"
-          placeholder="Ex: Mercado, aluguel, freelance"
-        />
-
-        <label for="amount">
-          Valor
-        </label>
-
-        <input
-          type="text"
-          id="amount"
-          placeholder="Ex: 1000,00"
-        />
-
-        <label for="category">
-          Categoria
-        </label>
-
-        <input
-          type="text"
-          id="category"
-          placeholder="Ex: Alimentação"
-        />
-
-        <div class="checkbox">
-
-          <input
-            type="checkbox"
-            id="anotherMonth"
-          />
-
-          <label for="anotherMonth">
-            Lançar em outro mês?
-          </label>
-
-        </div>
-
-        <input
-          type="month"
-          id="month"
-          style="display:none"
-        />
-
-        <div class="checkbox">
-
-          <input
-            type="checkbox"
-            id="hasInstallments"
-          />
-
-          <label for="hasInstallments">
-            Dividir em parcelas?
-          </label>
+          <button onclick="openTransactionModal()">
+            Nova movimentação
+          </button>
 
         </div>
 
         <div
-          id="installmentsBox"
-          style="display:none"
+          class="transactions-list"
+          id="transactionsList"
         >
+          </div>
 
-          <input
-            type="number"
-            id="installments"
-            placeholder="Quantidade de parcelas"
-            value="1"
-            min="1"
-          />
+      </section>
 
-        </div>
+      <section
+        id="categories"
+        class="page"
+      >
 
-        <div class="checkbox">
-
-          <input
-            type="checkbox"
-            id="fixed"
-          />
-
-          <label for="fixed">
-            Repetir todo mês?
-          </label>
-
-        </div>
-
-        <button
-          class="primary-button"
-          onclick="addTransaction()"
-        >
-          Salvar movimentação
-        </button>
-
-      </div>
-
-      <div class="card">
-
-        <div class="section-header">
-
-          <h2>
-            Movimentações
-          </h2>
-
-          <p>
-            Mais recentes primeiro
-          </p>
-
-        </div>
-
-        <div id="transactions"></div>
-
-      </div>
-
-    </section>
-
-    <section
-      id="history"
-      class="page"
-    >
-
-      <div class="card">
-
-        <div class="section-header">
-
-          <h2>
-            Extrato mensal
-          </h2>
-
-          <p>
-            Acompanhe sua evolução financeira
-          </p>
-
-        </div>
-
-        <canvas id="chart"></canvas>
-
-      </div>
-
-    </section>
-
-    <section
-      id="categories"
-      class="page"
-    >
-
-      <div class="card">
-
-        <div class="section-header">
-
-          <h2>
-            Categorias
-          </h2>
-
-          <p>
-            Clique em uma categoria para ver os registros do mês
-          </p>
-
-        </div>
-
-        <div class="month-filter-card">
-
-  <label for="categoriesMonthFilter">
-    Mês
-  </label>
-
-  <input
-    type="month"
-    id="categoriesMonthFilter"
-    onchange="changeSelectedMonth(this.value)"
-  />
-
-</div>
-
-<div id="categoriesList"></div>
-
-      </div>
-
-    </section>
-
-    <section
-      id="categoryDetail"
-      class="page"
-    >
-
-      <div class="card">
-
-        <div class="section-header detail-header">
+        <div class="categories-header">
 
           <div>
 
-            <h2 id="categoryDetailTitle">
-              Detalhe da categoria
-            </h2>
-
-            <p id="categoryDetailSubtitle">
-  Registros do mês selecionado
-</p>
-
-          </div>
-
-          <button
-            class="secondary-btn small-button"
-            onclick="showPage('categories')"
-          >
-            Voltar
-          </button>
-
-        </div>
-
-        <div
-          class="category-total-box"
-          id="categoryDetailTotal"
-        ></div>
-
-        <div id="categoryDetailList"></div>
-
-      </div>
-
-    </section>
-
-    <section
-      id="woolBall"
-      class="page"
-    >
-
-      <div class="hero-card wool-hero">
-
-        <p class="welcome-text">
-          Novelo de lã
-        </p>
-
-        <h2 class="hero-title">
-          Seu dinheiro guardado
-        </h2>
-
-        <div
-          class="saldo"
-          id="woolBallTotal"
-        >
-          +R$0,00
-        </div>
-
-        <p class="saldo-description">
-          Esse valor não entra no saldo disponível do mês
-        </p>
-
-      </div>
-
-      <div class="card form-card">
-
-        <div class="section-header">
-
-          <h2>
-            Movimentar caixinha
-          </h2>
-
-          <p>
-            Guarde, retire ou ajuste o total do seu Novelo de lã
-          </p>
-
-        </div>
-
-        <label for="woolBallAction">
-          O que você quer fazer?
-        </label>
-
-        <select id="woolBallAction">
-
-          <option value="deposit">
-            Guardar dinheiro
-          </option>
-
-          <option value="withdraw">
-            Retirar dinheiro
-          </option>
-
-          <option value="set">
-            Corrigir valor total
-          </option>
-
-        </select>
-
-        <label for="woolBallAmount">
-          Valor
-        </label>
-
-        <input
-          type="text"
-          id="woolBallAmount"
-          placeholder="Ex: 100,00"
-        />
-
-        <label for="woolBallNote">
-          Descrição
-        </label>
-
-        <input
-          type="text"
-          id="woolBallNote"
-          placeholder="Ex: Reserva, objetivo ou ajuste"
-        />
-
-        <button
-          class="primary-button"
-          onclick="saveWoolBallMovement()"
-        >
-          Salvar no Novelo
-        </button>
-
-      </div>
-
-      <div class="card">
-
-        <div class="section-header">
-
-          <h2>
-            Histórico do Novelo
-          </h2>
-
-          <p>
-            Entradas, retiradas e ajustes da sua caixinha
-          </p>
-
-        </div>
-
-        <div id="woolBallHistory"></div>
-
-      </div>
-
-    </section>
-
-    <section
-      id="help"
-      class="page"
-    >
-
-      <div class="hero-card help-hero">
-
-        <p class="welcome-text">
-          Central de ajuda
-        </p>
-
-        <h2 class="hero-title">
-          Como podemos te ajudar?
-        </h2>
-
-        <p class="saldo-description">
-          Encontre respostas rápidas ou fale com a gente
-        </p>
-
-      </div>
-
-      <div class="card">
-
-        <div class="section-header">
-
-          <h2>
-            Artigos de ajuda
-          </h2>
-
-          <p>
-            Escolha um tema para encontrar respostas sobre o Miaufi
-          </p>
-
-        </div>
-
-        <div class="help-categories-grid">
-
-          <button
-            class="help-category-card"
-            onclick="openHelpCategory('primeiros-passos')"
-          >
-
-            <div class="summary-icon">
-              🐾
-            </div>
-
-            <strong>
-              Primeiros passos
-            </strong>
-
-            <p>
-              Aprenda a configurar sua conta e começar a usar o Miaufi.
-            </p>
-
-            <span>
-              Ver mais
-            </span>
-
-          </button>
-
-          <button
-            class="help-category-card"
-            onclick="openHelpCategory('movimentacoes')"
-          >
-
-            <div class="summary-icon">
-              💸
-            </div>
-
-            <strong>
-              Movimentações e categorias
-            </strong>
-
-            <p>
-              Entenda como registrar gastos, entradas, parcelas e categorias.
-            </p>
-
-            <span>
-              Ver mais
-            </span>
-
-          </button>
-
-          <button
-            class="help-category-card"
-            onclick="openHelpCategory('conta-seguranca')"
-          >
-
-            <div class="summary-icon">
-              🔐
-            </div>
-
-            <strong>
-              Conta, segurança e histórico
-            </strong>
-
-            <p>
-              Veja como cuidar da sua conta, senha, histórico e dados salvos.
-            </p>
-
-            <span>
-              Ver mais
-            </span>
-
-          </button>
-
-        </div>
-
-      </div>
-
-      <div class="card">
-
-        <div class="section-header">
-
-          <h2>
-            Canais de atendimento
-          </h2>
-
-          <p>
-            Se precisar de ajuda, escolha um canal para falar com o Miaufi
-          </p>
-
-        </div>
-
-        <div class="support-grid">
-
-          <a
-            class="support-card"
-            href="tel:+550000000000"
-          >
-
-            <div class="summary-icon support-icon">
-              ☎️
-            </div>
-
-            <strong>
-              Telefone
-            </strong>
-
-            <p>
-              Fale com o suporte do Miaufi.
-            </p>
-
-            <span>
-              Ligar agora
-            </span>
-
-          </a>
-
-          <button
-            class="support-card"
-            onclick="startHelpChat()"
-          >
-
-            <div class="summary-icon support-icon">
-              💬
-            </div>
-
-            <strong>
-              Chat
-            </strong>
-
-            <p>
-              Tire dúvidas pelo atendimento online.
-            </p>
-
-            <span>
-              Falar no chat
-            </span>
-
-          </button>
-
-        </div>
-
-      </div>
-
-    </section>
-
-    <section
-      id="helpCategoryDetail"
-      class="page"
-    >
-
-      <div class="card">
-
-        <div class="section-header detail-header">
-
-          <div>
-
-            <h2 id="helpCategoryTitle">
-              Categoria de ajuda
-            </h2>
-
-            <p id="helpCategoryDescription">
-              Artigos disponíveis
+            <h1 class="page-title">
+              Categorias
+            </h1>
+
+            <p class="page-subtitle">
+              Gerencie seus limites e gastos por categoria
             </p>
 
           </div>
 
-          <button
-            class="secondary-btn small-button"
-            onclick="showPage('help')"
-          >
-            Voltar
-          </button>
+          <div class="month-filter-card">
+            <label for="categoriesMonthFilter">Mês </label>
+            <input type="month" id="categoriesMonthFilter" onchange="changeGlobalMonth(this.value)" />
+          </div>
 
         </div>
 
-        <div id="helpArticlesList"></div>
+        <div class="categories-grid-layout">
 
-      </div>
+          <div class="categories-main">
 
-    </section>
+            <div
+              class="categories-grid"
+              id="categoriesGrid"
+            >
+              </div>
 
-    <section
-      id="settings"
-      class="page"
-    >
+          </div>
 
-      <div class="card">
+          <aside class="categories-sidebar">
 
-        <div class="section-header">
+            <div class="card">
 
-          <h2>
-            Minha conta
-          </h2>
+              <h3 class="card-title">
+                Nova Categoria
+              </h3>
 
-          <p>
-            Configure seus dados e descontos automáticos
+              <div class="form-group">
+
+                <label for="newCategoryName">
+                  Nome da Categoria
+                </label>
+
+                <input
+                  type="text"
+                  id="newCategoryName"
+                  placeholder="Ex: Alimentação, Lazer..."
+                />
+
+              </div>
+
+              <div class="form-group">
+
+                <label for="newCategoryLimit">
+                  Limite Mensal (Opcional)
+                </label>
+
+                <input
+                  type="text"
+                  id="newCategoryLimit"
+                  placeholder="Ex: 500,00"
+                />
+
+              </div>
+
+              <button
+                class="w-100"
+                onclick="addCategory()"
+              >
+                Criar Categoria
+              </button>
+
+            </div>
+
+          </aside>
+
+        </div>
+
+      </section>
+
+      <section
+        id="wool-ball"
+        class="page"
+      >
+
+        <div class="wool-ball-container">
+
+          <div class="wool-ball-content">
+
+            <h1 class="page-title">
+              Novelo de Lã
+            </h1>
+
+            <p class="page-subtitle">
+              Guarde dinheiro para objetivos específicos embolando seu novelo.
+            </p>
+
+            <div class="wool-ball-card">
+
+              <div class="wool-ball-visual">
+
+                <div class="wool-ball-graphic">
+                  🧶
+                </div>
+
+                <div
+                  class="wool-ball-amount"
+                  id="woolBallTotal"
+                >
+                  R$ 0,00
+                </div>
+
+                <p class="wool-ball-desc">
+                  Total guardado no seu novelo
+                </p>
+
+              </div>
+
+            </div>
+
+            <div class="card">
+
+              <h3 class="card-title">
+                Histórico do Novelo
+              </h3>
+
+              <div
+                class="wool-ball-history"
+                id="woolBallHistory"
+              >
+                </div>
+
+            </div>
+
+          </div>
+
+          <aside class="wool-ball-sidebar">
+
+            <div class="card">
+
+              <h3 class="card-title">
+                Movimentar Novelo
+              </h3>
+
+              <div class="form-group">
+
+                <label for="woolBallAction">
+                  Ação
+                </label>
+
+                <select id="woolBallAction">
+
+                  <option value="enrolar">
+                    Enrolar (Guardar dinheiro)
+                  </option>
+
+                  <option value="desenrolar">
+                    Desenrolar (Resgatar dinheiro)
+                  </option>
+
+                </select>
+
+              </div>
+
+              <div class="form-group">
+
+                <label for="woolBallValue">
+                  Valor
+                </label>
+
+                <input
+                  type="text"
+                  id="woolBallValue"
+                  placeholder="Ex: 100,00"
+                />
+
+              </div>
+
+              <div class="form-group">
+
+                <label for="woolBallDescription">
+                  Motivo / Objetivo
+                </label>
+
+                <input
+                  type="text"
+                  id="woolBallDescription"
+                  placeholder="Ex: Reserva de emergência, Viagem..."
+                />
+
+              </div>
+
+              <button
+                class="w-100"
+                onclick="saveWoolBallMovement()"
+              >
+                Confirmar Movimentação
+              </button>
+
+            </div>
+
+          </aside>
+
+        </div>
+
+      </section>
+
+      <section
+        id="support"
+        class="page"
+      >
+
+        <div id="supportHome">
+
+          <h1 class="page-title">
+            Como podemos ajudar?
+          </h1>
+
+          <p class="page-subtitle">
+            Busque por tópicos ou inicie uma conversa com nosso suporte assistido.
           </p>
 
-        </div>
+          <div class="search-container">
 
-        <label for="settingsName">
-          Nome
-        </label>
+            <input
+              type="text"
+              class="search-bar"
+              placeholder="Digite sua dúvida aqui..."
+            />
 
-        <input
-          type="text"
-          id="settingsName"
-          placeholder="Seu nome"
-        />
+          </div>
 
-        <label for="settingsSalary">
-          Salário
-        </label>
+          <div class="support-grid">
 
-        <input
-          type="text"
-          id="settingsSalary"
-          placeholder="Ex: 4500,00"
-        />
+            <div class="support-card">
 
-        <label for="settingsSalaryType">
-          Tipo de salário
-        </label>
+              <h3>
+                Central de Ajuda
+              </h3>
 
-        <select id="settingsSalaryType">
+              <p>
+                Explore nossos artigos detalhados sobre como usar o Miaufi ao máximo.
+              </p>
 
-          <option value="bruto">
-            Bruto
-          </option>
+              <button
+                class="secondary-btn"
+                onclick="openHelpCenter()"
+              >
+                Ver Artigos
+              </button>
 
-          <option value="liquido">
-            Líquido
-          </option>
+            </div>
 
-        </select>
+            <div class="support-card">
 
-        <div class="checkbox">
+              <h3>
+                Fale Conosco
+              </h3>
 
-          <input
-            type="checkbox"
-            id="carryOverEnabled"
-          />
+              <p>
+                Não encontrou o que precisava? Converse diretamente com nosso chat.
+              </p>
 
-          <label for="carryOverEnabled">
-            Somar saldo dos meses anteriores?
-          </label>
+              <button onclick="startHelpChat()">
+                Iniciar Chat
+              </button>
 
-        </div>
+            </div>
 
-        <hr class="divider" />
-
-        <h3 class="settings-title">
-          INSS
-        </h3>
-
-        <div class="checkbox">
-
-          <input
-            type="checkbox"
-            id="inssEnabled"
-          />
-
-          <label for="inssEnabled">
-            Aplicar automaticamente
-          </label>
+          </div>
 
         </div>
 
-        <select id="inssType">
-
-          <option value="percent">
-            Percentual (%)
-          </option>
-
-          <option value="value">
-            Valor fixo (R$)
-          </option>
-
-        </select>
-
-        <input
-          type="text"
-          id="inssValue"
-          placeholder="Ex: 8,5 ou 450,00"
-        />
-
-        <hr class="divider" />
-
-        <h3 class="settings-title">
-          IRPF
-        </h3>
-
-        <div class="checkbox">
-
-          <input
-            type="checkbox"
-            id="irpfEnabled"
-          />
-
-          <label for="irpfEnabled">
-            Aplicar automaticamente
-          </label>
-
-        </div>
-
-        <select id="irpfType">
-
-          <option value="percent">
-            Percentual (%)
-          </option>
-
-          <option value="value">
-            Valor fixo (R$)
-          </option>
-
-        </select>
-
-        <input
-          type="text"
-          id="irpfValue"
-          placeholder="Ex: 15 ou 750,00"
-        />
-
-        <button
-          class="primary-button"
-          onclick="saveAccountSettings()"
+        <div
+          id="helpCenter"
+          style="display: none;"
         >
-          Salvar configurações
-        </button>
 
-      </div>
+          <div class="section-header">
 
-    </section>
+            <h2 class="section-title">
+              Central de Ajuda
+            </h2>
 
-  </div>
+            <button
+              class="secondary-btn"
+              onclick="backToSupportHome()"
+            >
+              Voltar
+            </button>
 
-  <script src="script.js"></script>
+          </div>
 
-</body>
+          <div
+            class="help-categories-grid"
+            id="helpCategoriesGrid"
+          >
+            </div>
 
-</html>
+        </div>
+
+        <div
+          id="helpCategoryDetail"
+          style="display: none;"
+        >
+
+          <div class="section-header">
+
+            <h2
+              class="section-title"
+              id="helpCategoryTitle"
+            >
+              Categoria de Ajuda
+            </h2>
+
+            <button
+              class="secondary-btn"
+              onclick="backToHelpCenter()"
+            >
+              Voltar aos tópicos
+            </button>
+
+          </div>
+
+          <div
+            class="articles-list"
+            id="articlesList"
+          >
+            </div>
+
+        </div>
+
+        <div
+          id="supportChat"
+          style="display: none;"
+        >
+
+          <div class="section-header">
+
+            <h2 class="section-title">
+              Suporte Miaufi
+            </h2>
+
+            <button
+              class="secondary-btn"
+              onclick="backToSupportHome()"
+            >
+              Encerrar Chat
+            </button>
+
+          </div>
+
+          <div class="chat-container">
+
+            <div
+              class="chat-messages"
+              id="chatMessages"
+            >
+              </div>
+
+            <div class
