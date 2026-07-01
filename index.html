@@ -674,7 +674,21 @@
 
         </div>
 
-        <div id="categoriesList"></div>
+        <div class="month-filter-card">
+
+  <label for="categoriesMonthFilter">
+    Mês
+  </label>
+
+  <input
+    type="month"
+    id="categoriesMonthFilter"
+    onchange="changeSelectedMonth(this.value)"
+  />
+
+</div>
+
+<div id="categoriesList"></div>
 
       </div>
 
@@ -696,8 +710,8 @@
             </h2>
 
             <p id="categoryDetailSubtitle">
-              Registros do mês atual
-            </p>
+  Registros do mês selecionado
+</p>
 
           </div>
 
